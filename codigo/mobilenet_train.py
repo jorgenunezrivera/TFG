@@ -44,7 +44,7 @@ base_model = keras.models.load_model('mobilenet_v2.h5')
 base_model.trainable = False
 
 global_average_layer = tf.keras.layers.GlobalAveragePooling2D()
-prediction_layer = tf.keras.layers.Dense(1)#sigmoid?
+prediction_layer = tf.keras.layers.Dense(2)#sigmoid?
 
 data_augmentation = tf.keras.Sequential([
   tf.keras.layers.experimental.preprocessing.RandomFlip('horizontal'),
@@ -65,12 +65,14 @@ model.summary()
 #Compilar
 base_learning_rate = 0.0001
 model.compile(optimizer=tf.keras.optimizers.Adam(lr=base_learning_rate),
-              loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
 #Entrenar
 history = model.fit(train_dataset,
                     epochs=EPOCHS,
                     validation_data=validation_dataset)
+
+model.save("mobilenet_catdog_categorical")
 
 acc = history.history['accuracy']
 val_acc = history.history['val_accuracy']
@@ -98,4 +100,4 @@ plt.xlabel('epoch')
 plt.show()
 
 
-model.save("fitted_10_epochs_aumentation")
+
