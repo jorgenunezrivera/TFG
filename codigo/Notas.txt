@@ -1,0 +1,15 @@
+Notas:
+
+    (Hecho)
+    1.Descargar mobilenetv2 con sus pesos
+    2.Reentrenar con BD de gatos y perros
+        Crossentropy
+        10 epochs
+        Red tal cual
+    3.Probar RNN con ejemplos
+
+    (Hacer)
+    1.Cronometrar procesado 1 imagen
+    2.Procesar imagenes en Batches por carpeta
+    3. Empezar funcion RL
+    
