@@ -281,6 +281,6 @@ env=ImageWindowEnv(img_arr)
 q_estimator=Estimator((160,160,3),5)
 target_estimator=Estimator((160,160,3),5)
 episode_rewards=deep_q_learning(env,q_estimator,target_estimator,num_episodes=5000,replay_memory_size=1000,
-                      replay_memory_init_size=64,update_target_estimator_every=500,discount_factor=0.9,
+                      replay_memory_init_size=64,update_target_estimator_every=100,discount_factor=0.9,
                       epsilon_start=0.7,epsilon_end=0.1,epsilon_decay_steps=500, batch_size=32)
 print("\nEpisode Reward: " + str(episode_rewards))
