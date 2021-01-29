@@ -10,7 +10,7 @@ import numpy as np
 
 labels=["cat","dog"]
 
-modelTrained = keras.models.load_model("fitted_10_epochs_aumentation")
+modelTrained = keras.models.load_model("fitted_10_epochs_aumentation_categorical")
 modelTrained.summary()
 
 
@@ -39,11 +39,11 @@ test_set=tf.stack(test_set)
 plt.figure(figsize=(10, 10))
 predictionsTrained = modelTrained.predict_on_batch(test_set)
 predictions = tf.nn.sigmoid(predictionsTrained).numpy()
-logits = tf.where(predictions < 0.5, 0, 1).numpy()
-print(logits)
+#logits = tf.where(predictions < 0.5, 0, 1).numpy()
+#print(logits)
 for i in range(len(images)):
     ax = plt.subplot(3, 3, i + 1)
     plt.imshow(images[i])
-    plt.title(filenames[i] +" :probability of "+str(np.abs(predictions[i]-0.5)))
+    plt.title(" cat:"+str(predictions[i][0]) + " dog: " + str(predictions[i][1]))
 plt.show()
 print(predictions)
