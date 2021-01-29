@@ -228,7 +228,7 @@ def deep_q_learning(env,
 
             # Print out which step we're on, useful for debugging.
             print("\rStep {} ({}) @ Episode {}/{}, loss: {} epsilon:{}".format(
-                    t, total_t, i_episode + 1, num_episodes, loss,epsilon = epsilons[min(total_t, epsilon_decay_steps-1)],), end="")
+                    t, total_t, i_episode + 1, num_episodes, loss,epsilons[min(total_t, epsilon_decay_steps-1)],), end="")
             sys.stdout.flush()
 
             # Take a step
