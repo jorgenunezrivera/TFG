@@ -115,6 +115,9 @@ class Estimator():
         orig.save_weights()
         self.load_weights()
 
+    def save_model(self):
+        self.model.save_model("dqn_model")
+
 def make_epsilon_greedy_policy(estimator, nA):
     """
     Creates an epsilon-greedy policy based on a given Q-function approximator and epsilon.
@@ -268,7 +271,7 @@ def deep_q_learning(env,
         #yield total_t, plotting.EpisodeStats(
         #    episode_lengths=stats.episode_lengths[:i_episode+1],
         #    episode_rewards=stats.episode_rewards[:i_episode+1])
-
+    q_estimator.save-model()
     return episode_rewards      
 
 TEST_FILE="test.jpg"
@@ -282,5 +285,5 @@ q_estimator=Estimator((160,160,3),5)
 target_estimator=Estimator((160,160,3),5)
 episode_rewards=deep_q_learning(env,q_estimator,target_estimator,num_episodes=5000,replay_memory_size=1000,
                       replay_memory_init_size=64,update_target_estimator_every=100,discount_factor=0.9,
-                      epsilon_start=0.7,epsilon_end=0.1,epsilon_decay_steps=500, batch_size=32)
+                      epsilon_start=0.9,epsilon_end=0.1,epsilon_decay_steps=5000, batch_size=32)
 print("\nEpisode Reward: " + str(episode_rewards))
