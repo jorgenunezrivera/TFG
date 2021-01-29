@@ -227,8 +227,8 @@ def deep_q_learning(env,
                 print("\nCopied model parameters to target network.")
 
             # Print out which step we're on, useful for debugging.
-            print("\rStep {} ({}) @ Episode {}/{}, loss: {}".format(
-                    t, total_t, i_episode + 1, num_episodes, loss), end="")
+            print("\rStep {} ({}) @ Episode {}/{}, loss: {} epsilon:{}".format(
+                    t, total_t, i_episode + 1, num_episodes, lossepsilon = epsilons[min(total_t, epsilon_decay_steps-1)],), end="")
             sys.stdout.flush()
 
             # Take a step
@@ -280,7 +280,7 @@ env=ImageWindowEnv(img_arr)
 
 q_estimator=Estimator((160,160,3),5)
 target_estimator=Estimator((160,160,3),5)
-episode_rewards=deep_q_learning(env,q_estimator,target_estimator,num_episodes=1000,replay_memory_size=10000,
-                      replay_memory_init_size=64,update_target_estimator_every=500,discount_factor=0.99,
-                      epsilon_start=1.0,epsilon_end=0.1,epsilon_decay_steps=1000, batch_size=32)
+episode_rewards=deep_q_learning(env,q_estimator,target_estimator,num_episodes=5000,replay_memory_size=1000,
+                      replay_memory_init_size=64,update_target_estimator_every=500,discount_factor=0.9,
+                      epsilon_start=0.7,epsilon_end=0.1,epsilon_decay_steps=500, batch_size=32)
 print("\nEpisode Reward: " + str(episode_rewards))
