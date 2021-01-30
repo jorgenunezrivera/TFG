@@ -1,5 +1,5 @@
 import tensorflow as tf
-from image_window_env import ImageWindowEnv
+from image_window_env_batch import ImageWindowEnvBatch
 import numpy as np
 from tensorflow import keras
 from tensorflow.keras import layers
@@ -274,16 +274,21 @@ def deep_q_learning(env,
     q_estimator.save-model()
     return episode_rewards      
 
-TEST_FILE="test.jpg"
+IMAGES_DIR="testql"
 
-image=tf.keras.preprocessing.image.load_img(TEST_FILE)
-img_arr= keras.preprocessing.image.img_to_array(image)
-
-env=ImageWindowEnv(img_arr)
+image_batch=[]
+for entry in os.listdir(IMAGES_DIR):
+    filename=os.path.join(IMAGES_DIR,entry)
+    if os.path.isfile(filename) and filename.endswith('.jpg'):
+        image =tf.keras.preprocessing.image.load_img(filename)
+        img_arr = keras.preprocessing.image.img_to_array(image)
+        image_batch.append(img_arr)
+        
+env=ImageWindowEnvBatch(image_batch)
 
 q_estimator=Estimator((160,160,3),5)
 target_estimator=Estimator((160,160,3),5)
 episode_rewards=deep_q_learning(env,q_estimator,target_estimator,num_episodes=5000,replay_memory_size=1000,
                       replay_memory_init_size=64,update_target_estimator_every=100,discount_factor=0.9,
-                      epsilon_start=0.9,epsilon_end=0.001,epsilon_decay_steps=5000, batch_size=32)
+                      epsilon_start=1,epsilon_end=0.001,epsilon_decay_steps=10000, batch_size=32)
 print("\nEpisode Reward: " + str(episode_rewards))
