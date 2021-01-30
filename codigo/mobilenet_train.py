@@ -18,6 +18,8 @@ validation_dir = os.path.join('cats_and_dogs_filtered', 'validation')
 BATCH_SIZE = 32
 IMG_SIZE = (160, 160)
 EPOCHS = 10
+FINE_TUNE_EPOCHS = 10
+
 
 train_dataset = image_dataset_from_directory(train_dir,
                                              shuffle=True,
@@ -72,6 +74,29 @@ history = model.fit(train_dataset,
                     epochs=EPOCHS,
                     validation_data=validation_dataset)
 
+#FINE TUNING
+
+base_model.trainable = True
+
+# Fine-tune from this layer onwards
+fine_tune_at = 100
+
+# Freeze all the layers before the `fine_tune_at` layer
+for layer in base_model.layers[:fine_tune_at]:
+  layer.trainable =  False
+
+model.compile(loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              optimizer = tf.keras.optimizers.RMSprop(lr=base_learning_rate/10),
+              metrics=['accuracy'])
+
+total_epochs= EPOCHS + FINE_TUNE_EPOCHS
+history_fine = model.fit(train_dataset,
+                         epochs=total_epochs,
+                         initial_epoch=history.epoch[-1],
+                         validation_data=validation_dataset)
+
+
+
 model.save("mobilenet_catdog_categorical")
 
 acc = history.history['accuracy']
@@ -79,22 +104,31 @@ val_acc = history.history['val_accuracy']
 
 loss = history.history['loss']
 val_loss = history.history['val_loss']
-# Grafica
+
+
+acc += history_fine.history['accuracy']
+val_acc += history_fine.history['val_accuracy']
+
+loss += history_fine.history['loss']
+val_loss += history_fine.history['val_loss']
+
 plt.figure(figsize=(8, 8))
 plt.subplot(2, 1, 1)
 plt.plot(acc, label='Training Accuracy')
 plt.plot(val_acc, label='Validation Accuracy')
+plt.ylim([0.8, 1])
+plt.plot([initial_epochs-1,initial_epochs-1],
+          plt.ylim(), label='Start Fine Tuning')
 plt.legend(loc='lower right')
-plt.ylabel('Accuracy')
-plt.ylim([min(plt.ylim()),1])
 plt.title('Training and Validation Accuracy')
 
 plt.subplot(2, 1, 2)
 plt.plot(loss, label='Training Loss')
 plt.plot(val_loss, label='Validation Loss')
+plt.ylim([0, 1.0])
+plt.plot([initial_epochs-1,initial_epochs-1],
+         plt.ylim(), label='Start Fine Tuning')
 plt.legend(loc='upper right')
-plt.ylabel('Cross Entropy')
-plt.ylim([0,1.0])
 plt.title('Training and Validation Loss')
 plt.xlabel('epoch')
 plt.show()
