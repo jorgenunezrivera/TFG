@@ -184,7 +184,7 @@ def deep_q_learning(env,
     
     # Keeps track of useful statistics (PROVISIONAL)
     episode_rewards=np.zeros(num_episodes)
-    
+    episode_losses=np.zeros(num_episodes)
     # The epsilon decay schedule
     epsilons = np.linspace(epsilon_start, epsilon_end, epsilon_decay_steps)
 
@@ -217,7 +217,7 @@ def deep_q_learning(env,
         state = env.reset()
         #state = np.stack([state] * 4, axis=2)
         loss = None
-
+        episode_loss=0
         # One step in the environment
         for t in itertools.count():
 
@@ -249,6 +249,7 @@ def deep_q_learning(env,
 
             # Update statistics
             episode_rewards[i_episode] += reward
+            
 
             # Sample a minibatch from the replay memory
             samples = random.sample(replay_memory, batch_size)
@@ -261,8 +262,9 @@ def deep_q_learning(env,
             # Perform gradient descent update
             states_batch = np.array(states_batch)
             loss = q_estimator.update(states_batch, action_batch, targets_batch)
-
+            episode_loss+=loss
             if done:
+                episode_losses[i_episode]=episode_loss/t
                 break
 
             state = next_state
@@ -272,7 +274,7 @@ def deep_q_learning(env,
         #    episode_lengths=stats.episode_lengths[:i_episode+1],
         #    episode_rewards=stats.episode_rewards[:i_episode+1])
     q_estimator.save-model()
-    return episode_rewards      
+    return episode_losses      
 
 IMAGES_DIR="testql"
 
@@ -288,7 +290,17 @@ env=ImageWindowEnvBatch(image_batch)
 
 q_estimator=Estimator((160,160,3),5)
 target_estimator=Estimator((160,160,3),5)
-episode_rewards=deep_q_learning(env,q_estimator,target_estimator,num_episodes=5000,replay_memory_size=1000,
-                      replay_memory_init_size=64,update_target_estimator_every=100,discount_factor=0.9,
+episode_losses=deep_q_learning(env,q_estimator,target_estimator,num_episodes=5000,replay_memory_size=1000,
+                      replay_memory_init_size=64,update_target_estimator_every=100,discount_factor=0.95,
                       epsilon_start=1,epsilon_end=0.001,epsilon_decay_steps=10000, batch_size=32)
+
+plt.figure(figsize=(8, 8))
+plt.plot(episode_losses, label='Training Loss')
+plt.legend(loc='upper right')
+plt.ylabel('Mean Squared Error')
+plt.ylim([0,1.0])
+plt.title('Training and Validation Loss')
+plt.xlabel('epoch')
+plt.show()
+
 print("\nEpisode Reward: " + str(episode_rewards))
