@@ -228,11 +228,9 @@ def deep_q_learning(env,
             if total_t % update_target_estimator_every == 0:
                 target_estimator.copy_weights(q_estimator)
                 print("\nCopied model parameters to target network.")
+                print("\rEpisode {}/{}, loss: {} ".format(i_episode + 1, num_episodes, loss))
 
-            # Print out which step we're on, useful for debugging.
-            print("\rStep {} ({}) @ Episode {}/{}, loss: {} epsilon:{}".format(
-                    t, total_t, i_episode + 1, num_episodes, loss,epsilons[min(total_t, epsilon_decay_steps-1)],), end="")
-            sys.stdout.flush()
+    
 
             # Take a step
             action_probs = policy(state, epsilon)
@@ -304,3 +302,14 @@ plt.xlabel('epoch')
 plt.show()
 
 print("\nEpisode Reward: " + str(episode_rewards))
+
+print("testing")
+env.reset()
+obs=env.render
+done=False
+while not done:
+    q_values = q_estimator.predict(np.expand_dims(obs, 0))[0]
+    best_action = np.argmax(q_values)
+    a=tf.argmax(actions)
+    obs, rewards, done, _ = env.step(action)
+    env.render
