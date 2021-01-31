@@ -82,19 +82,10 @@ class ImageWindowEnvBatch(gym.Env):
         image_window_expanded=np.array([image_window])
         predictions=self.model.predict(image_window_expanded)
         predictions=tf.nn.sigmoid(predictions).numpy()
-        reward = tf.math.reduce_max(predictions).numpy() #NO TIENE SENTIDO PERO POR AHORA
+        reward = predictions[1] #SOLO DETECTA PERROS
         return float(reward)
     
-    def _test_image_resize(self,image,size=(160,160)):#NO TIENE SENTIDO PERO POR AHORA
-        height, width,_ = image.shape
-        if(size[0]<width and size[1]<height):
-            resized=image[:size[0],:size[1]]
-        else:
-            resized=np.zeros((size[0],size[1]))
-            for i in range (width):
-                for j in range (height):
-                    resized[i][j]=image[i][j]
-        return resized    
+    
 
 
         
