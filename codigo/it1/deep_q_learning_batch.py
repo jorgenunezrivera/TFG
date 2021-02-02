@@ -116,7 +116,7 @@ class Estimator():
         self.load_weights()
 
     def save_model(self):
-        self.model.save_model("dqn_model")
+        self.model.save("dqn_model")
 
 def make_epsilon_greedy_policy(estimator, nA):
     """
