@@ -288,9 +288,9 @@ env=ImageWindowEnvBatch(image_batch)
 
 q_estimator=Estimator((160,160,3),5)
 target_estimator=Estimator((160,160,3),5)
-episode_losses=deep_q_learning(env,q_estimator,target_estimator,num_episodes=5000,replay_memory_size=1000,
+episode_losses=deep_q_learning(env,q_estimator,target_estimator,num_episodes=1000,replay_memory_size=5000,
                       replay_memory_init_size=64,update_target_estimator_every=100,discount_factor=0.95,
-                      epsilon_start=1,epsilon_end=0.001,epsilon_decay_steps=10000, batch_size=32)
+                      epsilon_start=1,epsilon_end=0.001,epsilon_decay_steps=2000, batch_size=32)
 
 plt.figure(figsize=(8, 8))
 plt.plot(episode_losses, label='Training Loss')
@@ -304,12 +304,20 @@ plt.show()
 print("\nEpisode Reward: " + str(episode_rewards))
 
 print("testing")
+
+predicted_class=0
 env.reset()
 obs=env.render
 done=False
-while not done:
+for t in itertools.count():
     q_values = q_estimator.predict(np.expand_dims(obs, 0))[0]
     best_action = np.argmax(q_values)
     a=tf.argmax(actions)
-    obs, rewards, done, _ = env.step(action)
+    obs, rewards, done, info = env.step(action)
+    new_predicted_class=info["predicted_class"]
+    if(predicted_class!=new_predicted_class):
+        print("predicted class changed.new predicted class = "+str(predicted_class))
+    if(t==0):
+        print("Predicted class:" + str(predicted_class))
+        
     env.render
