@@ -194,7 +194,6 @@ def deep_q_learning(env,
         env.action_space.n)
 
     # Populate the replay memory with initial experience
-    model.summary()
     print("Populating replay memory...")
     state = env.reset()
     #state = np.stack([state] * 4, axis=2)
