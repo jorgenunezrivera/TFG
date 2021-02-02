@@ -8,6 +8,7 @@ import itertools
 import sys
 import os
 import random
+import matplotlib.pyplot as plt
 
 mse=tf.keras.losses.MeanSquaredError()
 
@@ -290,9 +291,9 @@ env=ImageWindowEnvBatch(image_batch)
 
 q_estimator=Estimator((160,160,3),5)
 target_estimator=Estimator((160,160,3),5)
-episode_losses=deep_q_learning(env,q_estimator,target_estimator,num_episodes=2000,replay_memory_size=2000,
-                      replay_memory_init_size=64,update_target_estimator_every=125,discount_factor=0.95,
-                      epsilon_start=1,epsilon_end=0.001,epsilon_decay_steps=4000, batch_size=32)
+episode_losses=deep_q_learning(env,q_estimator,target_estimator,num_episodes=100,replay_memory_size=2000,
+                      replay_memory_init_size=64,update_target_estimator_every=25,discount_factor=0.95,
+                      epsilon_start=1,epsilon_end=0.001,epsilon_decay_steps=300, batch_size=32)
 
 plt.figure(figsize=(8, 8))
 plt.plot(episode_losses, label='Training Loss')
