@@ -194,6 +194,7 @@ def deep_q_learning(env,
         env.action_space.n)
 
     # Populate the replay memory with initial experience
+    model.summary()
     print("Populating replay memory...")
     state = env.reset()
     #state = np.stack([state] * 4, axis=2)
@@ -273,7 +274,7 @@ def deep_q_learning(env,
         #yield total_t, plotting.EpisodeStats(
         #    episode_lengths=stats.episode_lengths[:i_episode+1],
         #    episode_rewards=stats.episode_rewards[:i_episode+1])
-    q_estimator.save-model()
+    q_estimator.save_model()
     return episode_losses      
 
 IMAGES_DIR="testql"
@@ -290,9 +291,9 @@ env=ImageWindowEnvBatch(image_batch)
 
 q_estimator=Estimator((160,160,3),5)
 target_estimator=Estimator((160,160,3),5)
-episode_losses=deep_q_learning(env,q_estimator,target_estimator,num_episodes=1000,replay_memory_size=5000,
-                      replay_memory_init_size=64,update_target_estimator_every=100,discount_factor=0.95,
-                      epsilon_start=1,epsilon_end=0.001,epsilon_decay_steps=2000, batch_size=32)
+episode_losses=deep_q_learning(env,q_estimator,target_estimator,num_episodes=2000,replay_memory_size=2000,
+                      replay_memory_init_size=64,update_target_estimator_every=125,discount_factor=0.95,
+                      epsilon_start=1,epsilon_end=0.001,epsilon_decay_steps=4000, batch_size=32)
 
 plt.figure(figsize=(8, 8))
 plt.plot(episode_losses, label='Training Loss')
