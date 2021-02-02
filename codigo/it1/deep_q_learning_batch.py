@@ -119,6 +119,9 @@ class Estimator():
     def save_model(self):
         self.model.save("dqn_model")
 
+    def load_model(self)
+        delf.model.load("dqn_model")
+
 def make_epsilon_greedy_policy(estimator, nA):
     """
     Creates an epsilon-greedy policy based on a given Q-function approximator and epsilon.
@@ -277,7 +280,8 @@ def deep_q_learning(env,
     q_estimator.save_model()
     return episode_losses, episode_rewards      
 
-IMAGES_DIR="testql"
+TRAIN_IMAGES_DIR="train"
+
 
 image_batch=[]
 for entry in os.listdir(IMAGES_DIR):
@@ -300,7 +304,7 @@ plt.subplot(2, 1, 1)
 plt.plot(episode_losses, label='Training Loss')
 plt.legend(loc='upper right')
 plt.ylabel('Mean Squared Error')
-plt.ylim([0,2.0])
+plt.ylim([0,2.5])
 plt.title('Training Loss')
 plt.xlabel('epoch')
 
@@ -309,32 +313,9 @@ plt.subplot(2, 1, 2)
 plt.plot(episode_rewards, label='Rewards')
 plt.legend(loc='upper right')
 plt.ylabel('Rewards')
-plt.ylim([0,6.0])
+plt.ylim([0,6.5])
 plt.title('Training Rewards')
 plt.xlabel('epoch')
 plt.show()
 
-print("\nEpisode Reward: " + str(episode_losses))
 
-print("testing")
-
-for i in range(25):
-    predicted_class=0
-    obs=env.reset()
-    env.render
-    done=False
-    for t in itertools.count():
-        q_values = q_estimator.predict(np.array([obs]))
-        best_action = np.argmax(q_values)
-        obs, rewards, done, info = env.step(best_action)
-        new_predicted_class=info["predicted_class"]
-        if(predicted_class!=new_predicted_class & t!=0):
-            print("predicted class changed.new predicted class = "+str(new_predicted_class))
-        
-        predicted_class=new_predicted_class
-        if(t==0):
-            print("Predicted class:" + str(predicted_class))
-        env.render
-        if(done):
-            break
-        
