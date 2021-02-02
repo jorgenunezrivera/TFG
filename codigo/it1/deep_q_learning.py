@@ -281,42 +281,4 @@ def deep_q_learning(env,
     q_estimator.save_model()
     return episode_losses, episode_rewards      
 
-IMAGES_DIR="train"
-
-
-image_batch=[]
-for entry in os.listdir(IMAGES_DIR):
-    filename=os.path.join(IMAGES_DIR,entry)
-    if os.path.isfile(filename) and filename.endswith('.JPEG'):
-        image =tf.keras.preprocessing.image.load_img(filename)
-        img_arr = keras.preprocessing.image.img_to_array(image)
-        image_batch.append(img_arr)
-        
-env=ImageWindowEnvBatch(image_batch)
-
-q_estimator=Estimator((160,160,3),5)
-target_estimator=Estimator((160,160,3),5)
-episode_losses, episode_rewards=deep_q_learning(env,q_estimator,target_estimator,num_episodes=3000,replay_memory_size=2000,
-                      replay_memory_init_size=64,update_target_estimator_every=500,discount_factor=0.95,
-                      epsilon_start=1,epsilon_end=0.001,epsilon_decay_steps=10000, batch_size=32)
-
-plt.figure(figsize=(8, 8))
-plt.subplot(2, 1, 1)
-plt.plot(episode_losses, label='Training Loss')
-plt.legend(loc='upper right')
-plt.ylabel('Mean Squared Error')
-plt.ylim([0,2.5])
-plt.title('Training Loss')
-plt.xlabel('epoch')
-
-
-plt.subplot(2, 1, 2)
-plt.plot(episode_rewards, label='Rewards')
-plt.legend(loc='upper right')
-plt.ylabel('Rewards')
-plt.ylim([0,6.5])
-plt.title('Training Rewards')
-plt.xlabel('epoch')
-plt.show()
-
 

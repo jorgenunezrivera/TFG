@@ -9,7 +9,7 @@ from tensorflow import keras
 HEIGHT=160
 WIDTH=160
 N_CHANNELS=3
-MAX_STEPS=6
+MAX_STEPS=7
 STEP_SIZE=10
 
 class ImageWindowEnvBatch(gym.Env):
