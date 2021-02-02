@@ -299,12 +299,12 @@ plt.figure(figsize=(8, 8))
 plt.plot(episode_losses, label='Training Loss')
 plt.legend(loc='upper right')
 plt.ylabel('Mean Squared Error')
-plt.ylim([0,1.0])
+plt.ylim([0,2.0])
 plt.title('Training and Validation Loss')
 plt.xlabel('epoch')
 plt.show()
 
-print("\nEpisode Reward: " + str(episode_rewards))
+print("\nEpisode Reward: " + str(episode_losses))
 
 print("testing")
 
