@@ -291,9 +291,9 @@ env=ImageWindowEnvBatch(image_batch)
 
 q_estimator=Estimator((160,160,3),5)
 target_estimator=Estimator((160,160,3),5)
-episode_losses, episode_rewards=deep_q_learning(env,q_estimator,target_estimator,num_episodes=100,replay_memory_size=2000,
-                      replay_memory_init_size=64,update_target_estimator_every=25,discount_factor=0.95,
-                      epsilon_start=1,epsilon_end=0.001,epsilon_decay_steps=300, batch_size=32)
+episode_losses, episode_rewards=deep_q_learning(env,q_estimator,target_estimator,num_episodes=2000,replay_memory_size=2000,
+                      replay_memory_init_size=64,update_target_estimator_every=500,discount_factor=0.95,
+                      epsilon_start=1,epsilon_end=0.001,epsilon_decay_steps=9000, batch_size=32)
 
 plt.figure(figsize=(8, 8))
 plt.subplot(2, 1, 1)
@@ -309,7 +309,7 @@ plt.subplot(2, 1, 2)
 plt.plot(episode_rewards, label='Rewards')
 plt.legend(loc='upper right')
 plt.ylabel('Rewards')
-plt.ylim([0,5.0])
+plt.ylim([0,6.0])
 plt.title('Training Rewards')
 plt.xlabel('epoch')
 plt.show()
@@ -318,18 +318,23 @@ print("\nEpisode Reward: " + str(episode_losses))
 
 print("testing")
 
-predicted_class=0
-obs=env.reset()
-env.render
-done=False
-for t in itertools.count():
-    q_values = q_estimator.predict(obs)
-    best_action = np.argmax(q_values)
-    a=tf.argmax(actions)
-    obs, rewards, done, info = env.step(action)
-    new_predicted_class=info["predicted_class"]
-    if(predicted_class!=new_predicted_class):
-        print("predicted class changed.new predicted class = "+str(predicted_class))
-    if(t==0):
-        print("Predicted class:" + str(predicted_class))
+for i in range(25):
+    predicted_class=0
+    obs=env.reset()
     env.render
+    done=False
+    for t in itertools.count():
+        q_values = q_estimator.predict(np.array([obs]))
+        best_action = np.argmax(q_values)
+        obs, rewards, done, info = env.step(best_action)
+        new_predicted_class=info["predicted_class"]
+        if(predicted_class!=new_predicted_class & t!=0):
+            print("predicted class changed.new predicted class = "+str(new_predicted_class))
+        
+        predicted_class=new_predicted_class
+        if(t==0):
+            print("Predicted class:" + str(predicted_class))
+        env.render
+        if(done):
+            break
+        
