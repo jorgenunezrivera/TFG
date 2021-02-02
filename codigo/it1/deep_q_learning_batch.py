@@ -275,7 +275,7 @@ def deep_q_learning(env,
         #    episode_lengths=stats.episode_lengths[:i_episode+1],
         #    episode_rewards=stats.episode_rewards[:i_episode+1])
     q_estimator.save_model()
-    return episode_losses      
+    return episode_losses, episode_rewards      
 
 IMAGES_DIR="testql"
 
@@ -291,16 +291,26 @@ env=ImageWindowEnvBatch(image_batch)
 
 q_estimator=Estimator((160,160,3),5)
 target_estimator=Estimator((160,160,3),5)
-episode_losses=deep_q_learning(env,q_estimator,target_estimator,num_episodes=100,replay_memory_size=2000,
+episode_losses, episode_rewards=deep_q_learning(env,q_estimator,target_estimator,num_episodes=100,replay_memory_size=2000,
                       replay_memory_init_size=64,update_target_estimator_every=25,discount_factor=0.95,
                       epsilon_start=1,epsilon_end=0.001,epsilon_decay_steps=300, batch_size=32)
 
 plt.figure(figsize=(8, 8))
+plt.subplot(2, 1, 1)
 plt.plot(episode_losses, label='Training Loss')
 plt.legend(loc='upper right')
 plt.ylabel('Mean Squared Error')
 plt.ylim([0,2.0])
-plt.title('Training and Validation Loss')
+plt.title('Training Loss')
+plt.xlabel('epoch')
+plt.show()
+
+plt.subplot(2, 1, 2)
+plt.plot(episode_rewards, label='Rewards')
+plt.legend(loc='upper right')
+plt.ylabel('Rewards')
+plt.ylim([0,2.0])
+plt.title('Training Rewards')
 plt.xlabel('epoch')
 plt.show()
 
@@ -313,7 +323,7 @@ env.reset()
 obs=env.render
 done=False
 for t in itertools.count():
-    q_values = q_estimator.predict(np.expand_dims(obs, 0))[0]
+    q_values = q_estimator.predict(obs)
     best_action = np.argmax(q_values)
     a=tf.argmax(actions)
     obs, rewards, done, info = env.step(action)
