@@ -303,13 +303,13 @@ plt.ylabel('Mean Squared Error')
 plt.ylim([0,2.0])
 plt.title('Training Loss')
 plt.xlabel('epoch')
-plt.show()
+
 
 plt.subplot(2, 1, 2)
 plt.plot(episode_rewards, label='Rewards')
 plt.legend(loc='upper right')
 plt.ylabel('Rewards')
-plt.ylim([0,2.0])
+plt.ylim([0,5.0])
 plt.title('Training Rewards')
 plt.xlabel('epoch')
 plt.show()
@@ -319,8 +319,8 @@ print("\nEpisode Reward: " + str(episode_losses))
 print("testing")
 
 predicted_class=0
-env.reset()
-obs=env.render
+obs=env.reset()
+env.render
 done=False
 for t in itertools.count():
     q_values = q_estimator.predict(obs)
@@ -332,5 +332,4 @@ for t in itertools.count():
         print("predicted class changed.new predicted class = "+str(predicted_class))
     if(t==0):
         print("Predicted class:" + str(predicted_class))
-        
     env.render
