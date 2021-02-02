@@ -225,8 +225,9 @@ def deep_q_learning(env,
             epsilon = epsilons[min(total_t, epsilon_decay_steps-1)]
 
             # Maybe update the target estimator
-            if total_t % update_target_estimator_every == 0:
+            if (total_t+1) % update_target_estimator_every == 0:
                 target_estimator.copy_weights(q_estimator)
+                print("\nT : " + str(total_t))
                 print("\nCopied model parameters to target network.")
                 print("\rEpisode {}/{}, loss: {} ".format(i_episode + 1, num_episodes, loss))
 
@@ -261,12 +262,13 @@ def deep_q_learning(env,
             states_batch = np.array(states_batch)
             loss = q_estimator.update(states_batch, action_batch, targets_batch)
             episode_loss+=loss
+            total_t += 1
             if done:
                 episode_losses[i_episode]=episode_loss/t
                 break
 
             state = next_state
-            total_t += 1
+            
   
         #yield total_t, plotting.EpisodeStats(
         #    episode_lengths=stats.episode_lengths[:i_episode+1],
