@@ -9,6 +9,7 @@ import sys
 import os
 import random
 import matplotlib.pyplot as plt
+from deep_q_learning_validation import validation
 
 mse=tf.keras.losses.MeanSquaredError()
 
@@ -146,6 +147,7 @@ def make_epsilon_greedy_policy(estimator, nA):
 def deep_q_learning(env,
                     q_estimator,
                     target_estimator,
+                    validation_env,
                     num_episodes,
                     replay_memory_size=500000,
                     replay_memory_init_size=50000,
@@ -189,6 +191,7 @@ def deep_q_learning(env,
     # Keeps track of useful statistics (PROVISIONAL)
     episode_rewards=np.zeros(num_episodes)
     episode_losses=np.zeros(num_episodes)
+    validation_rewards=np.zeros(num_episodes)
     # The epsilon decay schedule
     epsilons = np.linspace(epsilon_start, epsilon_end, epsilon_decay_steps)
 
@@ -228,12 +231,13 @@ def deep_q_learning(env,
             # Epsilon for this time step
             epsilon = epsilons[min(total_t, epsilon_decay_steps-1)]
 
-            # Maybe update the target estimator
+            # Maybe update the target estimator
             if (total_t+1) % update_target_estimator_every == 0:
                 target_estimator.copy_weights(q_estimator)
+                validation_rewards[i_episode] = validation(q_estimator,validation_env)
                 print("\nT : " + str(total_t))
                 print("\nCopied model parameters to target network.")
-                print("\rEpisode {}/{}, loss: {} ".format(i_episode + 1, num_episodes, loss))
+                print("\rEpisode {}/{}, loss: {} validation_reward: {} ".format(i_episode + 1, num_episodes, loss,validation_rewards[i_episode]))
 
     
 
@@ -250,8 +254,6 @@ def deep_q_learning(env,
             # Save transition to replay memory
             replay_memory.append(Transition(state, action, reward, next_state, done))   
 
-            # Update statistics
-            episode_rewards[i_episode] += reward
             
 
             # Sample a minibatch from the replay memory
@@ -269,7 +271,7 @@ def deep_q_learning(env,
             total_t += 1
             if done:
                 episode_losses[i_episode]=episode_loss/t
-                episode_rewards[i_episode] = reward
+                episode_rewards[i_episode] = reward                
                 break
 
             state = next_state
@@ -279,6 +281,6 @@ def deep_q_learning(env,
         #    episode_lengths=stats.episode_lengths[:i_episode+1],
         #    episode_rewards=stats.episode_rewards[:i_episode+1])
     q_estimator.save_model()
-    return episode_losses, episode_rewards      
+    return episode_losses, episode_rewards  ,validation_rewards    
 
 

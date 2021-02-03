@@ -8,14 +8,14 @@ import sys
 import os
 import random
 import matplotlib.pyplot as plt
-
+from time import time
 from deep_q_learning import Estimator
 
 
 VALIDATION_IMAGES_DIR="validation"
 q_estimator=Estimator((160,160,3),5)
 q_estimator.load_model()
-
+seconds=time()
 image_batch=[]
 
 for entry in os.listdir(VALIDATION_IMAGES_DIR):
@@ -26,12 +26,12 @@ for entry in os.listdir(VALIDATION_IMAGES_DIR):
         image_batch.append(img_arr)
         
 env=ImageWindowEnvBatch(image_batch)
-
-print("testing")
+load_time=time()-seconds
+print("load time: " + str(load_time))
 
 rewards = []
 
-for i in range(100):
+for i in range(25):
     predicted_class=0
     obs=env.reset()
     env.render
@@ -41,15 +41,12 @@ for i in range(100):
         best_action = np.argmax(q_values)
         obs, reward, done, info = env.step(best_action)
         new_predicted_class=info["predicted_class"]
-        if(predicted_class!=new_predicted_class and t!=0):
-            print("Image: " + str(i) +"predicted class changed.new predicted class = "+str(new_predicted_class))
-        
         predicted_class=new_predicted_class
-        if(t==0):
-            print("Image: " + str(i) +" Predicted class:" + str(predicted_class))
         if(done):
             rewards.append(reward)
             break
+validate_time=time()-seconds-load_time
+print("validate time: " + str(validate_time))
 print("rewards mean:")
 print(np.mean(rewards))
 
@@ -57,7 +54,7 @@ plt.figure(figsize=(8, 8))
 plt.plot(rewards, label='Rewards')
 plt.legend(loc='upper right')
 plt.ylabel('Rewards')
-plt.ylim([0,7])
+plt.ylim([0,1])
 plt.title('Rewards')
 plt.xlabel('sample')
 plt.show()
