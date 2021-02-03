@@ -38,8 +38,8 @@ validation_env=ImageWindowEnvBatch(validation_image_batch)
 
 q_estimator=Estimator((160,160,3),5)
 target_estimator=Estimator((160,160,3),5)
-episode_losses, episode_rewards, validation_rewards =deep_q_learning(env,q_estimator,target_estimator,validation_env,num_episodes=3000,replay_memory_size=10000,
-                      replay_memory_init_size=64,update_target_estimator_every=3500,discount_factor=0.95,
+episode_losses, episode_rewards, validation_rewards =deep_q_learning(env,q_estimator,target_estimator,validation_env,num_episodes=5000,replay_memory_size=10000,
+                      replay_memory_init_size=64,update_target_estimator_every=700,discount_factor=0.95,
                       epsilon_start=1,epsilon_end=0.05,epsilon_decay_steps=15000, batch_size=32)
 
 plt.figure(figsize=(8, 8))
