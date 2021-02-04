@@ -6,11 +6,12 @@ import numpy as np
 
 import tensorflow as tf
 from tensorflow import keras
-HEIGHT=160
-WIDTH=160
+HEIGHT=128
+WIDTH=128
 N_CHANNELS=3
-MAX_STEPS=7
-STEP_SIZE=10
+MAX_STEPS=12
+STEP_SIZE=8
+N_ACTIONS=5
 
 class ImageWindowEnvBatch(gym.Env):
     
@@ -18,7 +19,7 @@ class ImageWindowEnvBatch(gym.Env):
     def __init__(self,img_arr_batch):
         super(ImageWindowEnvBatch, self).__init__()
         self.img_arr_batch=img_arr_batch
-        self.action_space = spaces.Discrete(5)
+        self.action_space = spaces.Discrete(N_ACTIONS)
         self.observation_space=spaces.Box(low=-1, high=1, shape=(HEIGHT, WIDTH, N_CHANNELS), dtype=np.float32)
         self.model=model = tf.keras.applications.MobileNetV2(input_shape=(HEIGHT, WIDTH, N_CHANNELS),
                                                include_top=True,
@@ -32,7 +33,7 @@ class ImageWindowEnvBatch(gym.Env):
         if(self.sample_index>=self.num_samples):#>=?
             self.sample_index=0            
         self.image_shape=self.img_arr.shape
-        self.image_size_factor=(self.image_shape[0]//160,self.image_shape[1]//160)
+        self.image_size_factor=(self.image_shape[0]//HEIGHT,self.image_shape[1]//WIDTH)
         self.x=self.y=self.z=0
         self.left=self.right=self.top=self.bottom=0
         self.n_steps=0
@@ -51,7 +52,7 @@ class ImageWindowEnvBatch(gym.Env):
         elif action==3:
             self.x-=STEP_SIZE
         elif action==4:
-            self.z+=STEP_SIZE
+            self.z+=STEP_SIZE//2
         self.n_steps+=1
         state=self._get_image_window()
         predictions=self._get_predictions(state)
@@ -79,7 +80,7 @@ class ImageWindowEnvBatch(gym.Env):
         self.bottom=self.image_shape[0]+(self.y-self.z)*self.image_size_factor[0]
         self.bottom=np.minimum(self.bottom,self.image_shape[0])
         image_window=self.img_arr[self.top:self.bottom,self.left:self.right]
-        image_window_resized=tf.image.resize(image_window,size=(160, 160)).numpy()
+        image_window_resized=tf.image.resize(image_window,size=(HEIGHT, WIDTH)).numpy()
         image_window_resized=tf.keras.applications.mobilenet_v2.preprocess_input(image_window_resized)
         return image_window_resized
    

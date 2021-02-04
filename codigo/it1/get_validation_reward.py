@@ -16,10 +16,10 @@ model = tf.keras.applications.MobileNetV2(input_shape=IMG_SHAPE,
 images=[]
 test_set=[]
 filenames=[]
-files=os.listdir('test')
+files=os.listdir('validation')
 for file in files:
-    filename=os.path.join('test', file)
-    if os.path.isfile(filename) and filename.endswith('.jpg'):
+    filename=os.path.join('validation', file)
+    if os.path.isfile(filename) and filename.endswith('.JPEG'):
         images.append(tf.keras.preprocessing.image.load_img(filename))
         filenames.append(file)
 
@@ -31,17 +31,12 @@ for i in range(len(images)):
     
 
 test_set=tf.stack(test_set)
-plt.figure(figsize=(10, 10))
 predictions = model.predict_on_batch(test_set)
 #predictions = tf.nn.sigmoid(predictionsTrained).numpy()
 predictions_name=tf.keras.applications.mobilenet_v2.decode_predictions(predictions,1)
 predictions_mean=0
 #print("predictions name shape: {}".format(predictions_name.shape))    
 for i in range(len(images)):
-    ax = plt.subplot(3, 3, i + 1)
-    plt.imshow(images[i])
-    plt.title(str(predictions_name[i][0][1]) + " : " + str(predictions_name[i][0][2]))
     predictions_mean+= predictions_name[i][0][2]
 predictions_mean/=len(images)
 print(predictions_mean)
-plt.show()
