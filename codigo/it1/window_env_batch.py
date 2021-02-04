@@ -9,7 +9,7 @@ from tensorflow import keras
 HEIGHT=128
 WIDTH=128
 N_CHANNELS=3
-MAX_STEPS=12
+MAX_STEPS=6
 STEP_SIZE=8
 N_ACTIONS=6
 
@@ -38,7 +38,9 @@ class ImageWindowEnvBatch(gym.Env):
         self.left=self.right=self.top=self.bottom=0
         self.n_steps=0
         image_window=self._get_image_window()
-        self.predicted_class=self._get_predicted_class(self._get_predictions(image_window))
+        predictions=self._get_predictions(image_window)
+        self.predicted_class=self._get_predicted_class(predictions)        
+        self.initial_reward=self._get_reward(predictions)
         return image_window
 
     def step (self,action):
@@ -56,9 +58,12 @@ class ImageWindowEnvBatch(gym.Env):
         self.n_steps+=1
         state=self._get_image_window()
         predictions=self._get_predictions(state)
-        self.predicted_class=self._get_predicted_class(predictions)
-        reward=self._get_reward(predictions)
+        self.predicted_class=self._get_predicted_class(predictions)        
         done=self.n_steps>=MAX_STEPS
+        if done :
+            reward=self.initial_reward-self._get_reward(predictions)
+        else:
+            reward=0#Reward parcial?
         return state,reward,done,{"predicted_class" : self.predicted_class}
 
     def render(self, mode='human', close=False):
