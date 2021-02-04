@@ -11,7 +11,7 @@ WIDTH=128
 N_CHANNELS=3
 MAX_STEPS=12
 STEP_SIZE=8
-N_ACTIONS=5
+N_ACTIONS=6
 
 class ImageWindowEnvBatch(gym.Env):
     

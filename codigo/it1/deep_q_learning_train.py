@@ -10,6 +10,8 @@ import os
 import random
 import matplotlib.pyplot as plt
 
+N_ACTIONS=6
+
 from deep_q_learning import deep_q_learning, Estimator
 IMG_SHAPE=(128,128,3)
 IMAGES_DIR="train"
@@ -36,11 +38,11 @@ env=ImageWindowEnvBatch(image_batch)
         
 validation_env=ImageWindowEnvBatch(validation_image_batch)
 
-q_estimator=Estimator(IMG_SHAPE,5)
-target_estimator=Estimator(IMG_SHAPE,5)
-episode_losses, episode_rewards, validation_rewards =deep_q_learning(env,q_estimator,target_estimator,validation_env,num_episodes=5000,replay_memory_size=10000,
-                      replay_memory_init_size=64,update_target_estimator_every=700,discount_factor=0.95,
-                      epsilon_start=1,epsilon_end=0.1,epsilon_decay_steps=15000, batch_size=32)
+q_estimator=Estimator(IMG_SHAPE,N_ACTIONS)
+target_estimator=Estimator(IMG_SHAPE,N_ACTIONS)
+episode_losses, episode_rewards, validation_rewards =deep_q_learning(env,q_estimator,target_estimator,validation_env,num_episodes=1000,replay_memory_size=10000,
+                      replay_memory_init_size=64,update_target_estimator_every=1200,discount_factor=0.95,
+                      epsilon_start=1,epsilon_end=0.1,epsilon_decay_steps=10000, batch_size=32)
 
 plt.figure(figsize=(8, 8))
 plt.subplot(2, 1, 1)

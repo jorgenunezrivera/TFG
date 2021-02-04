@@ -62,14 +62,14 @@ class Estimator():
         Builds the Tensorflow model.
         """
         self.model = keras.Sequential([
-          layers.Conv2D(32, (8,8),strides=(4,4), padding='same', activation='relu',input_shape=input_shape),
+          layers.Conv2D(16, (8,8),strides=(4,4), padding='same', activation='relu',input_shape=input_shape),
           #layers.MaxPooling2D(),
-          layers.Conv2D(64, (4, 4), strides=(2, 2), padding='same', activation='relu'),
+          layers.Conv2D(32, (4, 4), strides=(2, 2), padding='same', activation='relu'),
           #layers.MaxPooling2D(),
-          layers.Conv2D(64, (3, 3), strides=(1, 1), padding='same', activation='relu'),
+          layers.Conv2D(32, (3, 3), strides=(1, 1), padding='same', activation='relu'),
           #layers.MaxPooling2D(),
           layers.GlobalAveragePooling2D(),  
-          layers.Dense(512, activation='relu'),
+          layers.Dense(128, activation='relu'),
           layers.Dense(n_actions, activation='softmax')
         ])
         self.model.summary()
@@ -206,6 +206,7 @@ def deep_q_learning(env,
     for i in range(replay_memory_init_size):
         action_probs = policy(state, epsilons[min(total_t, epsilon_decay_steps-1)])
         action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
+        
         next_state, reward, done, _ = env.step(action)
         #next_state = np.append(state[:,:,1:], np.expand_dims(next_state, 2), axis=2)
         replay_memory.append(Transition(state, action, reward, next_state, done))
@@ -224,6 +225,7 @@ def deep_q_learning(env,
         #state = np.stack([state] * 4, axis=2)
         loss = None
         episode_loss=0
+        print("sample :"+str(i_episode))
         # One step in the environment
         for t in itertools.count():
 
@@ -231,7 +233,7 @@ def deep_q_learning(env,
             epsilon = epsilons[min(total_t, epsilon_decay_steps-1)]
 
             # Maybe update the target estimator
-            if (total_t+1) % update_target_estimator_every == 0:
+            if (i_episode+1) % 20 == 0:#mostrar las acciones cada 20 samples
                 target_estimator.copy_weights(q_estimator)
                 validation_rewards[i_episode] = validation(q_estimator,validation_env)
                 print("\nT : " + str(total_t))
@@ -242,7 +244,9 @@ def deep_q_learning(env,
 
             # Take a step
             action_probs = policy(state, epsilon)
-            action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
+            if (total_t+1) % update_target_estimator_every == 0:
+                action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
+            print("action =" + str(action))
             next_state, reward, done, _ = env.step(action)
             #next_state = np.append(state[:,:,1:], np.expand_dims(next_state, 2), axis=2)
 

@@ -36,9 +36,11 @@ for i in range(25):
     obs=env.reset()
     env.render
     done=False
+    print("sample: " + str(i))
     for t in itertools.count():
         q_values = q_estimator.predict(np.array([obs]))
         best_action = np.argmax(q_values)
+        print("Action: "+ str(best_action))
         obs, reward, done, info = env.step(best_action)
         new_predicted_class=info["predicted_class"]
         predicted_class=new_predicted_class
