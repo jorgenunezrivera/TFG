@@ -233,7 +233,7 @@ def deep_q_learning(env,
             epsilon = epsilons[min(total_t, epsilon_decay_steps-1)]
 
             # Maybe update the target estimator
-            if (i_episode+1) % 20 == 0:#mostrar las acciones cada 20 samples
+            if (total_t+1) % update_target_estimator_every == 0:
                 target_estimator.copy_weights(q_estimator)
                 validation_rewards[i_episode] = validation(q_estimator,validation_env)
                 print("\nT : " + str(total_t))
@@ -245,7 +245,7 @@ def deep_q_learning(env,
             # Take a step
             action_probs = policy(state, epsilon)            
             action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
-            if (total_t+1) % update_target_estimator_every == 0:
+            if (i_episode+1) % 20 == 0:#mostrar las acciones cada 20 samples
                 print("action =" + str(action)+ " epsilon = " + str(epsilons[min(total_t, epsilon_decay_steps-1)]))
             next_state, reward, done, _ = env.step(action)
             #next_state = np.append(state[:,:,1:], np.expand_dims(next_state, 2), axis=2)
