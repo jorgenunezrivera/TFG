@@ -248,6 +248,9 @@ def deep_q_learning(env,
             if (i_episode+1) % 20 == 0:#mostrar las acciones cada 20 samples
                 print("action =" + str(action)+ " epsilon = " + str(epsilons[min(total_t, epsilon_decay_steps-1)]))
             next_state, reward, done, _ = env.step(action)
+            if (i_episode+1) % 20 == 0:#mostrar las acciones cada 20 samples
+                print("reward =" + str(reward))
+             
             #next_state = np.append(state[:,:,1:], np.expand_dims(next_state, 2), axis=2)
 
             # If our replay memory is full, pop the first element
