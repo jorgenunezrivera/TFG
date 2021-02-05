@@ -13,6 +13,7 @@ MAX_STEPS=6
 STEP_SIZE=8
 N_ACTIONS=6
 
+
 class ImageWindowEnvBatch(gym.Env):
     
 
