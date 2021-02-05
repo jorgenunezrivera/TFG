@@ -40,26 +40,26 @@ validation_env=ImageWindowEnvBatch(validation_image_batch)
 
 q_estimator=Estimator(IMG_SHAPE,N_ACTIONS)
 target_estimator=Estimator(IMG_SHAPE,N_ACTIONS)
-episode_losses, episode_rewards, validation_rewards =deep_q_learning(env,q_estimator,target_estimator,validation_env,num_episodes=1000,replay_memory_size=10000,
+episode_losses, episode_rewards, validation_rewards =deep_q_learning(env,q_estimator,target_estimator,validation_env,num_episodes=6000,replay_memory_size=10000,
                       replay_memory_init_size=64,update_target_estimator_every=600,discount_factor=1,
-                      epsilon_start=1,epsilon_end=0.1,epsilon_decay_steps=5000, batch_size=32)
+                      epsilon_start=1,epsilon_end=0.1,epsilon_decay_steps=25000, batch_size=32)
 
 plt.figure(figsize=(8, 8))
 plt.subplot(2, 1, 1)
 plt.plot(episode_losses, label='Training Loss')
 plt.legend(loc='upper right')
 plt.ylabel('Mean Squared Error')
-plt.ylim([0,2.5])
+plt.ylim([0,0.03])
 plt.title('Training Loss')
 plt.xlabel('epoch')
 
 
 plt.subplot(2, 1, 2)
 plt.plot(episode_rewards, label='Rewards')
-plt.plot(validation_rewards, label='Validation Rewards')
+plt.plot(validation_rewards, frmt='ro' label='Validation Rewards')
 plt.legend(loc='upper right')
 plt.ylabel('Rewards')
-plt.ylim([-1,1])
+plt.ylim([-0.75,0.75])
 plt.title('Training Rewards')
 plt.xlabel('epoch')
 
