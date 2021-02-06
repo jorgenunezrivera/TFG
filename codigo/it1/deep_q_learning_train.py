@@ -49,7 +49,7 @@ plt.subplot(2, 1, 1)
 plt.plot(episode_losses,  label='Training Loss')
 plt.legend(loc='upper right')
 plt.ylabel('Mean Squared Error')
-plt.ylim([0,0.03])
+plt.ylim([0,2])
 plt.title('Training Loss')
 plt.xlabel('epoch')
 
