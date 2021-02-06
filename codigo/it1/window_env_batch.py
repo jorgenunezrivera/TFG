@@ -101,7 +101,10 @@ class ImageWindowEnvBatch(gym.Env):
 
     def _get_reward(self,predictions):
         reward = float(predictions[0,self.predicted_class])
-        
+        if reward>0:
+            reward=1
+        else:
+            reward=-1
         return reward
     
         
