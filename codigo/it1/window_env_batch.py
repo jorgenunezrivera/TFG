@@ -63,6 +63,10 @@ class ImageWindowEnvBatch(gym.Env):
         done=self.n_steps>=MAX_STEPS
         if done :
             reward=self.initial_reward-self._get_reward(predictions)
+            if reward>0:
+                reward=1
+            else:
+                reward=-1
         else:
             reward=0#Reward parcial?
         return state,reward,done,{"predicted_class" : self.predicted_class}
@@ -100,11 +104,7 @@ class ImageWindowEnvBatch(gym.Env):
         return prediction
 
     def _get_reward(self,predictions):
-        reward = float(predictions[0,self.predicted_class])
-        if reward>0:
-            reward=1
-        else:
-            reward=-1
+        reward = float(predictions[0,self.predicted_class])        
         return reward
     
         
