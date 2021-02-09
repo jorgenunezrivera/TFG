@@ -6,8 +6,14 @@ import numpy as np
 
 import tensorflow as tf
 from tensorflow import keras
-HEIGHT=128
-WIDTH=128
+import json
+
+with open("label_dict.json", "r") as read_file:
+    label_dict = json.load(read_file)
+
+
+HEIGHT=224
+WIDTH=224
 N_CHANNELS=3
 MAX_STEPS=6
 STEP_SIZE=8
@@ -17,7 +23,7 @@ N_ACTIONS=6
 class ImageWindowEnvBatch(gym.Env):
     
 
-    def __init__(self,img_arr_batch):
+    def __init__(self,img_arr_batch,labels):
         super(ImageWindowEnvBatch, self).__init__()
         self.img_arr_batch=img_arr_batch
         self.action_space = spaces.Discrete(N_ACTIONS)
@@ -27,9 +33,11 @@ class ImageWindowEnvBatch(gym.Env):
                                                weights='imagenet')
         self.sample_index=0
         self.num_samples=len(img_arr_batch)
+        self.labels=labels
 
     def reset(self):
         self.img_arr=self.img_arr_batch[self.sample_index]
+        self.label=self.labels[self.sample_index]
         self.sample_index+=1#Batches siempre en el mismo orden???
         if(self.sample_index>=self.num_samples):#>=?
             self.sample_index=0            
@@ -42,6 +50,11 @@ class ImageWindowEnvBatch(gym.Env):
         predictions=self._get_predictions(image_window)
         self.predicted_class=self._get_predicted_class(predictions)        
         self.initial_reward=self._get_reward(predictions)
+        if(self.predicted_class!=self.label):
+            self.initial_reward=-1
+            
+            
+
         return image_window
 
     def step (self,action):
@@ -62,11 +75,14 @@ class ImageWindowEnvBatch(gym.Env):
         self.predicted_class=self._get_predicted_class(predictions)        
         done=self.n_steps>=MAX_STEPS
         if done :
-            reward=self.initial_reward-self._get_reward(predictions)
-            if reward>0:
-                reward=1
+            if(self.predicted_class==self.label):
+                reward=self._get_reward(predictions)-self.initial_reward
             else:
-                reward=-1
+                reward=-1-self.initial_reward
+            #if reward>0:
+            #    reward=1
+            #else:
+            #    reward=-1
         else:
             reward=0#Reward parcial?
         return state,reward,done,{"predicted_class" : self.predicted_class}
@@ -100,8 +116,9 @@ class ImageWindowEnvBatch(gym.Env):
         return predictions
 
     def _get_predicted_class(self,predictions):
-        prediction=tf.argmax(predictions,axis=1).numpy()[0]
-        return prediction
+        decoded_predictions=tf.keras.applications.mobilenet_v2.decode_predictions(predictions, top=1)
+        predicted_label=label_dict[decoded_predictions[0][0][0]]
+        return predicted_label
 
     def _get_reward(self,predictions):
         reward = float(predictions[0,self.predicted_class])        

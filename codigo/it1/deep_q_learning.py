@@ -62,14 +62,14 @@ class Estimator():
         Builds the Tensorflow model.
         """
         self.model = keras.Sequential([
-          layers.Conv2D(16, (8,8),strides=(4,4), padding='same', activation='relu',input_shape=input_shape),
+          layers.Conv2D(32, (8,8),strides=(4,4), padding='same', activation='relu',input_shape=input_shape),
           #layers.MaxPooling2D(),
-          layers.Conv2D(32, (4, 4), strides=(2, 2), padding='same', activation='relu'),
+          layers.Conv2D(64, (4, 4), strides=(2, 2), padding='same', activation='relu'),
           #layers.MaxPooling2D(),
-          layers.Conv2D(32, (3, 3), strides=(1, 1), padding='same', activation='relu'),
+          layers.Conv2D(64, (3, 3), strides=(1, 1), padding='same', activation='relu'),
           #layers.MaxPooling2D(),
-          layers.GlobalAveragePooling2D(),  
-          layers.Dense(128, activation='relu'),
+          layers.Flatten(),  
+          layers.Dense(512, activation='relu'),
           layers.Dense(n_actions, activation='softmax')
         ])
         self.model.summary()

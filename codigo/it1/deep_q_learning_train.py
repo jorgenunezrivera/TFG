@@ -13,30 +13,51 @@ import matplotlib.pyplot as plt
 N_ACTIONS=6
 
 from deep_q_learning import deep_q_learning, Estimator
-IMG_SHAPE=(128,128,3)
-IMAGES_DIR="train"
+IMG_SHAPE=(224,224,3)
+TRAINING_IMAGES_DIR="train"
 VALIDATION_IMAGES_DIR="validation"
+TRAINING_LABELS_FILE="training_labels.txt"
+VALIDATION_LABELS_FILE="validation_labels.txt"
+
 
 image_batch=[]
-for entry in os.listdir(IMAGES_DIR):
-    filename=os.path.join(IMAGES_DIR,entry)
+filelist=os.listdir(TRAINING_IMAGES_DIR)
+filelist.sort()
+for entry in filelist:
+    filename=os.path.join(TRAINING_IMAGES_DIR,entry)
     if os.path.isfile(filename) and filename.endswith('.JPEG'):
         image =tf.keras.preprocessing.image.load_img(filename)
         img_arr = keras.preprocessing.image.img_to_array(image)
         image_batch.append(img_arr)
 
-validation_image_batch=[]
+training_labels=[]
+with open(TRAINING_LABELS_FILE) as fp:
+   line = fp.readline()
+   while line:
+       training_labels.append(int(line))
+       line = fp.readline()
+      
 
-for entry in os.listdir(VALIDATION_IMAGES_DIR):
+validation_image_batch=[]
+validationlist=os.listdir(VALIDATION_IMAGES_DIR)
+validationlist.sort()
+for entry in validationlist:
     filename=os.path.join(VALIDATION_IMAGES_DIR,entry)
     if os.path.isfile(filename) and filename.endswith('.JPEG'):
         image =tf.keras.preprocessing.image.load_img(filename)
         img_arr = keras.preprocessing.image.img_to_array(image)
         validation_image_batch.append(img_arr)
+
+validation_labels=[]
+with open(VALIDATION_LABELS_FILE) as fp:
+   line = fp.readline()
+   while line:
+       validation_labels.append(int(line))
+       line = fp.readline()
             
-env=ImageWindowEnvBatch(image_batch)
+env=ImageWindowEnvBatch(image_batch,training_labels)
         
-validation_env=ImageWindowEnvBatch(validation_image_batch)
+validation_env=ImageWindowEnvBatch(validation_image_batch,validation_labels)
 
 q_estimator=Estimator(IMG_SHAPE,N_ACTIONS)
 target_estimator=Estimator(IMG_SHAPE,N_ACTIONS)
@@ -49,7 +70,7 @@ plt.subplot(2, 1, 1)
 plt.plot(episode_losses,  label='Training Loss')
 plt.legend(loc='upper right')
 plt.ylabel('Mean Squared Error')
-plt.ylim([0,2])
+plt.ylim([0,0.7])
 plt.title('Training Loss')
 plt.xlabel('epoch')
 
@@ -59,7 +80,7 @@ plt.plot(episode_rewards, label='Rewards')
 plt.plot(validation_rewards,'ro', label='Validation Rewards')
 plt.legend(loc='upper right')
 plt.ylabel('Rewards')
-plt.ylim([-0.75,0.75])
+plt.ylim([-1.1,1.1])
 plt.title('Training Rewards')
 plt.xlabel('epoch')
 
