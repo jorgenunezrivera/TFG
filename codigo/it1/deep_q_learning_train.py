@@ -94,3 +94,4 @@ print("training reward : mean: " + str(training_reward_mean)+ " variance: " + st
 validation_reward_mean=np.mean(validation_rewards[:][1])
 validation_reward_variance=np.var(validation_rewards[:][1])
 print("validation reward : mean: " + str(validation_reward_mean)+ " variance: " + str(validation_reward_variance))
+print(validation_rewards)
