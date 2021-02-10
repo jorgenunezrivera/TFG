@@ -1,0 +1,4 @@
+weights.*
+dqn_model/*
+variables.*
+
