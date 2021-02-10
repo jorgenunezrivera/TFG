@@ -76,8 +76,10 @@ plt.xlabel('epoch')
 
 
 plt.subplot(2, 1, 2)
+for reward in validation_rewards:
+    plt.plot(reward[0],reward[1],'ro', label='Validation Rewards')
 plt.plot(episode_rewards, label='Rewards')
-plt.plot(validation_rewards,'ro', label='Validation Rewards')
+
 plt.legend(loc='upper right')
 plt.ylabel('Rewards')
 plt.ylim([-1.1,1.1])
