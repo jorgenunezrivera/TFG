@@ -16,7 +16,7 @@ HEIGHT=224
 WIDTH=224
 N_CHANNELS=3
 MAX_STEPS=6
-STEP_SIZE=8
+STEP_SIZE=30
 N_ACTIONS=6
 
 
@@ -33,11 +33,9 @@ class ImageWindowEnvBatch(gym.Env):
                                                weights='imagenet')
         self.sample_index=0
         self.num_samples=len(img_arr_batch)
-        print("num_samples: " + str(self.num_samples))
         self.labels=labels
 
     def reset(self):
-        print("sample_index: " + str(self.sample_index))
         self.img_arr=self.img_arr_batch[self.sample_index]
         self.label=self.labels[self.sample_index]
         self.sample_index+=1#Batches siempre en el mismo orden???
@@ -52,10 +50,9 @@ class ImageWindowEnvBatch(gym.Env):
         predictions=self._get_predictions(image_window)
         self.predicted_class=self._get_predicted_class(predictions)        
         self.initial_reward=self._get_reward(predictions)
-        if(self.predicted_class!=self.label):
-            self.initial_reward=-1
-            
-            
+        if not(self._is_correct_label(predictions,self.label)):
+            self.initial_reward=0
+          
 
         return image_window
 
@@ -77,8 +74,10 @@ class ImageWindowEnvBatch(gym.Env):
         self.predicted_class=self._get_predicted_class(predictions)        
         done=self.n_steps>=MAX_STEPS
         if done :
-            if(self.predicted_class==self.label):
-                reward=self._get_reward(predictions)-self.initial_reward
+            if(self._is_correct_label(predictions,self.label)):
+                final_reward=self._get_reward(predictions)
+                reward=final_reward-self.initial_reward
+                print("diferential reward :" + str(reward))
             else:
                 reward=-1-self.initial_reward
             #if reward>0:
@@ -118,11 +117,18 @@ class ImageWindowEnvBatch(gym.Env):
         return predictions
 
     def _get_predicted_class(self,predictions):
+        #decoded_predictions=tf.keras.applications.mobilenet_v2.decode_predictions(predictions, top=1)
+        #predicted_label=label_dict[decoded_predictions[0][0][0]]
+        predicted_class=np.argmax(predictions[0])
+        return predicted_class
+
+    def _is_correct_label(self,predictions,label):
         decoded_predictions=tf.keras.applications.mobilenet_v2.decode_predictions(predictions, top=1)
         predicted_label=label_dict[decoded_predictions[0][0][0]]
-        return predicted_label
+        return (predicted_label==label)
 
     def _get_reward(self,predictions):
+        #print("max reward: "+str(np.argmax(predictions[0])))
         reward = float(predictions[0,self.predicted_class])        
         return reward
     

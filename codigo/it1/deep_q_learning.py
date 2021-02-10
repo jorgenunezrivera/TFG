@@ -190,7 +190,7 @@ def deep_q_learning(env,
     # Keeps track of useful statistics (PROVISIONAL)
     episode_rewards=np.zeros(num_episodes)
     episode_losses=np.zeros(num_episodes)
-    validation_rewards=np.zeros(num_episodes)
+    validation_rewards=[]
     # The epsilon decay schedule
     epsilons = np.linspace(epsilon_start, epsilon_end, epsilon_decay_steps)
 
@@ -225,7 +225,6 @@ def deep_q_learning(env,
         #state = np.stack([state] * 4, axis=2)
         loss = None
         episode_loss=0
-        print("sample :"+str(i_episode))
         # One step in the environment
         for t in itertools.count():
 
@@ -235,7 +234,7 @@ def deep_q_learning(env,
             # Maybe update the target estimator
             if (total_t+1) % update_target_estimator_every == 0:
                 target_estimator.copy_weights(q_estimator)
-                validation_rewards[i_episode] = validation(q_estimator,validation_env)
+                validation_rewards.append((i_episode,validation(q_estimator,validation_env)))
                 print("\nT : " + str(total_t))
                 print("\nCopied model parameters to target network.")
                 print("\rEpisode {}/{}, loss: {} validation_reward: {} ".format(i_episode + 1, num_episodes, loss,validation_rewards[i_episode]))
@@ -245,11 +244,11 @@ def deep_q_learning(env,
             # Take a step
             action_probs = policy(state, epsilon)            
             action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
-            if (i_episode+1) % 20 == 0:#mostrar las acciones cada 20 samples
-                print("action =" + str(action)+ " epsilon = " + str(epsilons[min(total_t, epsilon_decay_steps-1)]))
+            #if (i_episode+1) % 20 == 0:#mostrar las acciones cada 20 samples
+            #    print("action =" + str(action)+ " epsilon = " + str(epsilons[min(total_t, epsilon_decay_steps-1)]))
             next_state, reward, done, _ = env.step(action)
-            if (i_episode+1) % 20 == 0:#mostrar las acciones cada 20 samples
-                print("reward =" + str(reward))
+            #if (i_episode+1) % 20 == 0:#mostrar las acciones cada 20 samples
+            #    print("reward =" + str(reward))
              
             #next_state = np.append(state[:,:,1:], np.expand_dims(next_state, 2), axis=2)
 

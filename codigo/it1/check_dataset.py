@@ -40,6 +40,13 @@ for i in range(1000):
 with open('label_dict.json', 'w') as fp:
     json.dump(dictionary, fp)
 
+inverse_dictionary={}
+for i in range(1000):
+    inverse_dictionary[int(metadata['synsets'][i][0][0][0][0])]=metadata['synsets'][i][0][1][0]
+
+with open('inverse_label_dict.json', 'w') as fp:
+    json.dump(inverse_dictionary, fp)
+
 print( dictionary)    
 image_batch=[]
 filelist=os.listdir(TRAINING_IMAGES_DIR)
