@@ -125,6 +125,8 @@ class ImageWindowEnvBatch(gym.Env):
     def _is_correct_label(self,predictions,label):
         decoded_predictions=tf.keras.applications.mobilenet_v2.decode_predictions(predictions, top=1)
         predicted_label=label_dict[decoded_predictions[0][0][0]]
+        print("predicted label: " + str(predicted_label))
+        print("label: " + str(label))
         return (predicted_label==label)
 
     def _get_reward(self,predictions):
