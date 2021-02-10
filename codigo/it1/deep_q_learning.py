@@ -234,7 +234,6 @@ def deep_q_learning(env,
             # Maybe update the target estimator
             if (total_t+1) % update_target_estimator_every == 0:
                 target_estimator.copy_weights(q_estimator)
-                print("vaalidation:")
                 validation_reward=validation(q_estimator,validation_env)
                 validation_rewards.append((i_episode,validation_reward))
                 print("\nT : " + str(total_t))
