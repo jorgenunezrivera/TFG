@@ -15,10 +15,8 @@ import matplotlib.pyplot as plt
 NUM_VALIDATION_IMAGES = 25 #max 100
 
 def validation(q_estimator,env):
-    print("Validation")
     rewards = []
     for i in range(NUM_VALIDATION_IMAGES):
-        print("val image :" + str(i))
         predicted_class=0
         obs=env.reset()
         done=False
@@ -27,7 +25,6 @@ def validation(q_estimator,env):
             best_action = np.argmax(q_values)
             obs, reward, done, info = env.step(best_action)
             if(done):
-                print("reward: " + str(reward))
                 rewards.append(reward)
                 break
     return np.mean(rewards)
