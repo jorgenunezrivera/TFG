@@ -11,7 +11,8 @@ import random
 import matplotlib.pyplot as plt
 from deep_q_learning_validation import validation
 
-mse=tf.keras.losses.MeanSquaredError()
+mse = tf.keras.losses.MeanSquaredError()
+LEARNING_RATE = 0.0001
 
 def custom_loss(model, x, y, training,a):
     y_ = model(x)
@@ -62,18 +63,18 @@ class Estimator():
         Builds the Tensorflow model.
         """
         self.model = keras.Sequential([
-          layers.Conv2D(32, (8,8),strides=(4,4), padding='same', activation='relu',input_shape=input_shape),
+          layers.Conv2D(32, (8, 8), strides=(4, 4),  activation='relu', input_shape=input_shape),
           #layers.MaxPooling2D(),
-          layers.Conv2D(64, (4, 4), strides=(2, 2), padding='same', activation='relu'),
+          layers.Conv2D(64, (4, 4), strides=(2, 2),  activation='relu'),
           #layers.MaxPooling2D(),
-          layers.Conv2D(64, (3, 3), strides=(1, 1), padding='same', activation='relu'),
+          layers.Conv2D(64, (3, 3), strides=(2, 2),  activation='relu'),
           #layers.MaxPooling2D(),
           layers.Flatten(),  
           layers.Dense(512, activation='relu'),
           layers.Dense(n_actions, activation='softmax')
         ])
         self.model.summary()
-        self.optimizer=tf.keras.optimizers.RMSprop(0.001,0.9)
+        self.optimizer=tf.keras.optimizers.RMSprop(LEARNING_RATE,0.9)
 
     def predict(self, state):
         """
