@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 from deep_q_learning_validation import validation
 
 mse = tf.keras.losses.MeanSquaredError()
-LEARNING_RATE = 0.00001
+LEARNING_RATE = 0.00005
 
 def custom_loss(model, x, y, training,a):
     y_ = model(x)

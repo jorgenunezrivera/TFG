@@ -14,12 +14,13 @@ import time
 
 
 from deep_q_learning import deep_q_learning, Estimator
+
 #IMG_SHAPE=(224,224,3)
 TRAINING_IMAGES_DIR="train"
 VALIDATION_IMAGES_DIR="validation"
 TRAINING_LABELS_FILE="training_labels.txt"
 VALIDATION_LABELS_FILE="validation_labels.txt"
-NUM_EPISODES=2000
+NUM_EPISODES=12000
 
 
 image_batch=[]

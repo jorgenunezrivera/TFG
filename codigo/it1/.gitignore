@@ -3,3 +3,4 @@ dqn_model/*
 variables.*
 __pycache__/*
 .DS_Store
+*.JPEG
