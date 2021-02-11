@@ -70,14 +70,14 @@ plt.subplot(2, 1, 1)
 plt.plot(episode_losses,  label='Training Loss')
 plt.legend(loc='upper right')
 plt.ylabel('Mean Squared Error')
-plt.ylim([0,0.7])
+plt.ylim([0,1.2])
 plt.title('Training Loss')
 plt.xlabel('epoch')
 
 
 plt.subplot(2, 1, 2)
 for reward in validation_rewards:
-    plt.plot(reward[0],reward[1],'ro', label='Validation Rewards')
+    plt.plot(reward[0],reward[1],'ro')
 plt.plot(episode_rewards, label='Rewards')
 
 plt.legend(loc='upper right')
@@ -93,8 +93,8 @@ training_reward_mean=np.mean(episode_rewards)
 training_reward_variance=np.var(episode_rewards)
 print("training reward : mean: " + str(training_reward_mean)+ " variance: " + str(training_reward_variance))
 
-validation_reward_mean=np.mean(validation_rewards[:][1])
-validation_reward_variance=np.var(validation_rewards[:][1])
+
+validation_reward_list=[x[1] for x in validation_rewards]
+validation_reward_mean=np.mean(validation_reward_list)
+validation_reward_variance=np.var(validation_reward_list)
 print("validation reward : mean: " + str(validation_reward_mean)+ " variance: " + str(validation_reward_variance))
-print(validation_rewards[:][1])
-print(validation_rewards)
