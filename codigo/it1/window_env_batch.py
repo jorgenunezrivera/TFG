@@ -79,7 +79,7 @@ class ImageWindowEnvBatch(gym.Env):
                 reward=final_reward-self.initial_reward
                 
             else:
-                reward=-1-self.initial_reward
+                reward=0-self.initial_reward
             #if reward>0:
             #    reward=1
             #else:
