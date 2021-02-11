@@ -15,7 +15,7 @@ with open("label_dict.json", "r") as read_file:
 HEIGHT=224
 WIDTH=224
 N_CHANNELS=3
-MAX_STEPS=5
+MAX_STEPS=6
 STEP_SIZE=30
 N_ACTIONS=4
 
@@ -27,7 +27,7 @@ class ImageWindowEnvBatch(gym.Env):
         super(ImageWindowEnvBatch, self).__init__()
         self.img_arr_batch=img_arr_batch
         self.action_space = spaces.Discrete(N_ACTIONS)
-        self.observation_space=spaces.Box(low=-1, high=1, shape=(HEIGHT, WIDTH, N_CHANNELS), dtype=np.float32)
+        self.observation_space=spaces.Box(low=-1, high=1, shape=(HEIGHT, WIDTH, N_CHANNELS,1,1,1), dtype=np.float32)
         self.model=model = tf.keras.applications.MobileNetV2(input_shape=(HEIGHT, WIDTH, N_CHANNELS),
                                                include_top=True,
                                                weights='imagenet')
@@ -67,7 +67,7 @@ class ImageWindowEnvBatch(gym.Env):
         elif action==3:
             pass
         self.n_steps+=1
-        state=self._get_image_window()
+        state=self._get_state()
         predictions=self._get_predictions(state)
         self.predicted_class=self._get_predicted_class(predictions)        
         done=self.n_steps>=MAX_STEPS
@@ -93,7 +93,10 @@ class ImageWindowEnvBatch(gym.Env):
         ax.add_patch(rectangle)
         #ax.imshow(self._get_image_window()/255)
         plt.show()
-            
+
+    def _get_state(self):
+        window=self._get_image_window()
+        state=(window[0],window[1],window[2],self.x,self.y,self.z)
 
     def _get_image_window(self):
         self.left=(self.x)*self.image_size_factor[1]
