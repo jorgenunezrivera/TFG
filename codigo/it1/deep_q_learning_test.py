@@ -53,7 +53,7 @@ for i in range(25):
         best_action = np.argmax(q_values)
         print("Action: "+ str(best_action))
         obs, reward, done, info = env.step(best_action)
-        if(i==24):
+        if(i%6==0):
             env.render()
         new_predicted_class=info["predicted_class"]
         predicted_class=new_predicted_class
@@ -69,7 +69,7 @@ plt.figure(figsize=(8, 8))
 plt.plot(rewards, label='Rewards')
 plt.legend(loc='upper right')
 plt.ylabel('Rewards')
-plt.ylim([0,1])
+plt.ylim([-1,1])
 plt.title('Rewards')
 plt.xlabel('sample')
 plt.show()
