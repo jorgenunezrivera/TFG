@@ -45,7 +45,7 @@ rewards = []
 for i in range(25):
     predicted_class=0
     obs=env.reset()
-    env.render
+
     done=False
     print("sample: " + str(i))
     for t in itertools.count():
@@ -53,6 +53,8 @@ for i in range(25):
         best_action = np.argmax(q_values)
         print("Action: "+ str(best_action))
         obs, reward, done, info = env.step(best_action)
+        if(i==24):
+            env.render()
         new_predicted_class=info["predicted_class"]
         predicted_class=new_predicted_class
         if(done):
