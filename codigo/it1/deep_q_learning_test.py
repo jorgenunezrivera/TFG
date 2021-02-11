@@ -11,21 +11,32 @@ import matplotlib.pyplot as plt
 from time import time
 from deep_q_learning import Estimator
 
-
+VALIDATION_LABELS_FILE="validation_labels.txt"
 VALIDATION_IMAGES_DIR="validation"
-q_estimator=Estimator((160,160,3),5)
+q_estimator=Estimator((224,224,3),6)
 q_estimator.load_model()
 seconds=time()
-image_batch=[]
 
-for entry in os.listdir(VALIDATION_IMAGES_DIR):
+validation_image_batch=[]
+validationlist=os.listdir(VALIDATION_IMAGES_DIR)
+validationlist.sort()
+for entry in validationlist:
     filename=os.path.join(VALIDATION_IMAGES_DIR,entry)
     if os.path.isfile(filename) and filename.endswith('.JPEG'):
         image =tf.keras.preprocessing.image.load_img(filename)
         img_arr = keras.preprocessing.image.img_to_array(image)
-        image_batch.append(img_arr)
+        validation_image_batch.append(img_arr)
+
+validation_labels=[]
+with open(VALIDATION_LABELS_FILE) as fp:
+   line = fp.readline()
+   while line:
+       validation_labels.append(int(line))
+       line = fp.readline()
+
+
         
-env=ImageWindowEnvBatch(image_batch)
+env=ImageWindowEnvBatch(validation_image_batch)
 load_time=time()-seconds
 print("load time: " + str(load_time))
 
