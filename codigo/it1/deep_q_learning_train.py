@@ -72,7 +72,7 @@ episode_losses, episode_rewards, validation_rewards =deep_q_learning(env,q_estim
 elapsed_time=time.time()-initial_ts
 print("Elapsed time: " + str(elapsed_time))
 print("Num episodes: " + str(NUM_EPISODES))
-print("episodes/sec:" + str(NUM_EPISODES/elapsed_time))
+print("secs/episode:" + str(elapsed_time/NUM_EPISODES))
 
 plt.figure(figsize=(8, 8))
 plt.subplot(2, 1, 1)
