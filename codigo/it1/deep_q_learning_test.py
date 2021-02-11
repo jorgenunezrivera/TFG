@@ -36,7 +36,7 @@ with open(VALIDATION_LABELS_FILE) as fp:
 
 
         
-env=ImageWindowEnvBatch(validation_image_batch)
+env=ImageWindowEnvBatch(validation_image_batch,validation_labels)
 load_time=time()-seconds
 print("load time: " + str(load_time))
 
