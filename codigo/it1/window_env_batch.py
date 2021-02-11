@@ -17,7 +17,7 @@ WIDTH=224
 N_CHANNELS=3
 MAX_STEPS=6
 STEP_SIZE=30
-N_ACTIONS=6
+N_ACTIONS=4
 
 
 class ImageWindowEnvBatch(gym.Env):
@@ -59,15 +59,13 @@ class ImageWindowEnvBatch(gym.Env):
     def step (self,action):
         #0: up 1:right 2: down 3: left4: zoom in
         if action==0:
-            self.y-=STEP_SIZE
-        elif action==1:
             self.x+=STEP_SIZE
-        elif action==2:
+        elif action==1:
             self.y+=STEP_SIZE
+        elif action==2:
+            self.z+=STEP_SIZE
         elif action==3:
-            self.x-=STEP_SIZE
-        elif action==4:
-            self.z+=STEP_SIZE//2
+            pass
         self.n_steps+=1
         state=self._get_image_window()
         predictions=self._get_predictions(state)
@@ -98,16 +96,16 @@ class ImageWindowEnvBatch(gym.Env):
             
 
     def _get_image_window(self):
-        self.left=(self.x+self.z)*self.image_size_factor[1]
+        self.left=(self.x)*self.image_size_factor[1]
         self.left=np.maximum(self.left,0)
         self.right=self.image_shape[1]+(self.x-self.z)*self.image_size_factor[1]
         self.right=np.minimum(self.right,self.image_shape[1])
-        self.top=(self.y+self.z)*self.image_size_factor[0]
+        self.top=(self.y)*self.image_size_factor[0]
         self.top=np.maximum(self.top,0)
         self.bottom=self.image_shape[0]+(self.y-self.z)*self.image_size_factor[0]
         self.bottom=np.minimum(self.bottom,self.image_shape[0])
         image_window=self.img_arr[self.top:self.bottom,self.left:self.right]
-        image_window_resized=tf.image.resize(image_window,size=(HEIGHT, WIDTH)).numpy()
+        image_window_resized=tf.image.resize(image_window,size=(HEIGHT, WIDTH))#.numpy() (comprobar performance)
         image_window_resized=tf.keras.applications.mobilenet_v2.preprocess_input(image_window_resized)
         return image_window_resized
    

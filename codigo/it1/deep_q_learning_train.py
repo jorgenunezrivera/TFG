@@ -11,10 +11,10 @@ import random
 import matplotlib.pyplot as plt
 import time
 
-N_ACTIONS=6
+
 
 from deep_q_learning import deep_q_learning, Estimator
-IMG_SHAPE=(224,224,3)
+#IMG_SHAPE=(224,224,3)
 TRAINING_IMAGES_DIR="train"
 VALIDATION_IMAGES_DIR="validation"
 TRAINING_LABELS_FILE="training_labels.txt"
@@ -60,6 +60,9 @@ with open(VALIDATION_LABELS_FILE) as fp:
 env=ImageWindowEnvBatch(image_batch,training_labels)
         
 validation_env=ImageWindowEnvBatch(validation_image_batch,validation_labels)
+
+N_ACTIONS=env.action_space.n
+IMG_SHAPE=env.observation_space.shape
 
 initial_ts=time.time()
 
