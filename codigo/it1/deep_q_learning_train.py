@@ -9,6 +9,7 @@ import sys
 import os
 import random
 import matplotlib.pyplot as plt
+import time
 
 N_ACTIONS=6
 
@@ -18,6 +19,7 @@ TRAINING_IMAGES_DIR="train"
 VALIDATION_IMAGES_DIR="validation"
 TRAINING_LABELS_FILE="training_labels.txt"
 VALIDATION_LABELS_FILE="validation_labels.txt"
+NUM_EPISODES=120
 
 
 image_batch=[]
@@ -59,18 +61,25 @@ env=ImageWindowEnvBatch(image_batch,training_labels)
         
 validation_env=ImageWindowEnvBatch(validation_image_batch,validation_labels)
 
+initial_ts=time.time()
+
 q_estimator=Estimator(IMG_SHAPE,N_ACTIONS)
 target_estimator=Estimator(IMG_SHAPE,N_ACTIONS)
-episode_losses, episode_rewards, validation_rewards =deep_q_learning(env,q_estimator,target_estimator,validation_env,num_episodes=120,replay_memory_size=10000,
+episode_losses, episode_rewards, validation_rewards =deep_q_learning(env,q_estimator,target_estimator,validation_env,num_episodes=NUM_EPISODES,replay_memory_size=10000,
                       replay_memory_init_size=64,update_target_estimator_every=120,discount_factor=1,
                       epsilon_start=1,epsilon_end=0.1,epsilon_decay_steps=60000, batch_size=32)
+
+elapsed_time=time.time()-initial_ts
+print("Elapsed time: " + str(elapsed_time))
+print("Num episodes: " + str(NUM_EPISODES))
+print("episodes/sec:" + str(NUM_EPISODES/elapsed_time))
 
 plt.figure(figsize=(8, 8))
 plt.subplot(2, 1, 1)
 plt.plot(episode_losses,  label='Training Loss')
 plt.legend(loc='upper right')
 plt.ylabel('Mean Squared Error')
-plt.ylim([0,1.2])
+plt.ylim([0,1])
 plt.title('Training Loss')
 plt.xlabel('epoch')
 
