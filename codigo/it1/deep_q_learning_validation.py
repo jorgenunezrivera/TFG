@@ -20,14 +20,11 @@ def validation(q_estimator,env):
     for i in range(NUM_VALIDATION_IMAGES):
         predicted_class=0
         obs=env.reset()
-        env.render
         done=False
         for t in itertools.count():
             q_values = q_estimator.predict(np.array([obs]))
             best_action = np.argmax(q_values)
             obs, reward, done, info = env.step(best_action)
-            new_predicted_class=info["predicted_class"]
-            predicted_class=new_predicted_class
             if(done):
                 rewards.append(reward)
                 break
