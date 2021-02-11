@@ -24,7 +24,8 @@ def validation(q_estimator,env):
             q_values = q_estimator.predict(np.array([obs]))
             best_action = np.argmax(q_values)
             if(i==24):
-                print("validation action: " + str(q_values))
+                print("validation action: "+ str(best_action))
+                print("validation q_values: " + str(q_values))
             obs, reward, done, info = env.step(best_action)
             if(done):
                 rewards.append(reward)
