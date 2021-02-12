@@ -20,7 +20,7 @@ TRAINING_IMAGES_DIR="train"
 VALIDATION_IMAGES_DIR="validation"
 TRAINING_LABELS_FILE="training_labels.txt"
 VALIDATION_LABELS_FILE="validation_labels.txt"
-NUM_EPISODES=12000
+NUM_EPISODES=2000
 
 
 image_batch=[]
@@ -89,10 +89,10 @@ plt.xlabel('epoch')
 
 
 plt.subplot(2, 1, 2)
+
+plt.plot(episode_rewards, label='Rewards')
 for reward in validation_rewards:
     plt.plot(reward[0],reward[1],'ro')
-plt.plot(episode_rewards, label='Rewards')
-
 plt.legend(loc='upper right')
 plt.ylabel('Rewards')
 plt.ylim([-1.1,1.1])
