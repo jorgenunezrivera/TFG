@@ -39,7 +39,7 @@ class ImageWindowEnvBatch(gym.Env):
     def reset(self):
         self.img_arr=self.img_arr_batch[self.sample_index]
         label=self.labels[self.sample_index]
-        self.true_class=label_index_dict[label]
+        self.true_class=label_index_dict[str(label)]
         self.sample_index+=1#Batches siempre en el mismo orden???
         if(self.sample_index>=self.num_samples):#>=?
             self.sample_index=0            
