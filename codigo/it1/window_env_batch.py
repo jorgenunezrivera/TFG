@@ -8,9 +8,10 @@ import tensorflow as tf
 from tensorflow import keras
 import json
 
-with open("label_dict.json", "r") as read_file:
-    label_dict = json.load(read_file)
 
+
+with open("label_to_index_dict.json", "r") as read_file:
+    label_index_dict = json.load(read_file)
 
 HEIGHT=224
 WIDTH=224
@@ -28,7 +29,7 @@ class ImageWindowEnvBatch(gym.Env):
         self.img_arr_batch=img_arr_batch
         self.action_space = spaces.Discrete(N_ACTIONS)
         self.observation_space=spaces.Box(low=-1, high=1, shape=(HEIGHT, WIDTH, N_CHANNELS), dtype=np.float32)
-        self.model=model = tf.keras.applications.MobileNetV2(input_shape=(HEIGHT, WIDTH, N_CHANNELS),
+        self.model= tf.keras.applications.MobileNetV2(input_shape=(HEIGHT, WIDTH, N_CHANNELS),
                                                include_top=True,
                                                weights='imagenet')
         self.sample_index=0
@@ -37,7 +38,8 @@ class ImageWindowEnvBatch(gym.Env):
 
     def reset(self):
         self.img_arr=self.img_arr_batch[self.sample_index]
-        self.label=self.labels[self.sample_index]
+        label=self.labels[self.sample_index]
+        self.true_class=label_index_dict[label]
         self.sample_index+=1#Batches siempre en el mismo orden???
         if(self.sample_index>=self.num_samples):#>=?
             self.sample_index=0            
@@ -50,10 +52,6 @@ class ImageWindowEnvBatch(gym.Env):
         predictions=self._get_predictions(image_window)
         self.predicted_class=self._get_predicted_class(predictions)        
         self.initial_reward=self._get_reward(predictions)
-        if not(self._is_correct_label(predictions,self.label)):
-            self.initial_reward=0
-          
-
         return image_window
 
     def step (self,action):
@@ -72,16 +70,10 @@ class ImageWindowEnvBatch(gym.Env):
         self.predicted_class=self._get_predicted_class(predictions)        
         done=self.n_steps>=MAX_STEPS
         if done :
-            if(self._is_correct_label(predictions,self.label)):
-                final_reward=self._get_reward(predictions)
-                reward=final_reward-self.initial_reward
-                
-            else:
-                reward=0-self.initial_reward
-            #if reward>0:
-            #    reward=1
-            #else:
-            #    reward=-1
+            final_reward = self._get_reward(predictions)
+            reward = final_reward - self.initial_reward
+            #if(self.predicted_class==self.true_class):
+
         else:
             reward=0#Reward parcial?
         return state,reward,done,{"predicted_class" : self.predicted_class}
@@ -120,14 +112,11 @@ class ImageWindowEnvBatch(gym.Env):
         predicted_class=np.argmax(predictions[0])
         return predicted_class
 
-    def _is_correct_label(self,predictions,label):
-        decoded_predictions=tf.keras.applications.mobilenet_v2.decode_predictions(predictions, top=1)
-        predicted_label=label_dict[decoded_predictions[0][0][0]]
-        return (predicted_label==label)
+
 
     def _get_reward(self,predictions):
         #print("max reward: "+str(np.argmax(predictions[0])))
-        reward = float(predictions[0,self.predicted_class])        
+        reward = float(predictions[0,self.true_class])
         return reward
     
         

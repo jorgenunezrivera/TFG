@@ -66,8 +66,20 @@ with open(TRAINING_LABELS_FILE) as fp:
        training_labels.append(int(line))
        line = fp.readline()
 
+indexes=[]
+index_dict={}
+for i in range(1000):
+    fake_predictions=np.zeros(1000)
+    fake_predictions[i]=1
+    synset=tf.keras.applications.mobilenet_v2.decode_predictions(np.array([fake_predictions]), top=1)[0][0][0]
+    label=dictionary[synset]
+    index_dict[label]=i
 
-    
+print(indexes)
+with open('label_to_index_dict.json', 'w') as fp:
+    json.dump(index_dict, fp)
+
+
 for i in range(len(image_batch)):
     image_window_resized=tf.image.resize(image_batch[i],size=(HEIGHT, WIDTH)).numpy()
     image_window_resized=tf.keras.applications.mobilenet_v2.preprocess_input(image_window_resized)
