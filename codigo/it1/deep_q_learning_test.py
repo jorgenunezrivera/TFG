@@ -37,7 +37,7 @@ with open(VALIDATION_LABELS_FILE) as fp:
    line = fp.readline()
    while line:
        validation_labels.append(int(line))
-       validation_true_classes.append(label_index_dict[int(line)])
+       validation_true_classes.append(label_index_dict[line])
        line = fp.readline()
 
 
