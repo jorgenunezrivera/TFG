@@ -20,7 +20,7 @@ TRAINING_IMAGES_DIR="train"
 VALIDATION_IMAGES_DIR="validation"
 TRAINING_LABELS_FILE="training_labels.txt"
 VALIDATION_LABELS_FILE="validation_labels.txt"
-NUM_EPISODES=1800
+NUM_EPISODES=18000
 
 
 image_batch=[]
