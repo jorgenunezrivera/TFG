@@ -47,7 +47,6 @@ for i in range(1000):
 with open('inverse_label_dict.json', 'w') as fp:
     json.dump(inverse_dictionary, fp)
 
-print( dictionary)    
 image_batch=[]
 filelist=os.listdir(TRAINING_IMAGES_DIR)
 filelist.sort()
@@ -79,12 +78,19 @@ print(indexes)
 with open('label_to_index_dict.json', 'w') as fp:
     json.dump(index_dict, fp)
 
-
+hits=0
 for i in range(len(image_batch)):
     image_window_resized=tf.image.resize(image_batch[i],size=(HEIGHT, WIDTH)).numpy()
     image_window_resized=tf.keras.applications.mobilenet_v2.preprocess_input(image_window_resized)
     image_window_expanded=np.array([image_window_resized])
     predictions=model.predict(image_window_expanded)
-    print("abel: " + str(training_labels[i]))
+    label=training_labels[i]
+    print("abel: " + str(label))
+
     decoded_predictions=tf.keras.applications.mobilenet_v2.decode_predictions(predictions, top=1)
-    print("predicted label: " + str(dictionary[decoded_predictions[0][0][0]]))
+    predicted_label=dictionary[decoded_predictions[0][0][0]]
+    print("predicted label: " + str(predicted_label))
+    if(label==predicted_label):
+        hits+=1
+print("Hits: {}/{} ({}%".format(hits,len(image_batch),hits*100/len(image_batch)))
+
