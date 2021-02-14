@@ -77,7 +77,7 @@ correct_predictions=0
 for i in range(25):
     if(validation_true_classes[i]==predicted_classes[i]):
         correct_predictions+=1
-print("Correct predictions. {} / {} ({}%)}".format(correct_predictions,len(validation_image_batch),100*correct_predictions/len(validation_image_batch)))
+print("Correct predictions. {} / {} ({}%)".format(correct_predictions,len(validation_image_batch),100*correct_predictions/len(validation_image_batch)))
 
 
 plt.figure(figsize=(8, 8))
