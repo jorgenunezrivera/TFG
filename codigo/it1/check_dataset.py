@@ -77,7 +77,7 @@ for i in range(1000):
 print(indexes)
 with open('label_to_index_dict.json', 'w') as fp:
     json.dump(index_dict, fp)
-
+rewards=[]
 hits=0
 for i in range(len(image_batch)):
     image_window_resized=tf.image.resize(image_batch[i],size=(HEIGHT, WIDTH)).numpy()
@@ -85,12 +85,16 @@ for i in range(len(image_batch)):
     image_window_expanded=np.array([image_window_resized])
     predictions=model.predict(image_window_expanded)
     label=training_labels[i]
-    print("abel: " + str(label))
-
+    print("label: " + str(label))
     decoded_predictions=tf.keras.applications.mobilenet_v2.decode_predictions(predictions, top=1)
     predicted_label=dictionary[decoded_predictions[0][0][0]]
     print("predicted label: " + str(predicted_label))
+    reward=decoded_predictions[0][0][2]
+    rewards.append(reward)
     if(label==predicted_label):
         hits+=1
-print("Hits: {}/{} ({}%".format(hits,len(image_batch),hits*100/len(image_batch)))
 
+print("Hits: {}/{} ({}%)".format(hits,len(image_batch),hits*100/len(image_batch)))
+training_reward_mean=np.mean(rewards)
+training_reward_variance=np.var(rewards)
+print("training reward : mean: " + str(training_reward_mean)+ " variance: " + str(training_reward_variance))
