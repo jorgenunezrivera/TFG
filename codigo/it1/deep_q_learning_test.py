@@ -48,7 +48,7 @@ print("load time: " + str(load_time))
 
 rewards = []
 predicted_classes=[]
-for i in range(25):
+for i in range(len(validation_image_batch)):
     predicted_class=0
     obs=env.reset()
 
@@ -77,7 +77,7 @@ correct_predictions=0
 for i in range(25):
     if(validation_true_classes[i]==predicted_classes[i]):
         correct_predictions+=1
-print("Correct predictions. {} / 25".format(correct_predictions))
+print("Correct predictions. {} / {} ({}%)}".format(correct_predictions,len(validation_image_batch),100*correct_predictions/len(validation_image_batch)))
 
 
 plt.figure(figsize=(8, 8))
