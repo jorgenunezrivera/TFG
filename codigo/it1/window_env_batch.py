@@ -19,7 +19,7 @@ N_CHANNELS=3
 MAX_STEPS=5
 STEP_SIZE=16
 N_ACTIONS=4
-
+REWARD_MAXIMIZING=1
 
 class ImageWindowEnvBatch(gym.Env):
     
@@ -72,6 +72,11 @@ class ImageWindowEnvBatch(gym.Env):
         if done :
             final_reward = self._get_reward(predictions)
             reward = final_reward - self.initial_reward
+            if(REWARD_MAXIMIZING):
+                if(reward>0):
+                    reward=1
+                if(reward<0):
+                    reward=-1
             #if(self.predicted_class==self.true_class):
 
         else:
