@@ -17,10 +17,10 @@ HEIGHT=224
 WIDTH=224
 N_CHANNELS=3
 MAX_STEPS=5
-STEP_SIZE=44
+STEP_SIZE=18
 N_ACTIONS=4
 REWARD_MAXIMIZING=0
-
+REWARD_AMPLIFICATION=1
 class ImageWindowEnvBatch(gym.Env):
     
 
@@ -77,6 +77,8 @@ class ImageWindowEnvBatch(gym.Env):
                     reward=1
                 if(reward<0):
                     reward=-1
+            elif(REWARD_AMPLIFICATION):
+                reward=reward**(1/3)
             #if(self.predicted_class==self.true_class):
 
         else:
