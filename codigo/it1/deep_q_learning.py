@@ -74,7 +74,7 @@ class Estimator():
           layers.Dense(n_actions, activation='softmax')
         ])
         self.model.summary()
-        self.optimizer=tf.keras.optimizers.RMSProp(LEARNING_RATE,0.9)
+        self.optimizer=tf.keras.optimizers.RMSprop(LEARNING_RATE,0.9)
 
     def predict(self, state):
         """
