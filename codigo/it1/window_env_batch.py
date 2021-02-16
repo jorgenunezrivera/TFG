@@ -78,7 +78,11 @@ class ImageWindowEnvBatch(gym.Env):
                 if(reward<0):
                     reward=-1
             elif(REWARD_AMPLIFICATION):
-                reward=reward**(1/3)
+                if (reward > 0):
+                    reward=reward**(1/3)
+                if (reward < 0):
+                    reward = -((-reward)**(1/3))
+
             #if(self.predicted_class==self.true_class):
 
         else:
