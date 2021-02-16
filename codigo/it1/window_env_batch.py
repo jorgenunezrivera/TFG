@@ -17,9 +17,9 @@ HEIGHT=224
 WIDTH=224
 N_CHANNELS=3
 MAX_STEPS=5
-STEP_SIZE=16
+STEP_SIZE=32
 N_ACTIONS=4
-REWARD_MAXIMIZING=1
+REWARD_MAXIMIZING=0
 
 class ImageWindowEnvBatch(gym.Env):
     
@@ -68,7 +68,7 @@ class ImageWindowEnvBatch(gym.Env):
         state=self._get_image_window()
         predictions=self._get_predictions(state)
         self.predicted_class=self._get_predicted_class(predictions)        
-        done=self.n_steps>=MAX_STEPS
+        done=(self.n_steps>=MAX_STEPS or action==3)
         if done :
             final_reward = self._get_reward(predictions)
             reward = final_reward - self.initial_reward
