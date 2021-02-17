@@ -82,7 +82,7 @@ print("secs/episode:" + str(elapsed_time/NUM_EPISODES))
 plt.figure(figsize=(8, 8))
 plt.subplot(2, 1, 1)
 for loss in training_losses:
-    plt.plot(loss[0],loss[1],'b-')
+    plt.plot(loss[0],loss[1],'-b')
 plt.legend(loc='upper right')
 plt.ylabel('Mean Squared Error')
 plt.ylim([0,1])
@@ -92,7 +92,7 @@ plt.xlabel('epoch')
 
 plt.subplot(2, 1, 2)
 for reward in training_rewards:
-    plt.plot(reward[0],reward[1],'b-')
+    plt.plot(reward[0],reward[1],'-b')
 for reward in validation_rewards:
     plt.plot(reward[0],reward[1],'ro')
 plt.legend(loc='upper right')
