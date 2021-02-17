@@ -36,7 +36,6 @@ class ImageWindowEnvBatch(gym.Env):
         self.num_samples=len(img_arr_batch)
         self.labels=labels
         self.history=[] #(x,y,z,return)
-        #self.cumulated_rewards=[]
 
     def reset(self):
         self.img_arr=self.img_arr_batch[self.sample_index]
@@ -69,7 +68,8 @@ class ImageWindowEnvBatch(gym.Env):
         self.n_steps+=1
         state=self._get_image_window()
         predictions=self._get_predictions(state)
-        self.predicted_class=self._get_predicted_class(predictions)        
+        predicted_class=self._get_predicted_class(predictions)
+        max_prediction_value=np.max(predictions)
         done=(self.n_steps>=MAX_STEPS or action==3)
         if done :
             final_reward = self._get_reward(predictions)
@@ -87,7 +87,7 @@ class ImageWindowEnvBatch(gym.Env):
 
         else:
             reward=0#Reward parcial?
-        return state,reward,done,{"predicted_class" : self.predicted_class}
+        return state,reward,done,{"predicted_class" : predicted_class, "max_predition_value":max_prediction_value}
 
     def render(self, mode='human', close=False):
         fig,ax=plt.subplots(1)

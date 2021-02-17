@@ -218,7 +218,7 @@ def deep_q_learning(env,
         episode_loss=0
         # One step in the environment
         if (i_episode + 1) % validate_every == 0:
-            validation_reward = validation(q_estimator, validation_env)
+            validation_reward,hits,wrong_certanty = validation(q_estimator, validation_env)
             validation_rewards.append((i_episode, validation_reward))
             print("\rEpisode {}/{}, loss: {} validation_reward: {} ".format(i_episode + 1, num_episodes, loss,validation_reward))
 

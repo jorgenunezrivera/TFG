@@ -20,7 +20,7 @@ TRAINING_IMAGES_DIR="train_200"
 VALIDATION_IMAGES_DIR="validation"
 TRAINING_LABELS_FILE="training_labels.txt"
 VALIDATION_LABELS_FILE="validation_labels.txt"
-NUM_EPISODES=1200
+NUM_EPISODES=120
 
 
 image_batch=[]
@@ -70,7 +70,7 @@ initial_ts=time.time()
 q_estimator=Estimator(IMG_SHAPE,N_ACTIONS)
 target_estimator=Estimator(IMG_SHAPE,N_ACTIONS)
 training_losses, training_rewards, validation_rewards =deep_q_learning(env,q_estimator,target_estimator,validation_env,num_episodes=NUM_EPISODES,replay_memory_size=10000,
-                      replay_memory_init_size=64,update_target_estimator_every=500,validate_every=1000,rewards_mean_every=100,discount_factor=1,
+                      replay_memory_init_size=64,update_target_estimator_every=500,validate_every=1000,rewards_mean_every=20,discount_factor=1,
                       epsilon_start=1,epsilon_end=0.1,epsilon_decay_steps=NUM_EPISODES*5, batch_size=32)
 
 elapsed_time=time.time()-initial_ts
@@ -82,7 +82,7 @@ print("secs/episode:" + str(elapsed_time/NUM_EPISODES))
 plt.figure(figsize=(8, 8))
 plt.subplot(2, 1, 1)
 for loss in training_losses:
-    plt.plot(loss[0],loss[1])
+    plt.plot(loss[0],loss[1],'b-')
 plt.legend(loc='upper right')
 plt.ylabel('Mean Squared Error')
 plt.ylim([0,1])
@@ -92,7 +92,7 @@ plt.xlabel('epoch')
 
 plt.subplot(2, 1, 2)
 for reward in training_rewards:
-    plt.plot(reward[0],reward[1])
+    plt.plot(reward[0],reward[1],'b-')
 for reward in validation_rewards:
     plt.plot(reward[0],reward[1],'ro')
 plt.legend(loc='upper right')
