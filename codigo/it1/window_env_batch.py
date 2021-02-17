@@ -20,7 +20,7 @@ MAX_STEPS=5
 STEP_SIZE=18
 N_ACTIONS=4
 REWARD_MAXIMIZING=0
-REWARD_AMPLIFICATION=1
+REWARD_NORMALIZATION=1
 class ImageWindowEnvBatch(gym.Env):
     
 
@@ -35,6 +35,7 @@ class ImageWindowEnvBatch(gym.Env):
         self.sample_index=0
         self.num_samples=len(img_arr_batch)
         self.labels=labels
+        self.cumulated_rewards=[]
 
     def reset(self):
         self.img_arr=self.img_arr_batch[self.sample_index]
@@ -72,16 +73,14 @@ class ImageWindowEnvBatch(gym.Env):
         if done :
             final_reward = self._get_reward(predictions)
             reward = final_reward - self.initial_reward
+            self.cumulated_rewards.append(reward)
             if(REWARD_MAXIMIZING):
                 if(reward>0):
                     reward=1
                 if(reward<0):
                     reward=-1
-            elif(REWARD_AMPLIFICATION):
-                if (reward > 0):
-                    reward=reward**(1/3)
-                if (reward < 0):
-                    reward = -((-reward)**(1/3))
+            elif(REWARD_NORMALIZATION):
+                reward = reward/np.var(self.cumulated_rewards)
 
             #if(self.predicted_class==self.true_class):
 
