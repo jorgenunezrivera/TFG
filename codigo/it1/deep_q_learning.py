@@ -13,13 +13,13 @@ from deep_q_learning_validation import validation
 
 mse = tf.keras.losses.MeanSquaredError() #categoricalcrossentropy
 mae = tf.keras.losses.MeanAbsoluteError()
-LEARNING_RATE = 0.0001
+LEARNING_RATE = 0.00001
 
 def custom_loss(model, x, y, training,a):
     y_ = model(x)
     #print("action: {} q_predictions: {} target_predictions: {}".format(a,y_,y))
     y_=y_[:,a]
-    return mse(y,y_)
+    return mae(y,y_)
     
 def custom_grad(model, inputs, targets,a):
     with tf.GradientTape() as tape:

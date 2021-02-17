@@ -53,8 +53,8 @@ initial_ts=time.time()
 q_estimator=Estimator(IMG_SHAPE,N_ACTIONS)
 target_estimator=Estimator(IMG_SHAPE,N_ACTIONS)
 training_losses, training_rewards, validation_rewards,validation_hits =deep_q_learning(env,q_estimator,target_estimator,validation_env,num_episodes=NUM_EPISODES,replay_memory_size=10000,
-                      replay_memory_init_size=2000,update_target_estimator_every=500,validate_every=100,rewards_mean_every=50,discount_factor=1,
-                      epsilon_start=1,epsilon_end=0.1,epsilon_decay_steps=NUM_EPISODES*5, batch_size=32)
+                      replay_memory_init_size=2000,update_target_estimator_every=500,validate_every=1000,rewards_mean_every=100,discount_factor=1,
+                      epsilon_start=1,epsilon_end=0.1,epsilon_decay_steps=NUM_EPISODES*4, batch_size=32)
 
 elapsed_time=time.time()-initial_ts
 print("Elapsed time: " + str(elapsed_time))

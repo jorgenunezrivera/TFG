@@ -46,4 +46,4 @@ def validation(q_estimator, env):
                     incorrect_prediction_certainty+=info["max_prediction_value"]
                 rewards.append(reward)
                 break
-    return np.mean(rewards),hits/NUM_VALIDATION_IMAGES,incorrect_prediction_certainty/NUM_VALIDATION_IMAGES
+    return np.mean(rewards),hits/NUM_VALIDATION_IMAGES,incorrect_prediction_certainty/(NUM_VALIDATION_IMAGES-hits)
