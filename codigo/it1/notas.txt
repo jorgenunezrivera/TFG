@@ -8,7 +8,7 @@ Env:
 Entrenamiento:
     Graficas: media cada ~100 para qe se veamejor la evolucion del loss y los rewards *
     Batch normalization?¿ (aun no)
-    MSE? yo creo que está bien
+    MSE? yo creo que está bien -> MAE (PROBAR)
 
 Validacion:
     -10000 Imagenes
@@ -20,5 +20,4 @@ Validacion:
 
 
 -17/02 18:12
-    La validacion está estatica
-    el loss ha aumentado mucho
+
