@@ -94,7 +94,7 @@ plt.xlabel('epoch')
 
 plt.subplot(2, 1, 2)
 for reward in training_rewards:
-    plt.plot(reward[0],reward[1],'-b')
+    plt.plot(reward[0],reward[1],'ro')
 for reward in validation_rewards:
     plt.plot(reward[0],reward[1],'ro')
 plt.legend(loc='upper right')
