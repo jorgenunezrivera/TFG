@@ -62,7 +62,7 @@ class ImageWindowEnvBatch(gym.Env):
         elif action==1:
             self.y+=STEP_SIZE
         elif action==2:
-            self.z+=STEP_SIZE=
+            self.z+=STEP_SIZE
         elif action==3:
             pass
         self.n_steps+=1
