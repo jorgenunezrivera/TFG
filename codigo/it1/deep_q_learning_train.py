@@ -79,7 +79,7 @@ print("Num episodes: " + str(NUM_EPISODES))
 print("secs/episode:" + str(elapsed_time/NUM_EPISODES))
 
 print("training_losses:{} ".format(training_losses))
-
+print("training_rewards: {}".format(training_rewards))
 
 plt.figure(figsize=(8, 8))
 plt.subplot(2, 1, 1)

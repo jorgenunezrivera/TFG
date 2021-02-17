@@ -222,7 +222,7 @@ def deep_q_learning(env,
             validation_rewards.append((i_episode, validation_reward))
             print("\rEpisode {}/{}, loss: {} validation_reward: {} ".format(i_episode + 1, num_episodes, loss,validation_reward))
 
-        if (i_episode + 1) % rewards_mean_every:
+        if (i_episode + 1) % rewards_mean_every==0:
             cumulated_reward/=rewards_mean_every
             training_rewards.append((i_episode,cumulated_reward))
             cumulated_loss/=rewards_mean_every
@@ -269,7 +269,7 @@ def deep_q_learning(env,
             episode_loss+=loss
             total_t += 1
             if done:
-                cumulated_loss += episode_loss/t
+                cumulated_loss += episode_loss.numpy()/t
                 cumulated_reward += reward
                 break
 
