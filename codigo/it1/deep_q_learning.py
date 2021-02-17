@@ -11,20 +11,15 @@ import random
 import matplotlib.pyplot as plt
 from deep_q_learning_validation import validation
 
-mse = tf.keras.losses.MeanSquaredError()
-LEARNING_RATE = 0.0001
+mse = tf.keras.losses.MeanSquaredError() #categoricalcrossentropy
+LEARNING_RATE = 0.001
 
 def custom_loss(model, x, y, training,a):
     y_ = model(x)
-    y_=y_[:,a]    
-    return mse(y,y_)
+    y_=y_[:,a]
+    #one hot encoding
 
-def custom_batch_loss(model, x, y, training,a):
-    y_ = model(x)
-    y__=np.zeros(y_.shape[0])
-    for i in range(y_.shape[0]):
-        y__[i]=y_[i,a[i]]    
-    return mse(y,y__)
+    return mse(y,y_)
     
 def custom_grad(model, inputs, targets,a):
     with tf.GradientTape() as tape:
@@ -38,13 +33,6 @@ def custom_train(model,optimizer,grad,s,y,a):
         optimizer.apply_gradients(zip(grads,model.trainable_variables))
         loss_avg.update_state(loss_value)
     return loss_avg.result()
-
-def custom_batch_train(model,optimizer,grad,s,y,a):
-    #loss_avg = tf.keras.metrics.Mean()
-    loss_value, grads= custom_grad(model,s,y,a)
-    optimizer.apply_gradients(zip(grads,model.trainable_variables))
-    loss_avg=np.mean(loss_value)
-    return loss_avg 
 
 class Estimator():
     """Q-Value Estimator neural network.
@@ -74,7 +62,7 @@ class Estimator():
           layers.Dense(n_actions, activation='softmax')
         ])
         self.model.summary()
-        self.optimizer=tf.keras.optimizers.RMSprop(LEARNING_RATE,0.9)
+        self.optimizer=tf.keras.optimizers.RMSprop(LEARNING_RATE,0.99)
 
     def predict(self, state):
         """
@@ -209,11 +197,9 @@ def deep_q_learning(env,
         action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
         
         next_state, reward, done, _ = env.step(action)
-        #next_state = np.append(state[:,:,1:], np.expand_dims(next_state, 2), axis=2)
         replay_memory.append(Transition(state, action, reward, next_state, done))
         if done:
             state = env.reset()
-            #state = np.stack([state] * 4, axis=2)
         else:
             state = next_state
     print("Done")
@@ -252,7 +238,6 @@ def deep_q_learning(env,
             #if (i_episode+1) % 20 == 0 and reward!=0:#mostrar las acciones cada 20 samples
             #    print("reward =" + str(reward))
              
-            #next_state = np.append(state[:,:,1:], np.expand_dims(next_state, 2), axis=2)
 
             # If our replay memory is full, pop the first element
             if len(replay_memory) == replay_memory_size:
@@ -260,8 +245,6 @@ def deep_q_learning(env,
 
             # Save transition to replay memory
             replay_memory.append(Transition(state, action, reward, next_state, done))   
-
-            
 
             # Sample a minibatch from the replay memory
             samples = random.sample(replay_memory, batch_size)

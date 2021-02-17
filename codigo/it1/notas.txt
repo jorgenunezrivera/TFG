@@ -1,0 +1,2 @@
+MSE:
+El loss se calcula y la red se actualiza solo para una acción (la acción escogida en la transicion (s,a,r,d,s_)

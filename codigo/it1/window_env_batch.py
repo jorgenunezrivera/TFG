@@ -17,10 +17,10 @@ HEIGHT=224
 WIDTH=224
 N_CHANNELS=3
 MAX_STEPS=5
-STEP_SIZE=18
+STEP_SIZE=16
 N_ACTIONS=4
 REWARD_MAXIMIZING=0
-REWARD_NORMALIZATION=1
+
 class ImageWindowEnvBatch(gym.Env):
     
 
@@ -35,7 +35,7 @@ class ImageWindowEnvBatch(gym.Env):
         self.sample_index=0
         self.num_samples=len(img_arr_batch)
         self.labels=labels
-        self.cumulated_rewards=[]
+        #self.cumulated_rewards=[]
 
     def reset(self):
         self.img_arr=self.img_arr_batch[self.sample_index]
@@ -56,7 +56,7 @@ class ImageWindowEnvBatch(gym.Env):
         return image_window
 
     def step (self,action):
-        #0: up 1:right 2: down 3: left4: zoom in
+        #0: right 1:down 2: zoom in 3: end
         if action==0:
             self.x+=STEP_SIZE
         elif action==1:
@@ -73,18 +73,16 @@ class ImageWindowEnvBatch(gym.Env):
         if done :
             final_reward = self._get_reward(predictions)
             reward = final_reward - self.initial_reward
-            self.cumulated_rewards.append(reward)
-            variance=np.var(self.cumulated_rewards)
+            #self.cumulated_rewards.append(reward)
+            #variance=np.var(self.cumulated_rewards)
             if(REWARD_MAXIMIZING):
                 if(reward>0):
                     reward=1
                 if(reward<0):
                     reward=-1
-            elif(REWARD_NORMALIZATION):
-                if(variance!=0):
-                    reward = reward/variance
-
-            #if(self.predicted_class==self.true_class):
+            #elif(REWARD_NORMALIZATION):
+            #    if(variance!=0):
+            #        reward = reward/variance
 
         else:
             reward=0#Reward parcial?
@@ -95,7 +93,6 @@ class ImageWindowEnvBatch(gym.Env):
         ax.imshow(self.img_arr/255)
         rectangle=pltpatch.Rectangle((self.left,self.bottom),self.right-self.left,self.top-self.bottom,edgecolor='r',facecolor='none',linewidth=3)
         ax.add_patch(rectangle)
-        #ax.imshow(self._get_image_window()/255)
         plt.show()
             
 
@@ -119,15 +116,12 @@ class ImageWindowEnvBatch(gym.Env):
         return predictions
 
     def _get_predicted_class(self,predictions):
-        #decoded_predictions=tf.keras.applications.mobilenet_v2.decode_predictions(predictions, top=1)
-        #predicted_label=label_dict[decoded_predictions[0][0][0]]
         predicted_class=np.argmax(predictions[0])
         return predicted_class
 
 
 
     def _get_reward(self,predictions):
-        #print("max reward: "+str(np.argmax(predictions[0])))
         reward = float(predictions[0,self.true_class])
         return reward
     
