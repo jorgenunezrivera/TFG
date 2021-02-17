@@ -19,7 +19,7 @@ def custom_loss(model, x, y, training,a):
     y_ = model(x)
     #print("action: {} q_predictions: {} target_predictions: {}".format(a,y_,y))
     y_=y_[:,a]
-    return mae(y,y_)
+    return mse(y,y_)
     
 def custom_grad(model, inputs, targets,a):
     with tf.GradientTape() as tape:
