@@ -40,7 +40,7 @@ def validation(q_estimator, env):
             best_action = np.argmax(q_values)
             obs, reward, done, info = env.step(best_action)
             if (done):
-                if (validation_true_classes == info["predicted_class"]):
+                if (validation_true_classes[i] == info["predicted_class"]):
                     hits += 1
                 else:
                     incorrect_prediction_certainty+=info["max_prediciton_value"]

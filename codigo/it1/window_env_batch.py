@@ -95,7 +95,6 @@ class ImageWindowEnvBatch(gym.Env):
         rectangle=pltpatch.Rectangle((self.left,self.bottom),self.right-self.left,self.top-self.bottom,edgecolor='r',facecolor='none',linewidth=3)
         ax.add_patch(rectangle)
         plt.show()
-            
 
     def _get_image_window(self):
         self.left=(self.x)*self.image_size_factor[1]
@@ -119,8 +118,6 @@ class ImageWindowEnvBatch(gym.Env):
     def _get_predicted_class(self,predictions):
         predicted_class=np.argmax(predictions[0])
         return predicted_class
-
-
 
     def _get_reward(self,predictions):
         reward = float(predictions[0,self.true_class])
