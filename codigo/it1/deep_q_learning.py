@@ -16,7 +16,7 @@ LEARNING_RATE = 0.0001
 
 def custom_loss(model, x, y, training,a):
     y_ = model(x)
-    #print("action: {} q_predictions: {} target_predictions: {}".format(a,y_,y))
+    print("action: {} q_predictions: {} target_predictions: {}".format(a,y_,y))
     y_=y_[:,a]
     return mse(y,y_)
     
@@ -217,7 +217,7 @@ def deep_q_learning(env,
         if (i_episode + 1) % validate_every == 0:
             validation_reward,hits,wrong_certanty = validation(q_estimator, validation_env)
             validation_rewards.append((i_episode, validation_reward))
-            print("\rEpisode {}/{}, loss: {} validation_reward: {} ".format(i_episode + 1, num_episodes, loss,validation_reward))
+            print("\rEpisode {}/{}, validation_reward: {} hits: {} mean_wrong_uncertanty: {}".format(i_episode + 1, num_episodes,validation_reward,hits,wrong_certanty))
 
         if (i_episode + 1) % rewards_mean_every==0:
             cumulated_reward/=rewards_mean_every
