@@ -16,7 +16,7 @@ LEARNING_RATE = 0.0001
 
 def custom_loss(model, x, y, training,a):
     y_ = model(x)
-    print("q_predictions: {} target_predictions: {}".format(y_,y))
+    print("action: {} q_predictions: {} target_predictions: {}".format(a,y_,y))
     y_=y_[:,a]
     #one hot encoding
 
