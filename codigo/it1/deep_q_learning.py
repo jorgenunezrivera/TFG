@@ -182,6 +182,7 @@ def deep_q_learning(env,
     training_losses=[]
     cumulated_loss=0
     validation_rewards=[]
+    validation_hits=[]
     # The epsilon decay schedule
     epsilons = np.linspace(epsilon_start, epsilon_end, epsilon_decay_steps)
 
@@ -218,6 +219,7 @@ def deep_q_learning(env,
         if (i_episode + 1) % validate_every == 0:
             validation_reward,hits,wrong_certanty = validation(q_estimator, validation_env)
             validation_rewards.append((i_episode, validation_reward))
+            validation_hits.append((i_episode,hits))
             print("\rEpisode {}/{}, validation_reward: {} hits: {} mean_wrong_uncertanty: {}".format(i_episode + 1, num_episodes,validation_reward,hits,wrong_certanty))
 
         if (i_episode + 1) % rewards_mean_every==0:
@@ -276,6 +278,6 @@ def deep_q_learning(env,
   
 
     q_estimator.save_model()
-    return training_losses, training_rewards ,validation_rewards
+    return training_losses, training_rewards ,validation_rewards, validation_hits
 
 

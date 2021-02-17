@@ -25,7 +25,7 @@ class ImageWindowEnvGenerator(gym.Env):
     
 
     def __init__(self,directory,labels):
-        super(ImageWindowEnvBatch, self).__init__()
+        super(ImageWindowEnvGenerator, self).__init__()
         image_filenames=from_disk_generator.get_filenames(directory)
         self.image_generator = FromDiskGenerator(
             image_filenames, batch_size=1,
@@ -42,7 +42,7 @@ class ImageWindowEnvGenerator(gym.Env):
 
 
     def reset(self):
-        self.img_arr=self.image_generator.__get_item__(self.sample_index)
+        self.img_arr=self.image_generator.__getitem__([self.sample_index])[0]
         label=self.labels[self.sample_index]
         self.true_class=label_index_dict[str(label)]
         self.sample_index+=1#Batches siempre en el mismo orden???

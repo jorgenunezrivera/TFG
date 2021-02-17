@@ -1,5 +1,6 @@
 import tensorflow as tf
-from window_env_batch import ImageWindowEnvBatch
+#from window_env_batch import ImageWindowEnvBatch
+from window_env_generator import ImageWindowEnvGenerator
 import numpy as np
 from tensorflow import keras
 from tensorflow.keras import layers
@@ -23,15 +24,6 @@ VALIDATION_LABELS_FILE="validation_labels.txt"
 NUM_EPISODES=1200
 
 
-image_batch=[]
-filelist=os.listdir(TRAINING_IMAGES_DIR)
-filelist.sort()
-for entry in filelist:
-    filename=os.path.join(TRAINING_IMAGES_DIR,entry)
-    if os.path.isfile(filename) and filename.endswith('.JPEG'):
-        image =tf.keras.preprocessing.image.load_img(filename)
-        img_arr = keras.preprocessing.image.img_to_array(image)
-        image_batch.append(img_arr)
 
 training_labels=[]
 with open(TRAINING_LABELS_FILE) as fp:
@@ -41,15 +33,6 @@ with open(TRAINING_LABELS_FILE) as fp:
        line = fp.readline()
       
 
-validation_image_batch=[]
-validationlist=os.listdir(VALIDATION_IMAGES_DIR)
-validationlist.sort()
-for entry in validationlist:
-    filename=os.path.join(VALIDATION_IMAGES_DIR,entry)
-    if os.path.isfile(filename) and filename.endswith('.JPEG'):
-        image =tf.keras.preprocessing.image.load_img(filename)
-        img_arr = keras.preprocessing.image.img_to_array(image)
-        validation_image_batch.append(img_arr)
 
 validation_labels=[]
 with open(VALIDATION_LABELS_FILE) as fp:
@@ -58,9 +41,9 @@ with open(VALIDATION_LABELS_FILE) as fp:
        validation_labels.append(int(line))
        line = fp.readline()
             
-env=ImageWindowEnvBatch(image_batch,training_labels)
+env=ImageWindowEnvGenerator(TRAINING_IMAGES_DIR,training_labels)
         
-validation_env=ImageWindowEnvBatch(validation_image_batch,validation_labels)
+validation_env=ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR,validation_labels)
 
 N_ACTIONS=env.action_space.n
 IMG_SHAPE=env.observation_space.shape
@@ -69,7 +52,7 @@ initial_ts=time.time()
 
 q_estimator=Estimator(IMG_SHAPE,N_ACTIONS)
 target_estimator=Estimator(IMG_SHAPE,N_ACTIONS)
-training_losses, training_rewards, validation_rewards =deep_q_learning(env,q_estimator,target_estimator,validation_env,num_episodes=NUM_EPISODES,replay_memory_size=10000,
+training_losses, training_rewards, validation_rewards,validation_hits =deep_q_learning(env,q_estimator,target_estimator,validation_env,num_episodes=NUM_EPISODES,replay_memory_size=10000,
                       replay_memory_init_size=2000,update_target_estimator_every=500,validate_every=100,rewards_mean_every=50,discount_factor=1,
                       epsilon_start=1,epsilon_end=0.1,epsilon_decay_steps=NUM_EPISODES*5, batch_size=32)
 
@@ -87,9 +70,11 @@ training_rewards_x=[x[0] for x in training_rewards]
 training_rewards_y=[x[1] for x in training_rewards]
 validation_rewards_x=[x[0] for x in validation_rewards]
 validation_rewards_y=[x[1] for x in validation_rewards]
+validation_hits_x=[x[0] for x in validation_hits]
+validation_hits_y=[x[1] for x in validation_hits]
 
 plt.figure(figsize=(8, 8))
-plt.subplot(2, 1, 1)
+plt.subplot(3, 1, 1)
 plt.plot(training_losses_x,training_losses_y)
 plt.legend(loc='upper right')
 plt.ylabel('Mean Squared Error')
@@ -98,7 +83,7 @@ plt.title('Training Loss')
 plt.xlabel('epoch')
 
 
-plt.subplot(2, 1, 2)
+plt.subplot(3, 1, 2)
 plt.plot(training_rewards_x,training_rewards_y)
 plt.plot(validation_rewards_x,validation_rewards_y,'ro')
 plt.legend(loc='upper right')
@@ -107,6 +92,13 @@ plt.ylim([-1.1,1.1])
 plt.title('Training Rewards')
 plt.xlabel('epoch')
 
+plt.subplot(3, 1, 3)
+plt.plot(validation_hits_x,validation_hits_y)
+plt.legend(loc='upper right')
+plt.ylabel('Rewards')
+plt.ylim([0,1])
+plt.title('Validation hits')
+plt.xlabel('epoch')
 
 plt.show()
 

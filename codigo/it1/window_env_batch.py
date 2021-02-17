@@ -15,8 +15,8 @@ with open("label_to_index_dict.json", "r") as read_file:
 HEIGHT=224
 WIDTH=224
 N_CHANNELS=3
-MAX_STEPS=5
-STEP_SIZE=16
+MAX_STEPS=4
+STEP_SIZE=32
 N_ACTIONS=4
 REWARD_MAXIMIZING=0
 
@@ -81,6 +81,7 @@ class ImageWindowEnvBatch(gym.Env):
                     reward=1
                 if(reward<0):
                     reward=-1
+            reward*=10
             #elif(REWARD_NORMALIZATION):
             #    if(variance!=0):
             #        reward = reward/variance
