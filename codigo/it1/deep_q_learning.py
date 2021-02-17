@@ -16,10 +16,8 @@ LEARNING_RATE = 0.0001
 
 def custom_loss(model, x, y, training,a):
     y_ = model(x)
-    print("action: {} q_predictions: {} target_predictions: {}".format(a,y_,y))
+    #print("action: {} q_predictions: {} target_predictions: {}".format(a,y_,y))
     y_=y_[:,a]
-    #one hot encoding
-
     return mse(y,y_)
     
 def custom_grad(model, inputs, targets,a):
@@ -58,7 +56,7 @@ class Estimator():
           #layers.MaxPooling2D(),
           layers.Flatten(),  
           layers.Dense(512, activation='relu'),
-          layers.Dense(n_actions, activation='softmax')
+          layers.Dense(n_actions)#Tenia un softmax que no venia a cuento
         ])
         self.model.summary()
         self.optimizer=tf.keras.optimizers.RMSprop(LEARNING_RATE,0.99)
