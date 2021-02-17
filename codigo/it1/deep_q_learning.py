@@ -269,7 +269,7 @@ def deep_q_learning(env,
             episode_loss+=loss
             total_t += 1
             if done:
-                cumulated_loss += episode_loss/t
+                cumulated_loss += episode_loss/(t+1)
                 cumulated_reward += reward
                 break
 
