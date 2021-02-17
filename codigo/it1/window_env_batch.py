@@ -70,10 +70,11 @@ class ImageWindowEnvBatch(gym.Env):
         predictions=self._get_predictions(state)
         predicted_class=self._get_predicted_class(predictions)
         max_prediction_value=np.max(predictions)
+        step_reward = self._get_reward(predictions)
         done=(self.n_steps>=MAX_STEPS or action==3)
+        self.history.append((self.x,self.y,self.z,step_reward))
         if done :
-            final_reward = self._get_reward(predictions)
-            reward = final_reward - self.initial_reward
+            reward = step_reward - self.initial_reward
             #self.cumulated_rewards.append(reward)
             #variance=np.var(self.cumulated_rewards)
             if(REWARD_MAXIMIZING):

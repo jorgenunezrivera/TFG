@@ -2,7 +2,8 @@ MSE:
 El loss se calcula y la red se actualiza solo para una acción (la acción escogida en la transicion (s,a,r,d,s_)
 
 Env:
-    Continuar hasta que deje de mejorar. IR GUARDANDO RESULTADOS; X; Y; Z;
+    Continuar hasta que deje de mejorar.
+    IR GUARDANDO RESULTADOS; X; Y; Z;
 
 Entrenamiento:
     Graficas: media cada ~100 para qe se veamejor la evolucion del loss y los rewards *
@@ -12,8 +13,10 @@ Entrenamiento:
 Validacion:
     -10000 Imagenes
     -Cargar directorio (funciones que me paso brais)
-    -Cuando se prediga una clase incorrecta, anotar la confianza del predictor en la clases maxima
-    -Calcular tambien aciertos
+    (Implementar en env, env que reciba una lista en vez del array )
+
+    -Cuando se prediga una clase incorrecta, anotar la confianza del predictor en la clases maxima*
+    -Calcular tambien aciertos*
 
 
 -17/02 18:12
