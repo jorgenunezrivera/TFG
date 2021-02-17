@@ -43,7 +43,7 @@ def validation(q_estimator, env):
                 if (validation_true_classes[i] == info["predicted_class"]):
                     hits += 1
                 else:
-                    incorrect_prediction_certainty+=info["max_prediciton_value"]
+                    incorrect_prediction_certainty+=info["max_prediction_value"]
                 rewards.append(reward)
                 break
     return np.mean(rewards),hits/NUM_VALIDATION_IMAGES,incorrect_prediction_certainty/NUM_VALIDATION_IMAGES
