@@ -21,3 +21,6 @@ Validacion:
 
 -17/02 18:12
 
+Modificar net?añadir otra capa de conv parra que quede 5*5 (o 3*3)
+Nunca elije la accion 3
+MSE/MAE??
