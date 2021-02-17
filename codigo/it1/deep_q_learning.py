@@ -16,6 +16,7 @@ LEARNING_RATE = 0.0001
 
 def custom_loss(model, x, y, training,a):
     y_ = model(x)
+    print("q_predictions: {} target_predictions: {}".format(y_,y))
     y_=y_[:,a]
     #one hot encoding
 
@@ -43,8 +44,6 @@ class Estimator():
     def __init__(self,input_shape,n_actions):
         self._build_model(input_shape,n_actions)
 
-    
-        
         
     def _build_model(self,input_shape,n_actions):
         """
