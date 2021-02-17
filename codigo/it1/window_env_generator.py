@@ -93,7 +93,7 @@ class ImageWindowEnvGenerator(gym.Env):
 
         else:
             reward=0#Reward parcial?
-        return state,reward,done,{"predicted_class" : predicted_class, "max_predition_value":max_prediction_value}
+        return state,reward,done,{"predicted_class" : predicted_class, "max_prediction_value":max_prediction_value}
 
     def render(self, mode='human', close=False):
         fig,ax=plt.subplots(1)
