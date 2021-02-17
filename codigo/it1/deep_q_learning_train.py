@@ -69,8 +69,8 @@ initial_ts=time.time()
 
 q_estimator=Estimator(IMG_SHAPE,N_ACTIONS)
 target_estimator=Estimator(IMG_SHAPE,N_ACTIONS)
-episode_losses, episode_rewards, validation_rewards =deep_q_learning(env,q_estimator,target_estimator,validation_env,num_episodes=NUM_EPISODES,replay_memory_size=10000,
-                      replay_memory_init_size=64,update_target_estimator_every=500,discount_factor=1,
+training_losses, training_rewards, validation_rewards =deep_q_learning(env,q_estimator,target_estimator,validation_env,num_episodes=NUM_EPISODES,replay_memory_size=10000,
+                      replay_memory_init_size=64,update_target_estimator_every=500,validate_every=1000,rewards_mean_every=100,discount_factor=1,
                       epsilon_start=1,epsilon_end=0.1,epsilon_decay_steps=NUM_EPISODES*5, batch_size=32)
 
 elapsed_time=time.time()-initial_ts
@@ -78,9 +78,11 @@ print("Elapsed time: " + str(elapsed_time))
 print("Num episodes: " + str(NUM_EPISODES))
 print("secs/episode:" + str(elapsed_time/NUM_EPISODES))
 
+
 plt.figure(figsize=(8, 8))
 plt.subplot(2, 1, 1)
-plt.plot(episode_losses,  label='Training Loss')
+for loss in training_losses:
+    plt.plot(loss[0],loss[1])
 plt.legend(loc='upper right')
 plt.ylabel('Mean Squared Error')
 plt.ylim([0,1])
@@ -89,8 +91,8 @@ plt.xlabel('epoch')
 
 
 plt.subplot(2, 1, 2)
-
-plt.plot(episode_rewards, label='Rewards')
+for reward in training_rewards:
+    plt.plot(reward[0],reward[1])
 for reward in validation_rewards:
     plt.plot(reward[0],reward[1],'ro')
 plt.legend(loc='upper right')
@@ -101,10 +103,6 @@ plt.xlabel('epoch')
 
 
 plt.show()
-
-training_reward_mean=np.mean(episode_rewards)
-training_reward_variance=np.var(episode_rewards)
-print("training reward : mean: " + str(training_reward_mean)+ " variance: " + str(training_reward_variance))
 
 
 validation_reward_list=[x[1] for x in validation_rewards]

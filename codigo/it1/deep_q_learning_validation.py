@@ -10,7 +10,9 @@ import random
 import matplotlib.pyplot as plt
 
 #from deep_q_learning import Estimator
-
+#TODO:loader que cargue 10000 imagenes del disco duro
+#Calcular porcentaje de acciertos
+#En los fallos, visaualizar certeza
 
 NUM_VALIDATION_IMAGES = 25 #max 100
 

@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 from deep_q_learning_validation import validation
 
 mse = tf.keras.losses.MeanSquaredError() #categoricalcrossentropy
-LEARNING_RATE = 0.001
+LEARNING_RATE = 0.0001
 
 def custom_loss(model, x, y, training,a):
     y_ = model(x)
@@ -140,6 +140,8 @@ def deep_q_learning(env,
                     replay_memory_size=500000,
                     replay_memory_init_size=50000,
                     update_target_estimator_every=10000,
+                    validate_every=1000,
+                    rewards_mean_every=100,
                     discount_factor=0.99,
                     epsilon_start=1.0,
                     epsilon_end=0.1,
@@ -177,8 +179,10 @@ def deep_q_learning(env,
     total_t=0
     
     # Keeps track of useful statistics (PROVISIONAL)
-    episode_rewards=np.zeros(num_episodes)
-    episode_losses=np.zeros(num_episodes)
+    training_rewards=[]
+    cumulated_reward=0
+    training_losses=[]
+    cumulated_loss=0
     validation_rewards=[]
     # The epsilon decay schedule
     epsilons = np.linspace(epsilon_start, epsilon_end, epsilon_decay_steps)
@@ -213,6 +217,18 @@ def deep_q_learning(env,
         loss = None
         episode_loss=0
         # One step in the environment
+        if (i_episode + 1) % validate_every == 0:
+            validation_reward = validation(q_estimator, validation_env)
+            validation_rewards.append((i_episode, validation_reward))
+            print("\rEpisode {}/{}, loss: {} validation_reward: {} ".format(i_episode + 1, num_episodes, loss,validation_reward))
+
+        if (i_episode + 1) % rewards_mean_every:
+            cumulated_reward/=rewards_mean_every
+            training_rewards.append((i_episode,cumulated_reward))
+            cumulated_loss/=rewards_mean_every
+            training_losses.append((i_episode,cumulated_loss))
+            cumulated_reward=cumulated_loss=0
+
         for t in itertools.count():
 
             # Epsilon for this time step
@@ -221,13 +237,6 @@ def deep_q_learning(env,
             # Maybe update the target estimator
             if (total_t+1) % update_target_estimator_every == 0:
                 target_estimator.copy_weights(q_estimator)
-                validation_reward=validation(q_estimator,validation_env)
-                validation_rewards.append((i_episode,validation_reward))
-                print("\nT : " + str(total_t))
-                print("\nCopied model parameters to target network.")
-                print("\rEpisode {}/{}, loss: {} validation_reward: {} ".format(i_episode + 1, num_episodes, loss,validation_reward))
-
-    
 
             # Take a step
             action_probs = policy(state, epsilon)            
@@ -260,17 +269,15 @@ def deep_q_learning(env,
             episode_loss+=loss
             total_t += 1
             if done:
-                episode_losses[i_episode]=episode_loss/t
-                episode_rewards[i_episode] = reward                
+                cumulated_loss += episode_loss/t
+                cumulated_reward += reward
                 break
 
             state = next_state
             
   
-        #yield total_t, plotting.EpisodeStats(
-        #    episode_lengths=stats.episode_lengths[:i_episode+1],
-        #    episode_rewards=stats.episode_rewards[:i_episode+1])
+
     q_estimator.save_model()
-    return episode_losses, episode_rewards  ,validation_rewards    
+    return training_losses, training_rewards ,validation_rewards
 
 

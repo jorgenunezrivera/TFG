@@ -8,7 +8,7 @@ import tensorflow as tf
 from tensorflow import keras
 import json
 
-
+#TODO:Info sobre clase correcta y sobre valor de prediccion maxima
 
 with open("label_to_index_dict.json", "r") as read_file:
     label_index_dict = json.load(read_file)
@@ -35,6 +35,7 @@ class ImageWindowEnvBatch(gym.Env):
         self.sample_index=0
         self.num_samples=len(img_arr_batch)
         self.labels=labels
+        self.history=[] #(x,y,z,return)
         #self.cumulated_rewards=[]
 
     def reset(self):
