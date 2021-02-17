@@ -62,7 +62,7 @@ class ImageWindowEnvBatch(gym.Env):
         elif action==1:
             self.y+=STEP_SIZE
         elif action==2:
-            self.z+=STEP_SIZE
+            self.z+=STEP_SIZE=
         elif action==3:
             pass
         self.n_steps+=1
@@ -74,13 +74,15 @@ class ImageWindowEnvBatch(gym.Env):
             final_reward = self._get_reward(predictions)
             reward = final_reward - self.initial_reward
             self.cumulated_rewards.append(reward)
+            variance=np.var(self.cumulated_rewards)
             if(REWARD_MAXIMIZING):
                 if(reward>0):
                     reward=1
                 if(reward<0):
                     reward=-1
             elif(REWARD_NORMALIZATION):
-                reward = reward/np.var(self.cumulated_rewards)
+                if(variance!=0):
+                    reward = reward/variance
 
             #if(self.predicted_class==self.true_class):
 
