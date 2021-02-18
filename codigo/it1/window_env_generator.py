@@ -102,10 +102,11 @@ class ImageWindowEnvGenerator(gym.Env):
         self.history.append((self.x, self.y, self.z, step_reward, self.predicted_class, max_prediction_value))
         if done:
             reward = step_reward - self.initial_reward
+            print("Reward: {}".format(reward))
             reward *= 10
         else:
             reward = 0  # Reward parcial?
-        print("Reward: {}".format(reward))
+
         return state, reward, done, {"predicted_class": self.predicted_class,
                                      "max_prediction_value": max_prediction_value,
                                      "hit": (self.predicted_class == self.true_class)}
