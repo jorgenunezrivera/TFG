@@ -43,9 +43,10 @@ class ImageWindowEnvGenerator(gym.Env):
         self.num_samples = self.image_generator.__len__()
         self.labels = labels
         self.x = self.y = self.z = 0
-        self.history = []  # (x,y,z,return)
+         # (x,y,z,return)
         self.true_class = 0
         self.predicted_class = 0
+        self.history = []
 
     def __len__(self):
         return self.num_samples
@@ -67,6 +68,7 @@ class ImageWindowEnvGenerator(gym.Env):
         self.predicted_class = self._get_predicted_class(predictions)
         self.initial_reward = self._get_reward(predictions)
         print("Initial_rewrd: {}".format(self.initial_reward))
+        self.history = []
         return image_window
 
     def step(self, action):
