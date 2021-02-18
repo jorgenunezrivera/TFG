@@ -2,7 +2,7 @@ MSE:
 El loss se calcula y la red se actualiza solo para una acción (la acción escogida en la transicion (s,a,r,d,s_)
 
 Env:
-    Continuar hasta que deje de mejorar.
+    Continuar hasta que deje de mejorar.*
     IR GUARDANDO RESULTADOS; X; Y; Z;*
 
 Entrenamiento:
@@ -22,7 +22,7 @@ Validacion:
 -17/02 18:12
 
 Modificar net?añadir otra capa de conv parra que quede 5*5 (o 3*3)
-Nunca elije la accion 3
+Nunca elije la accion 3*
 MSE/MAE??
 Con Mean absolute error y TD 0.00001 parece "menos estable" pero alcanza mejores resultados (0.84)
 con MSE y td 0.00001 parece mas estable

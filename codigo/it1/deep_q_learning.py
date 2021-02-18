@@ -10,10 +10,10 @@ import os
 import random
 import matplotlib.pyplot as plt
 from deep_q_learning_validation import validation
+from random_env_test import random_env_test
 
 mse = tf.keras.losses.MeanSquaredError() #categoricalcrossentropy
 mae = tf.keras.losses.MeanAbsoluteError()
-LEARNING_RATE = 0.000001
 
 def custom_loss(model, x, y, training,a):
     y_ = model(x)
@@ -40,14 +40,15 @@ class Estimator():
     This network is used for both the Q-Network and the Target Network.
     """
 
-    def __init__(self,input_shape,n_actions):
-        self._build_model(input_shape,n_actions)
+    def __init__(self,input_shape,n_actions,learning_rate):
+        self._build_model(input_shape,n_actions,learning_rate)
 
         
-    def _build_model(self,input_shape,n_actions):
+    def _build_model(self,input_shape,n_actions,learning_rate):
         """
         Builds the Tensorflow model.
         """
+        self.learning_rate=learning_rate
         self.model = keras.Sequential([
           layers.Conv2D(32, (8, 8), strides=(4, 4),  activation='relu', input_shape=input_shape),
           #layers.MaxPooling2D(),
@@ -60,7 +61,7 @@ class Estimator():
           layers.Dense(n_actions)#Tenia un softmax que no venia a cuento
         ])
         self.model.summary()
-        self.optimizer=tf.keras.optimizers.RMSprop(LEARNING_RATE,0.99)
+        self.optimizer=tf.keras.optimizers.RMSprop(self.learning_rate,0.99)
 
     def predict(self, state):
         """
@@ -192,6 +193,7 @@ def deep_q_learning(env,
         env.action_space.n)
 
     # Populate the replay memory with initial experience
+    print("Training {} steps with LR= {}".format(num_episodes,q_estimator.learning_rate))
     print("Populating replay memory...")
     state = env.reset()
     #state = np.stack([state] * 4, axis=2)
@@ -206,6 +208,9 @@ def deep_q_learning(env,
         else:
             state = next_state
     print("Done")
+
+    random_reward,random_hits=random_env_test(env)
+    print("Random test on env: training reward mean: {} , hits: {}%".format(random_reward, random_hits))
 
     for i_episode in range(num_episodes):
 

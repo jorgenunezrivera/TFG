@@ -16,12 +16,14 @@ with open("label_to_index_dict.json", "r") as read_file:
 HEIGHT=224
 WIDTH=224
 N_CHANNELS=3
+
 MAX_STEPS=4
 STEP_SIZE=32
 N_ACTIONS=4
 REWARD_MAXIMIZING=0
 CONTINUE_UNTIL_DIES=0
-
+if(CONTINUE_UNTIL_DIES):
+    N_ACTIONS-=1
 
 class ImageWindowEnvGenerator(gym.Env):
     
@@ -41,6 +43,9 @@ class ImageWindowEnvGenerator(gym.Env):
         self.num_samples=self.image_generator.__len__()
         self.labels=labels
         self.history=[] #(x,y,z,return)
+
+    def __len__(self):
+        return self.num_samples
 
 
     def reset(self):
@@ -81,27 +86,25 @@ class ImageWindowEnvGenerator(gym.Env):
         max_prediction_value=np.max(predictions)
         step_reward = self._get_reward(predictions)
         if CONTINUE_UNTIL_DIES:
-            done=step_reward<=self.history[-1][3]
+            if len(self.history):
+                done=step_reward<=self.history[-1][3]
+            else:
+                done=0
         else:
             done=(self.n_steps>=MAX_STEPS ) #or action==3
         self.history.append((self.x,self.y,self.z,step_reward))
         if done :
             reward = step_reward - self.initial_reward
-            #self.cumulated_rewards.append(reward)
-            #variance=np.var(self.cumulated_rewards)
             if(REWARD_MAXIMIZING):
                 if(reward>0):
                     reward=1
                 if(reward<0):
                     reward=-1
             reward*=10
-            #elif(REWARD_NORMALIZATION):
-            #    if(variance!=0):
-            #        reward = reward/variance
 
         else:
             reward=0#Reward parcial?
-        return state,reward,done,{"predicted_class" : predicted_class, "max_prediction_value":max_prediction_value}
+        return state,reward,done,{"predicted_class" : predicted_class, "max_prediction_value":max_prediction_value, "hit":self.predicted_class==self.true_class}
 
     def render(self, mode='human', close=False):
         fig,ax=plt.subplots(1)
