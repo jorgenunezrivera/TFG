@@ -20,7 +20,8 @@ N_CHANNELS = 3
 MAX_STEPS = 4
 STEP_SIZE = 32
 N_ACTIONS = 4
-REWARD_MAXIMIZING = 0
+INTERMEDIATE_REWARDS = 0
+INTERMEDIATE_REWARDS_FACTOR = 0.5
 CONTINUE_UNTIL_DIES = 0
 if (CONTINUE_UNTIL_DIES):
     N_ACTIONS -= 1
@@ -82,7 +83,7 @@ class ImageWindowEnvGenerator(gym.Env):
             self.z += 1
         elif action == 3:
             pass
-        self.n_steps += 1
+
         if (self.x > 6): self.x = 6
         if (self.y > 6): self.y = 6
         if (self.z > 6): self.z = 6
@@ -91,22 +92,23 @@ class ImageWindowEnvGenerator(gym.Env):
         self.predicted_class = self._get_predicted_class(predictions)
         max_prediction_value = np.max(predictions)
         step_reward = self._get_reward(predictions)
-        done = 0
         if CONTINUE_UNTIL_DIES:
-            #print("last step return: {}, step return : {}".format(self.history[-1][3], step_reward))
             if step_reward <= self.history[-1][3]:
-                done = 1
-                self.x, self.y, self.z, step_reward, self.predicted_class, max_prediction_value = self.history[-1]
+                self.n_steps += 1
         else:
-            done = (self.n_steps >= MAX_STEPS)  # or action==3
-        self.history.append((self.x, self.y, self.z, step_reward, self.predicted_class, max_prediction_value))
+            self.n_steps += 1
+        done = (self.n_steps >= MAX_STEPS)  # or action==3
+
         if done:
             reward = step_reward - self.initial_reward
             #print("Reward: {}".format(reward))
             #reward *= 10
         else:
-            reward = 0  # Reward parcial?
-
+            if(INTERMEDIATE_REWARDS):
+                reward = (step_reward-self.history[-1][3])*INTERMEDIATE_REWARDS_FACTOR
+            else:
+                reward=0
+        self.history.append((self.x, self.y, self.z, step_reward, self.predicted_class, max_prediction_value))
         return state, reward, done, {"predicted_class": self.predicted_class,
                                      "max_prediction_value": max_prediction_value,
                                      "hit": (self.predicted_class == self.true_class)}

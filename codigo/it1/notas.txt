@@ -28,3 +28,8 @@ Con Mean absolute error y TD 0.00001 parece "menos estable" pero alcanza mejores
 con MSE y td 0.00001 parece mas estable
 
 El loss se va porlas nubes!!
+Los pesos explotan porque no hay negativos
+Se devuelve un ultimoi poaso como si fuera el penultimo dando lugar a resultados incorrectos
+¡REWARDS INTERMEDIOS!->mejora desde el anterior paso
+REWARD FINAL:mejora desde el paso inicial
+
