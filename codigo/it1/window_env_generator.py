@@ -66,6 +66,7 @@ class ImageWindowEnvGenerator(gym.Env):
         predictions = self._get_predictions(image_window)
         self.predicted_class = self._get_predicted_class(predictions)
         self.initial_reward = self._get_reward(predictions)
+        print("Initial_rewrd: {}".format(self.initial_reward))
         return image_window
 
     def step(self, action):
