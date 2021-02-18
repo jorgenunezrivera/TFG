@@ -88,21 +88,17 @@ class ImageWindowEnvGenerator(gym.Env):
         step_reward = self._get_reward(predictions)
         if CONTINUE_UNTIL_DIES:
             if len(self.history):
-                done = step_reward <= self.history[-1][3]
+                if step_reward <= self.history[-1][3]:
+                    done = 1
+                    self.x,self.y,self.z,step_reward,self.predicted_class,max_prediction_value = self.history[-1]
             else:
                 done = 0
         else:
             done = (self.n_steps >= MAX_STEPS)  # or action==3
-        self.history.append((self.x, self.y, self.z, step_reward))
+        self.history.append((self.x, self.y, self.z, step_reward,self.predicted_class,max_prediction_value))
         if done:
             reward = step_reward - self.initial_reward
-            if (REWARD_MAXIMIZING):
-                if (reward > 0):
-                    reward = 1
-                if (reward < 0):
-                    reward = -1
             reward *= 10
-
         else:
             reward = 0  # Reward parcial?
         return state, reward, done, {"predicted_class": self.predicted_class, "max_prediction_value": max_prediction_value,
