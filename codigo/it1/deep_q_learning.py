@@ -210,7 +210,7 @@ def deep_q_learning(env,
             state = next_state
     print("Done")
 
-    random_reward,random_hits=random_env_test(env)
+    random_reward,random_hits=random_env_test(validation_env)
     print("Random test on env: training reward mean: {} , hits: {}%".format(random_reward, random_hits))
 
     for i_episode in range(num_episodes):
