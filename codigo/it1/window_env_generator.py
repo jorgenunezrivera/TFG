@@ -103,7 +103,7 @@ class ImageWindowEnvGenerator(gym.Env):
         if done:
             reward = step_reward - self.initial_reward
             #print("Reward: {}".format(reward))
-            reward *= 10
+            #reward *= 10
         else:
             reward = 0  # Reward parcial?
 
