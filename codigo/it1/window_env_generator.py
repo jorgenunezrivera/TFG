@@ -20,6 +20,8 @@ MAX_STEPS=4
 STEP_SIZE=32
 N_ACTIONS=4
 REWARD_MAXIMIZING=0
+CONTINUE_UNTIL_DIES=0
+
 
 class ImageWindowEnvGenerator(gym.Env):
     
@@ -62,20 +64,26 @@ class ImageWindowEnvGenerator(gym.Env):
     def step (self,action):
         #0: right 1:down 2: zoom in 3: end
         if action==0:
-            self.x+=STEP_SIZE
+            self.x+=1
         elif action==1:
-            self.y+=STEP_SIZE
+            self.y+=1
         elif action==2:
-            self.z+=STEP_SIZE
+            self.z+=1
         elif action==3:
             pass
         self.n_steps+=1
+        if (self.x > 6): self.x = 6
+        if (self.y > 6): self.y = 6
+        if (self.z > 6): self.z = 6
         state=self._get_image_window()
         predictions=self._get_predictions(state)
         predicted_class=self._get_predicted_class(predictions)
         max_prediction_value=np.max(predictions)
         step_reward = self._get_reward(predictions)
-        done=(self.n_steps>=MAX_STEPS ) #or action==3
+        if CONTINUE_UNTIL_DIES:
+            done=step_reward<=self.history[-1][3]
+        else:
+            done=(self.n_steps>=MAX_STEPS ) #or action==3
         self.history.append((self.x,self.y,self.z,step_reward))
         if done :
             reward = step_reward - self.initial_reward
@@ -103,13 +111,13 @@ class ImageWindowEnvGenerator(gym.Env):
         plt.show()
 
     def _get_image_window(self):
-        self.left=(self.x)*self.image_size_factor[1]
+        self.left=(self.x)*self.image_size_factor[1]*STEP_SIZE
         self.left=np.maximum(self.left,0)
-        self.right=self.image_shape[1]+(self.x-self.z)*self.image_size_factor[1]
+        self.right=self.image_shape[1]+(self.x-self.z)*self.image_size_factor[1]*STEP_SIZE
         self.right=np.minimum(self.right,self.image_shape[1])
-        self.top=(self.y)*self.image_size_factor[0]
+        self.top=(self.y)*self.image_size_factor[0]*STEP_SIZE
         self.top=np.maximum(self.top,0)
-        self.bottom=self.image_shape[0]+(self.y-self.z)*self.image_size_factor[0]
+        self.bottom=self.image_shape[0]+(self.y-self.z)*self.image_size_factor[0]*STEP_SIZE
         self.bottom=np.minimum(self.bottom,self.image_shape[0])
         image_window=self.img_arr[self.top:self.bottom,self.left:self.right]
         image_window_resized=tf.image.resize(image_window,size=(HEIGHT, WIDTH))#.numpy() (comprobar performance)

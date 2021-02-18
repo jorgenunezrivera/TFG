@@ -3,7 +3,7 @@ El loss se calcula y la red se actualiza solo para una acción (la acción escog
 
 Env:
     Continuar hasta que deje de mejorar.
-    IR GUARDANDO RESULTADOS; X; Y; Z;
+    IR GUARDANDO RESULTADOS; X; Y; Z;*
 
 Entrenamiento:
     Graficas: media cada ~100 para qe se veamejor la evolucion del loss y los rewards *
@@ -12,8 +12,8 @@ Entrenamiento:
 
 Validacion:
     -10000 Imagenes
-    -Cargar directorio (funciones que me paso brais)
-    (Implementar en env, env que reciba una lista en vez del array )
+    -Cargar directorio (funciones que me paso brais)*
+    (Implementar en env, env que reciba una lista en vez del array )*
 
     -Cuando se prediga una clase incorrecta, anotar la confianza del predictor en la clases maxima*
     -Calcular tambien aciertos*
