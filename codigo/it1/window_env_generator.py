@@ -84,7 +84,6 @@ class ImageWindowEnvGenerator(gym.Env):
         state = self._get_image_window()
         predictions = self._get_predictions(state)
         self.predicted_class = self._get_predicted_class(predictions)
-        print("predicted class : {}  true class: {}".format(self.predicted_class,self.true_class))
         max_prediction_value = np.max(predictions)
         step_reward = self._get_reward(predictions)
         if CONTINUE_UNTIL_DIES:
