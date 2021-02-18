@@ -89,8 +89,8 @@ class ImageWindowEnvGenerator(gym.Env):
         step_reward = self._get_reward(predictions)
         done = 0
         if CONTINUE_UNTIL_DIES:
-            print("last step return: {}, step return : {}".format(self.history[-1][3],step_reward))
             if len(self.history):
+                print("last step return: {}, step return : {}".format(self.history[-1][3], step_reward))
                 if step_reward <= self.history[-1][3]:
                     done = 1
                     self.x, self.y, self.z, step_reward, self.predicted_class, max_prediction_value = self.history[-1]
