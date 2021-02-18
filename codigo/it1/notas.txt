@@ -24,3 +24,5 @@ Validacion:
 Modificar net?añadir otra capa de conv parra que quede 5*5 (o 3*3)
 Nunca elije la accion 3
 MSE/MAE??
+Con Mean absolute error y TD 0.00001 parece "menos estable" pero alcanza mejores resultados (0.84)
+con MSE y td 0.00001 parece mas estable

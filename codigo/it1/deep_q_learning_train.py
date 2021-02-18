@@ -21,7 +21,7 @@ TRAINING_IMAGES_DIR="train_200"
 VALIDATION_IMAGES_DIR="validation"
 TRAINING_LABELS_FILE="training_labels.txt"
 VALIDATION_LABELS_FILE="validation_labels.txt"
-NUM_EPISODES=12000
+NUM_EPISODES=6000
 
 
 
@@ -77,7 +77,7 @@ plt.figure(figsize=(8, 8))
 plt.subplot(3, 1, 1)
 plt.plot(training_losses_x,training_losses_y)
 plt.legend(loc='upper right')
-plt.ylabel('Mean Squared Error')
+plt.ylabel('Mean Absolute Error')
 plt.ylim([0,1])
 plt.title('Training Loss')
 plt.xlabel('epoch')
@@ -95,8 +95,8 @@ plt.xlabel('epoch')
 plt.subplot(3, 1, 3)
 plt.plot(validation_hits_x,validation_hits_y)
 plt.legend(loc='upper right')
-plt.ylabel('Rewards')
-plt.ylim([0,1])
+plt.ylabel('Hits')
+plt.ylim([0.6,0.9])
 plt.title('Validation hits')
 plt.xlabel('epoch')
 
