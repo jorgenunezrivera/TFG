@@ -38,8 +38,26 @@ class Estimator():
     def __init__(self,input_shape,n_actions,learning_rate):
         self._build_model(input_shape,n_actions,learning_rate)
 
+    def _build_model(self, input_shape, n_actions, learning_rate):
+        """
+        Builds the Tensorflow model.
+        """
+        self.learning_rate = learning_rate
+        self.model = keras.Sequential([
+            layers.Conv2D(32, (8, 8), strides=(4, 4), activation='relu', input_shape=input_shape),
+            # layers.MaxPooling2D(),
+            layers.Conv2D(64, (4, 4), strides=(2, 2), activation='relu'),
+            # layers.MaxPooling2D(),
+            layers.Conv2D(64, (3, 3), strides=(2, 2), activation='relu'),
+            # layers.MaxPooling2D(),
+            layers.Flatten(),
+            layers.Dense(512, activation='relu'),
+            layers.Dense(n_actions)  # Tenia un softmax que no venia a cuento
+        ])
+        self.model.summary()
+        self.optimizer = tf.keras.optimizers.RMSprop(self.learning_rate, 0.99)
         
-    def _build_model(self,input_shape,n_actions,learning_rate):
+    def _build_model_norm(self,input_shape,n_actions,learning_rate):
         """
         Builds the Tensorflow model.
         """
