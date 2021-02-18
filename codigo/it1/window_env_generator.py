@@ -106,7 +106,7 @@ class ImageWindowEnvGenerator(gym.Env):
 
         else:
             reward = 0  # Reward parcial?
-        return state, reward, done, {"predicted_class": predicted_class, "max_prediction_value": max_prediction_value,
+        return state, reward, done, {"predicted_class": self.predicted_class, "max_prediction_value": max_prediction_value,
                                      "hit": (self.predicted_class == self.true_class)}
 
     def render(self, mode='human', close=False):
