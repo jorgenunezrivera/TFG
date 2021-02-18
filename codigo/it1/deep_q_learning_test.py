@@ -45,15 +45,15 @@ for i in range(len(env)):
     for t in itertools.count():
         q_values = q_estimator.predict(np.array([obs]))
         best_action = np.argmax(q_values)
-        #print("q_values : " + str(q_values))
-        #print("Action: "+ str(best_action))
+        print("q_values : " + str(q_values))
+        print("Action: "+ str(best_action))
         obs, reward, done, info = env.step(best_action)
         if i % 6 == 0:
             env.render()
         if(done):
             rewards.append(reward)
             hits+=info["hit"]
-            #print("reward: "+ str(reward))
+            print("reward: "+ str(reward))
             break
 
 validate_time=time()-seconds-load_time
