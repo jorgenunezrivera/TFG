@@ -13,9 +13,7 @@ def random_env_test(env):
         env.render
         for t in itertools.count():
             best_action = np.random.randint(N_ACTIONS)
-            print("Action: "+ str(best_action))
             obs, reward, done, info = env.step(best_action)
-            print("Reward: "+ str(reward))
             if(done):
                 rewards.append(reward)
                 if(info["hit"]):
