@@ -1,12 +1,9 @@
 import tensorflow as tf
-from window_env_batch import ImageWindowEnvBatch
+from window_env_generator import ImageWindowEnvGenerator
 import numpy as np
 from tensorflow import keras
-from tensorflow.keras import layers
 import itertools
-import sys
 import os
-import random
 import matplotlib.pyplot as plt
 from time import time
 from deep_q_learning import Estimator
@@ -21,15 +18,6 @@ q_estimator=Estimator((224,224,3),6,0.00001)
 q_estimator.load_model()
 seconds=time()
 
-validation_image_batch=[]
-validationlist=os.listdir(VALIDATION_IMAGES_DIR)
-validationlist.sort()
-for entry in validationlist:
-    filename=os.path.join(VALIDATION_IMAGES_DIR,entry)
-    if os.path.isfile(filename) and filename.endswith('.JPEG'):
-        image =tf.keras.preprocessing.image.load_img(filename)
-        img_arr = keras.preprocessing.image.img_to_array(image)
-        validation_image_batch.append(img_arr)
 
 validation_labels=[]
 validation_true_classes=[]
@@ -42,13 +30,13 @@ with open(VALIDATION_LABELS_FILE) as fp:
 
 
         
-env=ImageWindowEnvBatch(validation_image_batch,validation_labels)
+env=ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR,validation_labels)
 load_time=time()-seconds
 print("load time: " + str(load_time))
 
 rewards = []
-predicted_classes=[]
-for i in range(len(validation_image_batch)):
+hits=0
+for i in range(len(env)):
     predicted_class=0
     obs=env.reset()
 
@@ -62,10 +50,9 @@ for i in range(len(validation_image_batch)):
         obs, reward, done, info = env.step(best_action)
         if i % 6 == 0:
             env.render()
-        predicted_class=info["predicted_class"]
         if(done):
             rewards.append(reward)
-            predicted_classes.append(predicted_class)
+            hits+=info["hit"]
             print("reward: "+ str(reward))
             break
 
@@ -74,10 +61,8 @@ print("validate time: " + str(validate_time))
 print("rewards mean:")
 print(np.mean(rewards))
 correct_predictions=0
-for i in range(25):
-    if(validation_true_classes[i]==predicted_classes[i]):
-        correct_predictions+=1
-print("Correct predictions. {} / {} ({}%)".format(correct_predictions,len(validation_image_batch),100*correct_predictions/len(validation_image_batch)))
+
+print("Correct predictions. {} / {} ({}%)".format(hits,len(env),100*hits/len(env)))
 
 
 plt.figure(figsize=(8, 8))

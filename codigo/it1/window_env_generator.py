@@ -42,9 +42,10 @@ class ImageWindowEnvGenerator(gym.Env):
         self.sample_index = 0
         self.num_samples = self.image_generator.__len__()
         self.labels = labels
+        self.x = self.y = self.z = 0
         self.history = []  # (x,y,z,return)
-        self.true_class=0
-        self.predicted_class=0
+        self.true_class = 0
+        self.predicted_class = 0
 
     def __len__(self):
         return self.num_samples
@@ -86,21 +87,22 @@ class ImageWindowEnvGenerator(gym.Env):
         self.predicted_class = self._get_predicted_class(predictions)
         max_prediction_value = np.max(predictions)
         step_reward = self._get_reward(predictions)
-        done=0
-        if CONTINUE_UNTIL_DIES :
+        done = 0
+        if CONTINUE_UNTIL_DIES:
             if len(self.history):
                 if step_reward <= self.history[-1][3]:
-                   done = 1
-                   self.x,self.y,self.z,step_reward,self.predicted_class,max_prediction_value = self.history[-1]
+                    done = 1
+                    self.x, self.y, self.z, step_reward, self.predicted_class, max_prediction_value = self.history[-1]
         else:
             done = (self.n_steps >= MAX_STEPS)  # or action==3
-        self.history.append((self.x, self.y, self.z, step_reward,self.predicted_class,max_prediction_value))
+        self.history.append((self.x, self.y, self.z, step_reward, self.predicted_class, max_prediction_value))
         if done:
             reward = step_reward - self.initial_reward
             reward *= 10
         else:
             reward = 0  # Reward parcial?
-        return state, reward, done, {"predicted_class": self.predicted_class, "max_prediction_value": max_prediction_value,
+        return state, reward, done, {"predicted_class": self.predicted_class,
+                                     "max_prediction_value": max_prediction_value,
                                      "hit": (self.predicted_class == self.true_class)}
 
     def render(self, mode='human', close=False):
