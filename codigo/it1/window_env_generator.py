@@ -68,7 +68,7 @@ class ImageWindowEnvGenerator(gym.Env):
         self.predicted_class = self._get_predicted_class(predictions)
         self.initial_reward = self._get_reward(predictions)
         max_prediction_value = np.max(predictions)
-        print("Initial_rewrd: {}".format(self.initial_reward))
+        #print("Initial_rewrd: {}".format(self.initial_reward))
         self.history = [(0,0,0,self.initial_reward,self.predicted_class,max_prediction_value)]
         return image_window
 
@@ -93,7 +93,7 @@ class ImageWindowEnvGenerator(gym.Env):
         step_reward = self._get_reward(predictions)
         done = 0
         if CONTINUE_UNTIL_DIES:
-            print("last step return: {}, step return : {}".format(self.history[-1][3], step_reward))
+            #print("last step return: {}, step return : {}".format(self.history[-1][3], step_reward))
             if step_reward <= self.history[-1][3]:
                 done = 1
                 self.x, self.y, self.z, step_reward, self.predicted_class, max_prediction_value = self.history[-1]
@@ -102,7 +102,7 @@ class ImageWindowEnvGenerator(gym.Env):
         self.history.append((self.x, self.y, self.z, step_reward, self.predicted_class, max_prediction_value))
         if done:
             reward = step_reward - self.initial_reward
-            print("Reward: {}".format(reward))
+            #print("Reward: {}".format(reward))
             reward *= 10
         else:
             reward = 0  # Reward parcial?
