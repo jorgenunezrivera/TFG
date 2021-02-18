@@ -36,7 +36,7 @@ class Estimator():
     """
 
     def __init__(self,input_shape,n_actions,learning_rate):
-        self._build_model(input_shape,n_actions,learning_rate)
+        self._build_model_norm(input_shape,n_actions,learning_rate)
 
     def _build_model(self, input_shape, n_actions, learning_rate):
         """
@@ -72,11 +72,11 @@ class Estimator():
           layers.Conv2D(64, (4, 4), strides=(2, 2), ),
           layers.BatchNormalization(),
           layers.Activation('relu'),
-          layers.Conv2D(64, (4, 4), strides=(2, 2), ),
-          layers.BatchNormalization(),
-          layers.Activation('relu'),
+          #layers.Conv2D(64, (4, 4), strides=(2, 2), ),
+          #layers.BatchNormalization(),
+          #layers.Activation('relu'),
           layers.Flatten(),  
-          layers.Dense(128, activation='relu'),#512?
+          layers.Dense(512, activation='relu'),#512?
           layers.Dense(n_actions)#Tenia un softmax que no venia a cuento
         ])
         self.model.summary()

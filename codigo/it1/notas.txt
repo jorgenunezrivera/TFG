@@ -26,3 +26,5 @@ Nunca elije la accion 3*
 MSE/MAE??
 Con Mean absolute error y TD 0.00001 parece "menos estable" pero alcanza mejores resultados (0.84)
 con MSE y td 0.00001 parece mas estable
+
+El loss se va porlas nubes!!
