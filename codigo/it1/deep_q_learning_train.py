@@ -3,6 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 from deep_q_learning import deep_q_learning, Estimator
+import os
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
 
 # IMG_SHAPE=(224,224,3)
 TRAINING_IMAGES_DIR = "train_200"
@@ -84,6 +87,7 @@ plt.xlabel('epoch')
 plt.subplot(3, 1, 2)
 plt.plot(training_rewards_x, training_rewards_y)
 plt.plot(validation_rewards_x, validation_rewards_y, 'ro')
+plt.hlines(0,0,NUM_EPISODES)
 plt.legend(loc='upper right')
 plt.ylabel('Rewards')
 plt.ylim([-1.1, 1.1])
@@ -92,6 +96,7 @@ plt.xlabel('epoch')
 
 plt.subplot(3, 1, 3)
 plt.plot(validation_hits_x, validation_hits_y)
+plt.hlines(0.73,0,NUM_EPISODES)
 plt.legend(loc='upper right')
 plt.ylabel('Hits')
 plt.ylim([0.6, 0.9])
