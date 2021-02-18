@@ -1,14 +1,7 @@
-import tensorflow as tf
-from window_env_batch import ImageWindowEnvBatch
 import numpy as np
-from tensorflow import keras
-from tensorflow.keras import layers
+import time
 import itertools
-import sys
-import os
-import random
-import matplotlib.pyplot as plt
-import json
+
 
 # from deep_q_learning import Estimator
 # TODO:loader que cargue 10000 imagenes del disco duro
@@ -16,6 +9,7 @@ import json
 # En los fallos, visaualizar certeza
 
 def validation(q_estimator, env):
+    init_ts=time.time()
     rewards = []
     hits=0
     incorrect_prediction_certainty=0
@@ -32,4 +26,5 @@ def validation(q_estimator, env):
                     incorrect_prediction_certainty+=info["max_prediction_value"]
                 rewards.append(reward)
                 break
+    print("time_elapsed={}".format(time.time()-init_ts))
     return np.mean(rewards),hits/len(env),incorrect_prediction_certainty/(len(env)-hits)

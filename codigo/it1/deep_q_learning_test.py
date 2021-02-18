@@ -17,7 +17,7 @@ with open("label_to_index_dict.json", "r") as read_file:
 
 VALIDATION_LABELS_FILE="validation_labels.txt"
 VALIDATION_IMAGES_DIR="validation"
-q_estimator=Estimator((224,224,3),6)
+q_estimator=Estimator((224,224,3),6,0.00001)
 q_estimator.load_model()
 seconds=time()
 

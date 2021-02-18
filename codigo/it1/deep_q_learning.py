@@ -1,29 +1,24 @@
 import tensorflow as tf
-from window_env_batch import ImageWindowEnvBatch
 import numpy as np
 from tensorflow import keras
 from tensorflow.keras import layers
 from collections import namedtuple
 import itertools
-import sys
-import os
 import random
-import matplotlib.pyplot as plt
 from deep_q_learning_validation import validation
 from random_env_test import random_env_test
 
 mse = tf.keras.losses.MeanSquaredError() #categoricalcrossentropy
 mae = tf.keras.losses.MeanAbsoluteError()
 
-def custom_loss(model, x, y, training,a):
+def custom_loss(model, x, y, a):
     y_ = model(x)
-    #print("action: {} q_predictions: {} target_predictions: {}".format(a,y_,y))
     y_=y_[:,a]
     return mae(y,y_)
     
 def custom_grad(model, inputs, targets,a):
     with tf.GradientTape() as tape:
-        loss_value = custom_loss(model, inputs, targets, training=True,a=a)
+        loss_value = custom_loss(model, inputs, targets,a=a)
     return loss_value, tape.gradient(loss_value, model.trainable_variables)
 
 def custom_train(model,optimizer,grad,s,y,a):
@@ -50,14 +45,20 @@ class Estimator():
         """
         self.learning_rate=learning_rate
         self.model = keras.Sequential([
-          layers.Conv2D(32, (8, 8), strides=(4, 4),  activation='relu', input_shape=input_shape),
-          #layers.MaxPooling2D(),
-          layers.Conv2D(64, (4, 4), strides=(2, 2),  activation='relu'),
-          #layers.MaxPooling2D(),
-          layers.Conv2D(64, (3, 3), strides=(2, 2),  activation='relu'),
-          #layers.MaxPooling2D(),
+          layers.Conv2D(32, (8, 8), strides=(4, 4),   input_shape=input_shape),
+          layers.BatchNormalization(),
+          layers.Activation('relu'),
+          layers.Conv2D(64, (4, 4), strides=(2, 2), ),
+          layers.BatchNormalization(),
+          layers.Activation('relu'),
+          layers.Conv2D(64, (4, 4), strides=(2, 2), ),
+          layers.BatchNormalization(),
+          layers.Activation('relu'),
+          layers.Conv2D(64, (4, 4), strides=(2, 2), ),
+          layers.BatchNormalization(),
+          layers.Activation('relu'),
           layers.Flatten(),  
-          layers.Dense(512, activation='relu'),
+          layers.Dense(128, activation='relu'),#512?
           layers.Dense(n_actions)#Tenia un softmax que no venia a cuento
         ])
         self.model.summary()
@@ -84,7 +85,7 @@ class Estimator():
         Updates the estimator towards the given targets.
 
         Args:
-          s: State input of shape [batch_size, 160, 160, 3]
+          s: State input of shape [batch_size, 224, 224, 3]
           a: Chosen actions of shape [batch_size]
           y: Targets of shape [batch_size]
 
