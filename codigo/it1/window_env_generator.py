@@ -86,13 +86,12 @@ class ImageWindowEnvGenerator(gym.Env):
         self.predicted_class = self._get_predicted_class(predictions)
         max_prediction_value = np.max(predictions)
         step_reward = self._get_reward(predictions)
-        if CONTINUE_UNTIL_DIES:
+        done=0
+        if CONTINUE_UNTIL_DIES :
             if len(self.history):
                 if step_reward <= self.history[-1][3]:
-                    done = 1
-                    self.x,self.y,self.z,step_reward,self.predicted_class,max_prediction_value = self.history[-1]
-            else:
-                done = 0
+                   done = 1
+                   self.x,self.y,self.z,step_reward,self.predicted_class,max_prediction_value = self.history[-1]
         else:
             done = (self.n_steps >= MAX_STEPS)  # or action==3
         self.history.append((self.x, self.y, self.z, step_reward,self.predicted_class,max_prediction_value))
