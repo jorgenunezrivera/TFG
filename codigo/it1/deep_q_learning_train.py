@@ -8,14 +8,14 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
 
 # IMG_SHAPE=(224,224,3)
-TRAINING_IMAGES_DIR = "old_train"
-VALIDATION_IMAGES_DIR = "old_validation"
-TRAINING_LABELS_FILE = "old_training_labels.txt"
-VALIDATION_LABELS_FILE = "old_validation_labels.txt"
-NUM_EPISODES = 900
-LEARNING_RATE = 0.0001
-UPDATE_TARGET_ESTIMATOR_EVERY=500
-VALIDATE_EVERY=100
+TRAINING_IMAGES_DIR = "train_200"
+VALIDATION_IMAGES_DIR = "validation1000"
+TRAINING_LABELS_FILE = "training_labels.txt"
+VALIDATION_LABELS_FILE = "validation_labels.txt"
+NUM_EPISODES = 36000
+LEARNING_RATE = 0.00001
+UPDATE_TARGET_ESTIMATOR_EVERY=1000
+VALIDATE_EVERY=1000
 
 
 training_labels = []
@@ -55,7 +55,7 @@ training_losses, training_rewards, validation_rewards, validation_hits = deep_q_
                                                                                          discount_factor=1,
                                                                                          epsilon_start=1,
                                                                                          epsilon_end=0.1,
-                                                                                         epsilon_decay_steps=NUM_EPISODES * 5,
+                                                                                         epsilon_decay_steps=NUM_EPISODES * 4,
                                                                                          batch_size=32)
 
 #################################################### PLOTTING RESULTS ###################################################

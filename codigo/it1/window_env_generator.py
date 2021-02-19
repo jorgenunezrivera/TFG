@@ -102,7 +102,6 @@ class ImageWindowEnvGenerator(gym.Env):
         if done:
             reward = step_reward - self.initial_reward
             #print("Reward: {}".format(reward))
-            reward *= 10
         else:
             if(INTERMEDIATE_REWARDS):
                 reward = (step_reward-self.history[-1][3])*INTERMEDIATE_REWARDS_FACTOR
