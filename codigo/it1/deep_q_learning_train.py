@@ -55,7 +55,7 @@ training_losses, training_rewards, validation_rewards, validation_hits = deep_q_
                                                                                          discount_factor=1,
                                                                                          epsilon_start=1,
                                                                                          epsilon_end=0.1,
-                                                                                         epsilon_decay_steps=NUM_EPISODES * 4,
+                                                                                         epsilon_decay_steps=NUM_EPISODES * 5,
                                                                                          batch_size=32)
 
 #################################################### PLOTTING RESULTS ###################################################
