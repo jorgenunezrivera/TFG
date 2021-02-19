@@ -36,7 +36,7 @@ class Estimator():
     """
 
     def __init__(self,input_shape,n_actions,learning_rate):
-        self._build_model_norm(input_shape,n_actions,learning_rate)
+        self._build_model(input_shape,n_actions,learning_rate)
 
     def _build_model(self, input_shape, n_actions, learning_rate):
         """
@@ -240,12 +240,13 @@ def deep_q_learning(env,
         loss = None
         episode_loss=0
         # One step in the environment
+        ############# VALIDACION #######################
         if (i_episode + 1) % validate_every == 0:
             validation_reward,hits,wrong_certanty = validation(q_estimator, validation_env)
             validation_rewards.append((i_episode, validation_reward))
             validation_hits.append((i_episode,hits))
             print("\rEpisode {}/{}, validation_reward: {} hits: {} mean_wrong_uncertanty: {}".format(i_episode + 1, num_episodes,validation_reward,hits,wrong_certanty))
-
+        ######################### ESTADISTICAS ###############
         if (i_episode + 1) % rewards_mean_every==0:
             cumulated_reward/=rewards_mean_every
             training_rewards.append((i_episode,cumulated_reward))
@@ -262,6 +263,7 @@ def deep_q_learning(env,
             if (total_t+1) % update_target_estimator_every == 0:
                 target_estimator.copy_weights(q_estimator)
 
+            #################### INTERACCION CON EL ENV #########################
             # Take a step
             action_probs = policy(state, epsilon)            
             action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
@@ -279,6 +281,7 @@ def deep_q_learning(env,
             # Save transition to replay memory
             replay_memory.append(Transition(state, action, reward, next_state, done))   
 
+            ################## APRENDIZAJE #############################
             # Sample a minibatch from the replay memory
             samples = random.sample(replay_memory, batch_size)
             states_batch, action_batch, reward_batch, next_states_batch, done_batch = map(np.array, zip(*samples))
