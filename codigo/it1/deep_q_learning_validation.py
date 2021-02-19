@@ -21,5 +21,5 @@ def validation(q_estimator, env):
                     incorrect_prediction_certainty+=info["max_prediction_value"]
                 rewards.append(reward)
                 break
-    print("time_elapsed={}".format(time.time()-init_ts))
+    #print("time_elapsed={}".format(time.time()-init_ts))
     return np.mean(rewards),hits/len(env),incorrect_prediction_certainty/(len(env)-hits)
