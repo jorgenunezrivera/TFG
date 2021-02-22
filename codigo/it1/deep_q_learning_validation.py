@@ -14,6 +14,8 @@ def validation(q_estimator, env):
             q_values = q_estimator.predict(np.array([obs]))
             best_action = np.argmax(q_values)
             obs, reward, done, info = env.step(best_action)
+            if(i%20==0):
+                print("q values: {}, reward: {} , hit:{}".format(q_values,reward,info["hit"]))
             if done:
                 if info["hit"]:
                     hits += 1

@@ -268,7 +268,8 @@ def deep_q_learning(env,
             action_probs = policy(state, epsilon)            
             action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
             if (i_episode+1) % 20 == 0:#mostrar las acciones cada 20 samples
-                print("action =" + str(action)+ " epsilon = " + str(epsilons[min(total_t, epsilon_decay_steps-1)]))
+                print("action =" + str(action))
+
             next_state, reward, done, _ = env.step(action)
             if (i_episode+1) % 20 == 0 and reward!=0:#mostrar las acciones cada 20 samples
                 print("reward =" + str(reward))
