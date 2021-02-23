@@ -20,7 +20,7 @@ N_CHANNELS = 3
 MAX_STEPS = 4
 STEP_SIZE = 32
 N_ACTIONS = 4
-INTERMEDIATE_REWARDS = 1
+INTERMEDIATE_REWARDS = 0
 INTERMEDIATE_REWARDS_FACTOR = 10
 CONTINUE_UNTIL_DIES = 0
 if (CONTINUE_UNTIL_DIES):
@@ -103,7 +103,7 @@ class ImageWindowEnvGenerator(gym.Env):
             reward = (step_reward - self.history[-1][3]) * INTERMEDIATE_REWARDS_FACTOR
         else:
             if done:
-                reward = step_reward - self.initial_reward
+                reward = (step_reward - self.initial_reward)*10
             else:
                 reward=0
         self.history.append((self.x, self.y, self.z, step_reward, self.predicted_class, max_prediction_value))
