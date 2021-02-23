@@ -97,7 +97,7 @@ class ImageWindowEnvGenerator(gym.Env):
                 self.n_steps += 1
         else:
             self.n_steps += 1
-        done = (self.n_steps >= MAX_STEPS)## or action==3)
+        done = (self.n_steps >= MAX_STEPS) ## or action==3)
 
         if (INTERMEDIATE_REWARDS):
             reward = (step_reward - self.history[-1][3]) * INTERMEDIATE_REWARDS_FACTOR
