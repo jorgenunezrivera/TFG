@@ -14,7 +14,7 @@ mae = tf.keras.losses.MeanAbsoluteError()
 def custom_loss(model, x, y, a):
     y_ = model(x)
     y_=y_[:,a]
-    return mae(y,y_)
+    return mse(y,y_)
     
 def custom_grad(model, inputs, targets,a):
     with tf.GradientTape() as tape:
