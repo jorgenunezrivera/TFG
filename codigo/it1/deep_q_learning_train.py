@@ -66,8 +66,9 @@ elapsed_time = time.time() - initial_ts
 print("Elapsed time: " + str(elapsed_time))
 print("Num episodes: " + str(NUM_EPISODES))
 print("secs/episode:" + str(elapsed_time / NUM_EPISODES))
-
 now = datetime.now()
+
+print(stats)
 log_filename = now.strftime("logs/%d_%m_%Y_%H_%M:_S_log.json")
 with open(log_filename, 'w') as fp:
     json.dump(stats, fp)
