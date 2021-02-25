@@ -204,7 +204,8 @@ def deep_q_learning(env,
     cumulated_loss=0
     stats["validation_rewards"]=[]
     stats["validation_hits"]=[]
-    stats["action_stats"]=np.zeros(env.action_space.n)
+    stats["action_stats"]=[]
+    action_stats=np.zeros(env.action_space.n)
     stats["num_episodes"]=num_episodes
     stats["learning_rate"]=q_estimator.learning_rate
     # The epsilon decay schedule
@@ -243,13 +244,14 @@ def deep_q_learning(env,
         #state = np.stack([state] * 4, axis=2)
         loss = None
         episode_loss=0
+        episode_reward=0
         # One step in the environment
         ############# VALIDACION #######################
         if (i_episode + 1) % validate_every == 0:
             validation_reward,hits,wrong_certanty,action_stats = validation(q_estimator, validation_env)
             stats["validation_rewards"].append((i_episode, float(validation_reward)))
             stats["validation_hits"].append((i_episode,hits))
-            stats["action_stats"]=np.add(stats["action_stats"],action_stats)
+            action_stats=np.add(stats["action_stats"],action_stats)
             print("\rEpisode {}/{}, validation_reward: {} hits: {} mean_wrong_uncertanty: {}".format(i_episode + 1, num_episodes,validation_reward,hits,wrong_certanty))
         ######################### ESTADISTICAS ###############
         if (i_episode + 1) % rewards_mean_every==0:
@@ -300,16 +302,17 @@ def deep_q_learning(env,
             states_batch = np.array(states_batch)
             loss = q_estimator.update(states_batch, action_batch, targets_batch)
             episode_loss+=loss
+            episode_reward+=reward
             total_t += 1
             if done:
                 cumulated_loss += episode_loss/(t+1)
-                cumulated_reward += reward
+                cumulated_reward += episode_reward
                 break
 
             state = next_state
             
   
-
+    stats["action_stats"]=action_stats.tolist()
     q_estimator.save_model()
     return stats
 
