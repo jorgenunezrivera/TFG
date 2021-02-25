@@ -256,7 +256,7 @@ def deep_q_learning(env,
             cumulated_reward/=rewards_mean_every
             stats["training_rewards"].append((i_episode,cumulated_reward))
             cumulated_loss/=rewards_mean_every
-            stats["training_losses"].append((i_episode,cumulated_loss))
+            stats["training_losses"].append((i_episode,cumulated_loss.numpy()))
             cumulated_reward=cumulated_loss=0
 
         for t in itertools.count():

@@ -1,9 +1,6 @@
-import datetime
-import json
 
+import json
 from window_env_generator import ImageWindowEnvGenerator
-import numpy as np
-import matplotlib.pyplot as plt
 from datetime import datetime
 import time
 from deep_q_learning import deep_q_learning, Estimator
@@ -22,23 +19,10 @@ UPDATE_TARGET_ESTIMATOR_EVERY=20
 VALIDATE_EVERY=60
 
 
-training_labels = []
-with open(TRAINING_LABELS_FILE) as fp:
-    line = fp.readline()
-    while line:
-        training_labels.append(int(line))
-        line = fp.readline()
 
-validation_labels = []
-with open(VALIDATION_LABELS_FILE) as fp:
-    line = fp.readline()
-    while line:
-        validation_labels.append(int(line))
-        line = fp.readline()
+env = ImageWindowEnvGenerator(TRAINING_IMAGES_DIR, TRAINING_LABELS_FILE)
 
-env = ImageWindowEnvGenerator(TRAINING_IMAGES_DIR, training_labels)
-
-validation_env = ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, validation_labels)
+validation_env = ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE)
 
 N_ACTIONS = env.action_space.n
 IMG_SHAPE = env.observation_space.shape
@@ -66,8 +50,8 @@ elapsed_time = time.time() - initial_ts
 print("Elapsed time: " + str(elapsed_time))
 print("Num episodes: " + str(NUM_EPISODES))
 print("secs/episode:" + str(elapsed_time / NUM_EPISODES))
-now = datetime.now()
 
+now = datetime.now()
 print(stats)
 log_filename = now.strftime("logs/%d_%m_%Y_%H_%M:_S_log.json")
 with open(log_filename, 'w') as fp:

@@ -29,7 +29,7 @@ if (CONTINUE_UNTIL_DIES):
 
 class ImageWindowEnvGenerator(gym.Env):
 
-    def __init__(self, directory, labels):
+    def __init__(self, directory, labels_file):
         super(ImageWindowEnvGenerator, self).__init__()
         image_filenames = from_disk_generator.get_filenames(directory)
         self.image_generator = FromDiskGenerator(
@@ -42,7 +42,12 @@ class ImageWindowEnvGenerator(gym.Env):
                                                        weights='imagenet')
         self.sample_index = 0
         self.num_samples = self.image_generator.__len__()
-        self.labels = labels
+        self.labels = []
+        with open(labels_file) as fp:
+            line = fp.readline()
+            while line:
+                self.labels.append(int(line))
+                line = fp.readline()
         self.x = self.y = self.z = 0
          # (x,y,z,return)
         self.true_class = 0
