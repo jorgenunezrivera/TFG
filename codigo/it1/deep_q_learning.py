@@ -198,7 +198,7 @@ def deep_q_learning(env,
     total_t=0
     
     # Keeps track of useful statistics (PROVISIONAL)
-    stats["training_reward"]=[]
+    stats["training_rewards"]=[]
     cumulated_reward=0
     stats["training_losses"]=[]
     cumulated_loss=0
