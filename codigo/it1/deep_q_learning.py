@@ -191,18 +191,22 @@ def deep_q_learning(env,
     """
 
     Transition = namedtuple("Transition", ["state", "action", "reward", "next_state", "done"])
+    stats={}
 
     # The replay memory
     replay_memory = []
     total_t=0
     
     # Keeps track of useful statistics (PROVISIONAL)
-    training_rewards=[]
+    stats["training_reward"]=[]
     cumulated_reward=0
-    training_losses=[]
+    stats["training_losses"]=[]
     cumulated_loss=0
-    validation_rewards=[]
-    validation_hits=[]
+    stats["validation_rewards"]=[]
+    stats["validation_hits"]=[]
+    stats["action_stats"]=np.zeros(env.action_space.n)
+    stats["num_episodes"]=num_episodes
+    stats["learning_rate"]=q_estimator.learning_rate
     # The epsilon decay schedule
     epsilons = np.linspace(epsilon_start, epsilon_end, epsilon_decay_steps)
 
@@ -242,16 +246,17 @@ def deep_q_learning(env,
         # One step in the environment
         ############# VALIDACION #######################
         if (i_episode + 1) % validate_every == 0:
-            validation_reward,hits,wrong_certanty = validation(q_estimator, validation_env)
-            validation_rewards.append((i_episode, validation_reward))
-            validation_hits.append((i_episode,hits))
+            validation_reward,hits,wrong_certanty,action_stats = validation(q_estimator, validation_env)
+            stats["validation_rewards"].append((i_episode, validation_reward))
+            stats["validation_hits"].append((i_episode,hits))
+            stats["action_stats"]=np.add(stats["action_stats"],action_stats)
             print("\rEpisode {}/{}, validation_reward: {} hits: {} mean_wrong_uncertanty: {}".format(i_episode + 1, num_episodes,validation_reward,hits,wrong_certanty))
         ######################### ESTADISTICAS ###############
         if (i_episode + 1) % rewards_mean_every==0:
             cumulated_reward/=rewards_mean_every
-            training_rewards.append((i_episode,cumulated_reward))
+            stats["training_rewards"].append((i_episode,cumulated_reward))
             cumulated_loss/=rewards_mean_every
-            training_losses.append((i_episode,cumulated_loss))
+            stats["training_losses"].append((i_episode,cumulated_loss))
             cumulated_reward=cumulated_loss=0
 
         for t in itertools.count():
@@ -306,6 +311,6 @@ def deep_q_learning(env,
   
 
     q_estimator.save_model()
-    return training_losses, training_rewards ,validation_rewards, validation_hits
+    return stats
 
 

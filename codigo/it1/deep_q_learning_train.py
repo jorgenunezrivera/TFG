@@ -1,6 +1,10 @@
+import datetime
+import json
+
 from window_env_generator import ImageWindowEnvGenerator
 import numpy as np
 import matplotlib.pyplot as plt
+from datetime import datetime
 import time
 from deep_q_learning import deep_q_learning, Estimator
 import os
@@ -12,10 +16,10 @@ TRAINING_IMAGES_DIR = "train_200"
 VALIDATION_IMAGES_DIR = "validation1000"
 TRAINING_LABELS_FILE = "training_labels.txt"
 VALIDATION_LABELS_FILE = "validation_labels.txt"
-NUM_EPISODES = 12000
+NUM_EPISODES = 120
 LEARNING_RATE = 0.00001
-UPDATE_TARGET_ESTIMATOR_EVERY=200
-VALIDATE_EVERY=1000
+UPDATE_TARGET_ESTIMATOR_EVERY=20
+VALIDATE_EVERY=60
 
 
 training_labels = []
@@ -43,7 +47,7 @@ initial_ts = time.time()
 
 q_estimator = Estimator(IMG_SHAPE, N_ACTIONS, LEARNING_RATE)
 target_estimator = Estimator(IMG_SHAPE, N_ACTIONS, LEARNING_RATE)
-training_losses, training_rewards, validation_rewards, validation_hits = deep_q_learning(env, q_estimator,
+stats = deep_q_learning(env, q_estimator,
                                                                                          target_estimator,
                                                                                          validation_env,
                                                                                          num_episodes=NUM_EPISODES,
@@ -58,54 +62,12 @@ training_losses, training_rewards, validation_rewards, validation_hits = deep_q_
                                                                                          epsilon_decay_steps=NUM_EPISODES * 4,
                                                                                          batch_size=32)
 
-#################################################### PLOTTING RESULTS ###################################################
-
 elapsed_time = time.time() - initial_ts
 print("Elapsed time: " + str(elapsed_time))
 print("Num episodes: " + str(NUM_EPISODES))
 print("secs/episode:" + str(elapsed_time / NUM_EPISODES))
 
-
-training_losses_x = [x[0] for x in training_losses]
-training_losses_y = [x[1] for x in training_losses]
-training_rewards_x = [x[0] for x in training_rewards]
-training_rewards_y = [x[1] for x in training_rewards]
-validation_rewards_x = [x[0] for x in validation_rewards]
-validation_rewards_y = [x[1] for x in validation_rewards]
-validation_hits_x = [x[0] for x in validation_hits]
-validation_hits_y = [x[1] for x in validation_hits]
-
-plt.figure(figsize=(8, 8))
-plt.subplot(3, 1, 1)
-plt.plot(training_losses_x, training_losses_y)
-plt.legend(loc='upper right')
-plt.ylabel('Mean Absolute Error')
-plt.ylim([0, 1])
-plt.title('Training Loss')
-plt.xlabel('epoch')
-
-plt.subplot(3, 1, 2)
-plt.plot(training_rewards_x, training_rewards_y)
-plt.plot(validation_rewards_x, validation_rewards_y, 'ro')
-plt.hlines(0,0,NUM_EPISODES)
-plt.legend(loc='upper right')
-plt.ylabel('Rewards')
-plt.ylim([-1.1, 1.1])
-plt.title('Training Rewards')
-plt.xlabel('epoch')
-
-plt.subplot(3, 1, 3)
-plt.plot(validation_hits_x, validation_hits_y)
-plt.hlines(0.73,0,NUM_EPISODES)
-plt.legend(loc='upper right')
-plt.ylabel('Hits')
-plt.ylim([0.6, 0.9])
-plt.title('Validation hits')
-plt.xlabel('epoch')
-
-plt.show()
-
-validation_reward_list = [x[1] for x in validation_rewards]
-validation_reward_mean = np.mean(validation_reward_list)
-validation_reward_variance = np.var(validation_reward_list)
-print("validation reward : mean: " + str(validation_reward_mean) + " variance: " + str(validation_reward_variance))
+now = datetime.now()
+log_filename = now.strftime("logs/%d_%m_%Y_%H_%M:_S_log.json")
+with open(log_filename, 'w') as fp:
+    json.dump(stats, fp)

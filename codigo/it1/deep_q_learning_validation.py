@@ -6,6 +6,7 @@ import itertools
 def validation(q_estimator, env):
     init_ts=time.time()
     rewards = []
+    action_stats=np.zeros(env.action_space.n)
     hits=0
     incorrect_prediction_certainty=0
     for i in range(len(env)):
@@ -13,6 +14,7 @@ def validation(q_estimator, env):
         for _ in itertools.count():
             q_values = q_estimator.predict(np.array([obs]))
             best_action = np.argmax(q_values)
+            action_stats[best_action]+=1
             obs, reward, done, info = env.step(best_action)
             if(i%20==0):
                 print("q values: {}, reward: {} , hit:{}".format(q_values,reward,info["hit"]))
@@ -24,4 +26,4 @@ def validation(q_estimator, env):
                 rewards.append(reward)
                 break
     #print("time_elapsed={}".format(time.time()-init_ts))
-    return np.mean(rewards),hits/len(env),incorrect_prediction_certainty/(len(env)-hits)
+    return np.mean(rewards),hits/len(env),incorrect_prediction_certainty/(len(env)-hits),action_stats
