@@ -247,16 +247,16 @@ def deep_q_learning(env,
         ############# VALIDACION #######################
         if (i_episode + 1) % validate_every == 0:
             validation_reward,hits,wrong_certanty,action_stats = validation(q_estimator, validation_env)
-            stats["validation_rewards"].append((i_episode, validation_reward))
+            stats["validation_rewards"].append((i_episode, float(validation_reward)))
             stats["validation_hits"].append((i_episode,hits))
             stats["action_stats"]=np.add(stats["action_stats"],action_stats)
             print("\rEpisode {}/{}, validation_reward: {} hits: {} mean_wrong_uncertanty: {}".format(i_episode + 1, num_episodes,validation_reward,hits,wrong_certanty))
         ######################### ESTADISTICAS ###############
         if (i_episode + 1) % rewards_mean_every==0:
             cumulated_reward/=rewards_mean_every
-            stats["training_rewards"].append((i_episode,cumulated_reward))
+            stats["training_rewards"].append((i_episode,float(cumulated_reward)))
             cumulated_loss/=rewards_mean_every
-            stats["training_losses"].append((i_episode,cumulated_loss.numpy()))
+            stats["training_losses"].append((i_episode,float(cumulated_loss.numpy())))
             cumulated_reward=cumulated_loss=0
 
         for t in itertools.count():
