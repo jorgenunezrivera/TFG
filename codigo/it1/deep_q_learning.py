@@ -87,7 +87,7 @@ class Estimator():
         Predicts action values.
 
         Args:
-          s: State input of shape [batch_size, 160, 160, 3]
+          state: State input of shape [batch_size, 160, 160, 3]
 
         Returns:
           Tensor of shape [batch_size, nb_actions] containing the estimated 
@@ -206,7 +206,7 @@ def deep_q_learning(env,
     stats["validation_hits"]=[]
     stats["action_stats"]=[]
     cumulated_action_stats=np.zeros(env.action_space.n)
-    stats["step_action"]=[]
+    stats["step_action"]=[[]]
     stats["step_action"][0] = []
     stats["step_action"][1] = []
 
