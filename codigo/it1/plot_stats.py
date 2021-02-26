@@ -1,6 +1,7 @@
 import matplotlib as plt
 import sys
 import json
+import numpy as np
 
 def training_plot(training_losses,training_rewards,validation_rewards,validation_hits,action_stats):
     training_losses_x = [x[0] for x in training_losses]
@@ -65,6 +66,6 @@ if len(sys.argv)!=2:
 else:
     with open(sys.argv[1], "r") as read_file:
         stats= json.load(read_file)
-    training_plot(stats["training_losses"],stats["trining_rewards"],stats["validation_rewards"],stats["validation_hits"],stats["action_stats"])
+    training_plot(stats["training_losses"],stats["training_rewards"],stats["validation_rewards"],stats["validation_hits"],stats["action_stats"])
     print(stats)
 
