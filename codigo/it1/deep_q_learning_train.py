@@ -53,6 +53,6 @@ print("secs/episode:" + str(elapsed_time / NUM_EPISODES))
 
 now = datetime.now()
 print(stats)
-log_filename = now.strftime("logs/%d_%m_%Y_%H_%M:_S_log.json")
+log_filename = now.strftime("logs/%d_%m_%Y_%H_%M_%S_log.json")
 with open(log_filename, 'w') as fp:
     json.dump(stats, fp)
