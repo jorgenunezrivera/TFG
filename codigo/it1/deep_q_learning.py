@@ -206,9 +206,8 @@ def deep_q_learning(env,
     stats["validation_hits"]=[]
     stats["action_stats"]=[]
     cumulated_action_stats=np.zeros(env.action_space.n)
-    stats["step_action"]=[[]]*2
-    stats["step_action"][0] = []
-    stats["step_action"][1] = []
+    stats["step_action"]=[[] for _ in range(5)]
+
 
 
     stats["num_episodes"]=num_episodes

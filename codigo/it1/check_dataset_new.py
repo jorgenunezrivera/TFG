@@ -56,10 +56,14 @@ for i in range(len(image_batch)):
     predictions=model.predict(image_window_expanded)
     true_prediction=label_index_dict[str(training_labels[i])]
     prediction=np.argmax(predictions)
+    label=keras.applications.mobilenet_v2.decode_predictions(predictions)[0][0][1]
     hit=(true_prediction==prediction)
+    false_preds=np.zeros(1000)
+    false_preds[training_labels[i]]=1
+    predicted_label=keras.applications.mobilenet_v2.decode_predictions(false_predictions)[0][0][1]
     #print("Sample {} Hit: {}".format(i,hit))
     if not hit:
-        print(i)
+        print(str(1001+i) + " " +label + " and not " + predicted_label)
     if hit:
         hits+=1
 
