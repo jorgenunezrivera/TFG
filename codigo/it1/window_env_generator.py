@@ -144,6 +144,7 @@ class ImageWindowEnvGenerator(gym.Env):
         print("predicting(training)")
         predictions = self.model.predict_on_batch(tf.expand_dims(image_window, axis=0))#np.array
         print("predicted(training)")
+        gc.collect
         return predictions
 
     def _get_predicted_class(self, predictions):

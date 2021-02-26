@@ -147,6 +147,7 @@ def make_epsilon_greedy_policy(estimator, nA):
         print("predicting(policy)")
         q_values = estimator.predict(tf.expand_dims(observation, axis=0))[0]
         print("predicted(policy)")
+        gc.collect
         best_action = np.argmax(q_values)
         A[best_action] += (1.0 - epsilon)
         return A
@@ -281,6 +282,7 @@ def deep_q_learning(env,
             if (total_t+1) % update_target_estimator_every == 0:
                 print("Copying weights")
                 target_estimator.copy_weights(q_estimator)
+                gc.collect
 
             #################### INTERACCION CON EL ENV #########################
             # Take a step
