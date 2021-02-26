@@ -277,6 +277,7 @@ def deep_q_learning(env,
 
             # Maybe update the target estimator
             if (total_t+1) % update_target_estimator_every == 0:
+                print("Copying weights")
                 target_estimator.copy_weights(q_estimator)
 
             #################### INTERACCION CON EL ENV #########################
