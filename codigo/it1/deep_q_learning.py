@@ -307,8 +307,8 @@ def deep_q_learning(env,
 
             state = next_state
             
-  
-    stats["action_stats"]=action_stats.tolist()
+    np.divide(cumulated_action_stats,np.sum(cumulated_action_stats))
+    stats["action_stats"]=cumulated_action_stats.tolist()
     q_estimator.save_model()
     return stats
 
