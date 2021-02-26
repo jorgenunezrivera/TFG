@@ -104,7 +104,7 @@ class ImageWindowEnvGenerator(gym.Env):
             self.n_steps += 1
         done = (self.n_steps >= MAX_STEPS) ## or action==3)
 
-        if (INTERMEDIATE_REWARDS):
+        if INTERMEDIATE_REWARDS:
             reward = (step_reward - self.history[-1][3]) * INTERMEDIATE_REWARDS_FACTOR
         else:
             if done:
@@ -141,7 +141,7 @@ class ImageWindowEnvGenerator(gym.Env):
         return image_window_resized
 
     def _get_predictions(self, image_window):
-        predictions = self.model.predict(np.array([image_window]))
+        predictions = self.model.predict([image_window])#np.array
         return predictions
 
     def _get_predicted_class(self, predictions):
