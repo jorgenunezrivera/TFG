@@ -145,6 +145,8 @@ def make_epsilon_greedy_policy(estimator, nA):
     def policy_fn(observation, epsilon):
         A = np.ones(nA, dtype=float) * epsilon / nA
         print("predicting(policy)")
+        print(observation)
+        print(observation.shape)
         q_values = estimator.predict(tf.expand_dims(observation, axis=0))[0]
         print("predicted(policy)")
         best_action = np.argmax(q_values)
