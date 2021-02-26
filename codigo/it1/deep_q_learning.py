@@ -93,7 +93,7 @@ class Estimator():
           Tensor of shape [batch_size, nb_actions] containing the estimated 
           action values.
         """
-        return self.model.predict(state)
+        return self.model.predict_on_batch(state)
 
     
 
@@ -303,7 +303,7 @@ def deep_q_learning(env,
             states_batch, action_batch, reward_batch, next_states_batch, done_batch = map(np.array, zip(*samples))
 
             # Calculate q values and targets
-            q_values_next = target_estimator.predict(next_states_batch)
+            q_values_next = target_estimator.predict_on_batch(next_states_batch)
             targets_batch = reward_batch + np.invert(done_batch).astype(np.float32) * discount_factor * np.amax(q_values_next, axis=1)
 
             # Perform gradient descent update
