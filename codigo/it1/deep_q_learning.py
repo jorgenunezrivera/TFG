@@ -210,6 +210,7 @@ def deep_q_learning(env,
     stats["step_action"][0] = []
     stats["step_action"][1] = []
 
+
     stats["num_episodes"]=num_episodes
     stats["learning_rate"]=q_estimator.learning_rate
     # The epsilon decay schedule
