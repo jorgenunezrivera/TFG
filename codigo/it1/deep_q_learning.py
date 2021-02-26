@@ -206,6 +206,7 @@ def deep_q_learning(env,
     stats["validation_hits"]=[]
     stats["action_stats"]=[]
     cumulated_action_stats=np.zeros(env.action_space.n)
+    stats["step_action"]=[]
     stats["num_episodes"]=num_episodes
     stats["learning_rate"]=q_estimator.learning_rate
     # The epsilon decay schedule
@@ -252,6 +253,9 @@ def deep_q_learning(env,
             stats["validation_rewards"].append((i_episode, float(validation_reward)))
             stats["validation_hits"].append((i_episode,hits))
             cumulated_action_stats=np.add(cumulated_action_stats,action_stats)
+            stats["step_action"][0].append(i_episode)
+            for i in range(env.action_space.n):
+                stats["step_action"][i+1].append(action_stats[i])
             print("\rEpisode {}/{}, validation_reward: {} hits: {} mean_wrong_uncertanty: {}".format(i_episode + 1, num_episodes,validation_reward,hits,wrong_certanty))
         ######################### ESTADISTICAS ###############
         if (i_episode + 1) % rewards_mean_every==0:
