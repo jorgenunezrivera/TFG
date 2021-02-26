@@ -93,7 +93,7 @@ class Estimator():
           Tensor of shape [batch_size, nb_actions] containing the estimated 
           action values.
         """
-        return self.model(state)
+        return self.model.predict_on_batch(state,axis=0)
 
     
 
