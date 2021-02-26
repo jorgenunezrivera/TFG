@@ -205,7 +205,7 @@ def deep_q_learning(env,
     stats["validation_rewards"]=[]
     stats["validation_hits"]=[]
     stats["action_stats"]=[]
-    action_stats=np.zeros(env.action_space.n)
+    cumulated_action_stats=np.zeros(env.action_space.n)
     stats["num_episodes"]=num_episodes
     stats["learning_rate"]=q_estimator.learning_rate
     # The epsilon decay schedule
@@ -251,7 +251,7 @@ def deep_q_learning(env,
             validation_reward,hits,wrong_certanty,action_stats = validation(q_estimator, validation_env)
             stats["validation_rewards"].append((i_episode, float(validation_reward)))
             stats["validation_hits"].append((i_episode,hits))
-            action_stats=np.add(stats["action_stats"],action_stats)
+            cumulated_action_stats=np.add(cumulated_action_stats,action_stats)
             print("\rEpisode {}/{}, validation_reward: {} hits: {} mean_wrong_uncertanty: {}".format(i_episode + 1, num_episodes,validation_reward,hits,wrong_certanty))
         ######################### ESTADISTICAS ###############
         if (i_episode + 1) % rewards_mean_every==0:
@@ -274,12 +274,8 @@ def deep_q_learning(env,
             # Take a step
             action_probs = policy(state, epsilon)            
             action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
-            if (i_episode+1) % 20 == 0:#mostrar las acciones cada 20 samples
-                print("action =" + str(action))
 
             next_state, reward, done, _ = env.step(action)
-            if (i_episode+1) % 20 == 0 and reward!=0:#mostrar las acciones cada 20 samples
-                print("reward =" + str(reward))
              
 
             # If our replay memory is full, pop the first element

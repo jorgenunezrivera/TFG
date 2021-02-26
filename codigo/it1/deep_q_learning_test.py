@@ -14,29 +14,22 @@ with open("label_to_index_dict.json", "r") as read_file:
 
 VALIDATION_LABELS_FILE="validation_labels.txt"
 VALIDATION_IMAGES_DIR="validation"
+
+FILES_TO_TEST=5
+
 q_estimator=Estimator((224,224,3),6,0.00001)
 q_estimator.load_model()
 seconds=time()
 
 
-validation_labels=[]
-validation_true_classes=[]
-with open(VALIDATION_LABELS_FILE) as fp:
-   line = fp.readline()
-   while line:
-       validation_labels.append(int(line))
-       validation_true_classes.append(label_index_dict[line.rstrip()])
-       line = fp.readline()
 
-
-        
-env=ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR,validation_labels)
+env=ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR,VALIDATION_LABELS_FILE)
 load_time=time()-seconds
 print("load time: " + str(load_time))
 
 rewards = []
 hits=0
-for i in range(len(env)):
+for i in range(FILES_TO_TEST):
     predicted_class=0
     obs=env.reset()
 
@@ -48,12 +41,13 @@ for i in range(len(env)):
         print("q_values : " + str(q_values))
         print("Action: "+ str(best_action))
         obs, reward, done, info = env.step(best_action)
-        if i % 6 == 0:
-            env.render()
+        env.render()
         if(done):
             rewards.append(reward)
             hits+=info["hit"]
             print("reward: "+ str(reward))
+            print("hit: "+str(info["hit"]))
+            print("top5: "+str(info["top5"]))
             break
 
 validate_time=time()-seconds-load_time

@@ -16,8 +16,8 @@ def validation(q_estimator, env):
             best_action = np.argmax(q_values)
             action_stats[best_action]+=1
             obs, reward, done, info = env.step(best_action)
-            if(i%20==0):
-                print("q values: {}, reward: {} , hit:{}".format(q_values,reward,info["hit"]))
+            #if(i%20==0):
+            #    print("q values: {}, reward: {} , hit:{}".format(q_values,reward,info["hit"]))
             if done:
                 if info["hit"]:
                     hits += 1

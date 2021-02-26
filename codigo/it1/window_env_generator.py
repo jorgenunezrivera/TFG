@@ -111,10 +111,12 @@ class ImageWindowEnvGenerator(gym.Env):
                 reward = (step_reward - self.initial_reward)*10
             else:
                 reward=0
+        topfive=keras.applications.mobilenet_v2.decode_predictions(predictions,5)
         self.history.append((self.x, self.y, self.z, step_reward, self.predicted_class, max_prediction_value))
         return state, reward, done, {"predicted_class": self.predicted_class,
                                      "max_prediction_value": max_prediction_value,
-                                     "hit": (self.predicted_class == self.true_class)}
+                                     "hit": (self.predicted_class == self.true_class),
+                                     "top5": topfive}
 
     def render(self, mode='human', close=False):
         fig, ax = plt.subplots(1)
