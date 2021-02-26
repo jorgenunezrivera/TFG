@@ -35,7 +35,7 @@ filelist=os.listdir(TRAINING_IMAGES_DIR)
 filelist.sort()
 for entry in filelist:
     filename=os.path.join(TRAINING_IMAGES_DIR,entry)
-    print("filename: " + filename)
+    #print("filename: " + filename)
     if os.path.isfile(filename) and filename.endswith('.JPEG'):
         image =tf.keras.preprocessing.image.load_img(filename)
         img_arr = keras.preprocessing.image.img_to_array(image)
@@ -57,7 +57,9 @@ for i in range(len(image_batch)):
     true_prediction=label_index_dict[str(training_labels[i])]
     prediction=np.argmax(predictions)
     hit=(true_prediction==prediction)
-    print("Sample {} true_prediction: {} prediction :{} Hit: {}".format(i,true_prediction,prediction,hit))
+    #print("Sample {} Hit: {}".format(i,hit))
+    if not hit:
+        print(i)
     if hit:
         hits+=1
 
