@@ -55,7 +55,6 @@ for i in range(len(image_batch)):
     image_window_expanded=np.array([image_window_resized])
     predictions=model.predict(image_window_expanded)
     true_prediction=label_index_dict[str(training_labels[i])]
-    print("true_prediction: " + str(true_prediction))
     prediction=np.argmax(predictions)
     hit=(true_prediction==prediction)
     print("Sample {} true_prediction: {} prediction :{} Hit: {}".format(i,true_prediction,prediction,hit))

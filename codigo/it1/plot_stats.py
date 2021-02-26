@@ -23,8 +23,8 @@ def training_plot(training_losses,training_rewards,validation_rewards,validation
     plt.xlabel('epoch')
 
     plt.subplot(4, 1, 2)
-    plt.plot(training_rewards_x, training_rewards_y)
-    plt.plot(validation_rewards_x, validation_rewards_y, 'ro')
+    plt.plot(training_rewards_x, training_rewards_y,label='training_rewards')
+    plt.plot(validation_rewards_x, validation_rewards_y, 'ro',label='validation_rewards')
     #plt.hlines(0,0,NUM_EPISODES)
     plt.legend(loc='upper right')
     plt.ylabel('Rewards')
@@ -42,11 +42,13 @@ def training_plot(training_losses,training_rewards,validation_rewards,validation
     plt.xlabel('epoch')
 
     plt.subplot(4, 1, 4)
-    for i in range(0,len(action_stats)):
-        plt.bar(i, action_stats[i])
+    plt.plot(action_stats[0], action_stats[1],'b',label='action 0')
+    plt.plot(action_stats[0], action_stats[2],'r',label='action 1')
+    plt.plot(action_stats[0], action_stats[3],'g',label='action 2')
+    plt.plot(action_stats[0], action_stats[4],'c',label='action 3')
     plt.legend(loc='upper right')
     plt.ylabel('Ocurrences')
-    plt.ylim([0.6, 0.9])
+    plt.ylim([0, 6000])
     plt.title('Action stats')
     plt.xlabel('Action')
 
@@ -66,6 +68,6 @@ if len(sys.argv)!=2:
 else:
     with open(sys.argv[1], "r") as read_file:
         stats= json.load(read_file)
-    training_plot(stats["training_losses"],stats["training_rewards"],stats["validation_rewards"],stats["validation_hits"],stats["action_stats"])
+    training_plot(stats["training_losses"],stats["training_rewards"],stats["validation_rewards"],stats["validation_hits"],stats["step_action"])
     print(stats)
 
