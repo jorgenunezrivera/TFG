@@ -141,8 +141,7 @@ class ImageWindowEnvGenerator(gym.Env):
         return image_window_resized
 
     def _get_predictions(self, image_window):
-        image_window_expanded = np.array([image_window])
-        predictions = self.model.predict(image_window_expanded)
+        predictions = self.model.predict(np.array([image_window]))
         return predictions
 
     def _get_predicted_class(self, predictions):
