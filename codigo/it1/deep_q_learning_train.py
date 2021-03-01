@@ -10,7 +10,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
 
 # IMG_SHAPE=(224,224,3)
 TRAINING_IMAGES_DIR = "train_200"
-VALIDATION_IMAGES_DIR = "validation100"
+VALIDATION_IMAGES_DIR = "validation1000"
 TRAINING_LABELS_FILE = "training_labels.txt"
 VALIDATION_LABELS_FILE = "validation_labels.txt"
 NUM_EPISODES = 12000

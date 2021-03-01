@@ -308,7 +308,7 @@ def deep_q_learning(env,
             targets_batch = reward_batch + np.invert(done_batch).astype(np.float32) * discount_factor * np.amax(q_values_next, axis=1)
 
             # Perform gradient descent update
-            states_batch = np.array(states_batch)
+            #states_batch = np.array(states_batch)
             loss = q_estimator.update(states_batch, action_batch, targets_batch)
 
             gc.collect()
