@@ -5,6 +5,7 @@ from gym import spaces
 import matplotlib.pyplot as plt
 import matplotlib.patches as pltpatch
 import numpy as np
+from PIL import Image
 
 import tensorflow as tf
 from tensorflow import keras
@@ -137,10 +138,13 @@ class ImageWindowEnvGenerator(gym.Env):
         self.top = np.maximum(self.top, 0)
         self.bottom = self.image_shape[0] + (self.y - self.z) * self.image_size_factor[0] * STEP_SIZE
         self.bottom = np.minimum(self.bottom, self.image_shape[0])
-        image_window = self.img_arr[self.top:self.bottom, self.left:self.right]
-        image_window_resized = tf.image.resize(image_window, size=(HEIGHT, WIDTH))  # .numpy() (comprobar performance)
-        image_window_resized = tf.keras.applications.mobilenet_v2.preprocess_input(image_window_resized)
-        return image_window_resized.numpy()
+        image_window = Image.fromarray(self.img_arr[self.top:self.bottom, self.left:self.right])
+        image_window_resized = image_window.resize((WIDTH,HEIGHT))#tf.image.resize(image_window, size=(HEIGHT, WIDTH))  # .numpy() (comprobar performance) #IMPLEMENTARSIN TENSORFLOW
+        image_window_array=np.array(image_window_resized)#tf.keras.applications.mobilenet_v2.preprocess_input(image_window_resized)
+        image_window_preprocessed=(image_window_array/128)-1
+        print(image_window_preprocessed)
+        print(image_window_preprocessed.shape)
+        return image_window_preprocessed
 
     def _get_predictions(self, image_window):
         predictions = self.model.predict_on_batch(tf.expand_dims(image_window, axis=0))#np.array
