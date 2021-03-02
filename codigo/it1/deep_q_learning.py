@@ -2,6 +2,7 @@ import gc
 
 import tensorflow as tf
 import numpy as np
+from memprof import memprof
 from tensorflow import keras
 from tensorflow.keras import layers
 from collections import namedtuple
@@ -150,8 +151,9 @@ def make_epsilon_greedy_policy(estimator, nA):
         best_action = np.argmax(q_values)
         A[best_action] += (1.0 - epsilon)
         return A
-    return policy_fn        
+    return policy_fn
 
+@memprof
 def deep_q_learning(env,
                     q_estimator,
                     target_estimator,
@@ -301,7 +303,14 @@ def deep_q_learning(env,
             ################## APRENDIZAJE #############################
             # Sample a minibatch from the replay memory
             samples = random.sample(replay_memory, batch_size)
-            states_batch, action_batch, reward_batch, next_states_batch, done_batch = map(np.array, zip(*samples))
+            zipped_samples=zip(*samples)
+            states_batch=zipped_samples[0].numpy()
+            action_batch=np.array(zipped_samples[1])
+            reward_batch=np.arraY(zipped_samples[2])
+            next_states_batch=zipped_samples[3].numpy()
+            done_batch=np.array(zipped_samples[4])
+            zipped_samples=None
+            #states_batch, action_batch, reward_batch, next_states_batch, done_batch = map(np.array, zip(*samples))
 
             # Calculate q values and targets
             q_values_next = target_estimator.predict(next_states_batch)
