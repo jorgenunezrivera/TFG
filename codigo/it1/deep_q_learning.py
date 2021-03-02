@@ -302,6 +302,7 @@ def deep_q_learning(env,
 
             ################## APRENDIZAJE #############################
             # Sample a minibatch from the replay memory
+            print("sampling")
             samples = random.sample(replay_memory, batch_size)
             #zipped_samples=zip(*samples)
             #states_batch=zipped_samples[0].numpy()
@@ -311,6 +312,7 @@ def deep_q_learning(env,
             #done_batch=np.array(zipped_samples[4])
             zipped_samples=None
             states_batch, action_batch, reward_batch, next_states_batch, done_batch = map(np.array, zip(*samples))
+            print("end sampling")
 
             # Calculate q values and targets
             q_values_next = target_estimator.predict(next_states_batch)
