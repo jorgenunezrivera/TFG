@@ -153,7 +153,7 @@ def make_epsilon_greedy_policy(estimator, nA):
         return A
     return policy_fn
 
-@profile
+#@profile
 def deep_q_learning(env,
                     q_estimator,
                     target_estimator,
