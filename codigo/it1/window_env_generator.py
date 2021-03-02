@@ -140,7 +140,7 @@ class ImageWindowEnvGenerator(gym.Env):
         image_window = self.img_arr[self.top:self.bottom, self.left:self.right]
         image_window_resized = tf.image.resize(image_window, size=(HEIGHT, WIDTH))  # .numpy() (comprobar performance)
         image_window_resized = tf.keras.applications.mobilenet_v2.preprocess_input(image_window_resized)
-        return image_window_resized
+        return image_window_resized.numpy()
 
     def _get_predictions(self, image_window):
         predictions = self.model.predict_on_batch(tf.expand_dims(image_window, axis=0))#np.array

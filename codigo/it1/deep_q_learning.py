@@ -12,11 +12,12 @@ from random_env_test import random_env_test
 
 mse = tf.keras.losses.MeanSquaredError() #categoricalcrossentropy
 mae = tf.keras.losses.MeanAbsoluteError()
+huber=tf.keras.losses.Huber()
 
 def custom_loss(model, x, y, a):
     y_ = model(x)
     y_=y_[:,a]
-    return mse(y,y_)
+    return huber(y,y_)
     
 def custom_grad(model, inputs, targets,a):
     with tf.GradientTape() as tape:
@@ -240,8 +241,8 @@ def deep_q_learning(env,
             state = next_state
     print("Done")
 
-    random_reward,random_hits=random_env_test(validation_env)
-    print("Random test on validation_env: validation reward mean: {} , hits: {}%".format(random_reward, random_hits))
+    #random_reward,random_hits=random_env_test(validation_env)
+    #print("Random test on validation_env: validation reward mean: {} , hits: {}%".format(random_reward, random_hits))
 
     for i_episode in range(num_episodes):
 
@@ -302,14 +303,14 @@ def deep_q_learning(env,
             ################## APRENDIZAJE #############################
             # Sample a minibatch from the replay memory
             samples = random.sample(replay_memory, batch_size)
-            zipped_samples=zip(*samples)
-            states_batch=zipped_samples[0].numpy()
-            action_batch=np.array(zipped_samples[1])
-            reward_batch=np.array(zipped_samples[2])
-            next_states_batch=zipped_samples[3].numpy()
-            done_batch=np.array(zipped_samples[4])
+            #zipped_samples=zip(*samples)
+            #states_batch=zipped_samples[0].numpy()
+            #action_batch=np.array(zipped_samples[1])
+            #reward_batch=np.array(zipped_samples[2])
+            #next_states_batch=zipped_samples[3].numpy()
+            #done_batch=np.array(zipped_samples[4])
             zipped_samples=None
-            #states_batch, action_batch, reward_batch, next_states_batch, done_batch = map(np.array, zip(*samples))
+            states_batch, action_batch, reward_batch, next_states_batch, done_batch = map(np.array, zip(*samples))
 
             # Calculate q values and targets
             q_values_next = target_estimator.predict(next_states_batch)
