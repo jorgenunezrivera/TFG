@@ -227,7 +227,7 @@ def deep_q_learning(env,
     print("Training {} steps with LR= {}".format(num_episodes,q_estimator.learning_rate))
     print("Populating replay memory...")
     state = env.reset()
-    #state = np.stack([state] * 4, axis=2)
+    # state = np.stack([state] * 4, axis=2)
     for i in range(replay_memory_init_size):
         action_probs = policy(state, epsilons[min(total_t, epsilon_decay_steps-1)])
         action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
@@ -305,7 +305,7 @@ def deep_q_learning(env,
             zipped_samples=zip(*samples)
             states_batch=zipped_samples[0].numpy()
             action_batch=np.array(zipped_samples[1])
-            reward_batch=np.arraY(zipped_samples[2])
+            reward_batch=np.array(zipped_samples[2])
             next_states_batch=zipped_samples[3].numpy()
             done_batch=np.array(zipped_samples[4])
             zipped_samples=None
