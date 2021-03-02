@@ -2,7 +2,6 @@ import gc
 
 import tensorflow as tf
 import numpy as np
-from memprof import memprof
 from tensorflow import keras
 from tensorflow.keras import layers
 from collections import namedtuple
@@ -153,7 +152,7 @@ def make_epsilon_greedy_policy(estimator, nA):
         return A
     return policy_fn
 
-@memprof
+
 def deep_q_learning(env,
                     q_estimator,
                     target_estimator,
