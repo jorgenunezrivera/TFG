@@ -46,13 +46,13 @@ class ImageWindowEnvGenerator(gym.Env):
         self.sample_index = 0
         self.num_samples = self.image_generator.__len__()
         self.labels = []
+        self.last_better_result=-1
         with open(labels_file) as fp:
             line = fp.readline()
             while line:
                 self.labels.append(int(line))
                 line = fp.readline()
         self.x = self.y = self.z = 0
-         # (x,y,z,return)
         self.true_class = 0
         self.predicted_class = 0
         self.history = []
@@ -79,6 +79,7 @@ class ImageWindowEnvGenerator(gym.Env):
         max_prediction_value = np.max(predictions)
         #print("Initial_rewrd: {}".format(self.initial_reward))
         self.history = [(0,0,0,self.initial_reward,self.predicted_class,max_prediction_value)]
+        self.last_better_result = -1
         return image_window
 
     def step(self, action):
@@ -92,20 +93,29 @@ class ImageWindowEnvGenerator(gym.Env):
         elif action == 3:
             pass
 
-        if (self.x > 6): self.x = 6
-        if (self.y > 6): self.y = 6
-        if (self.z > 6): self.z = 6
+        if (self.x > 6):
+            self.x = 6
+            self.n_steps =MAX_STEPS
+        if (self.y > 6):
+            self.y = 6
+            self.n_steps = MAX_STEPS
+        if (self.z > 6):
+            self.z = 6
+            self.n_steps = MAX_STEPS
         state = self._get_image_window()
         predictions = self._get_predictions(state)
         self.predicted_class = self._get_predicted_class(predictions)
         max_prediction_value = np.max(predictions)
         step_reward = self._get_reward(predictions)
         if CONTINUE_UNTIL_DIES:
-            if step_reward <= self.history[-1][3]:
+            if step_reward <= self.history[self.last_better_result][3]:
                 self.n_steps += 1
+            else:
+                self.last_better_result = len(self.history)
+                self.n_steps = 0
         else:
             self.n_steps += 1
-        done = (self.n_steps >= MAX_STEPS) ## or action==3)
+        done = (self.n_steps >= MAX_STEPS or action==3)
 
         if INTERMEDIATE_REWARDS:
             reward = (step_reward - self.history[-1][3]) * INTERMEDIATE_REWARDS_FACTOR

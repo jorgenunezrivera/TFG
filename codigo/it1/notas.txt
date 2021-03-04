@@ -33,3 +33,31 @@ Se devuelve un ultimoi poaso como si fuera el penultimo dando lugar a resultados
 ¡REWARDS INTERMEDIOS!->mejora desde el anterior paso
 REWARD FINAL:mejora desde el paso inicial
 
+Desde la última reunión:
+    Mean Squared Error:
+        Me dijisteis que lo cambiara por CategoricalCrossEntropy. Sin embargo, como la red está aproximando (como en una regresión) el Q value del estado y la acción elegidos
+    no parece que tenga sentido ya que aproximamos un numero real y no unas probabilidades. también me di cuenta de que la última capa de la red tenía una funcion de activación
+    softmax, lo cual tampoco tenía sentido, y que fue eliminada.
+    Finalización según resultados.
+        La implementé para probar de forma que finalizara despues de un step con resultados peores que el anterior. Los pesos explotaban y los q values crecían cada vez más.
+    Sin embargo aún debería hacer mas pruebas, finalizando despues de varios steps empeorando, y tambien con rewards intermedios para que aprenda de cada step directamente
+    Loss: he probado Mean Absolute Error. en un caso concreto he conseguido resultados buenos pero no se han repetido
+    He vueltto a MSE con la idea de repetir los últimos resultados buenos de antes de la reunión. Al final he cambiado a Huber Loss
+    Step size: lo mismo,con 32 he conseguido resultados buenos pero en casos especificos
+    Con finalizacion a la primera acción que empeora: Los pesos explotan (falta probar con mas pasos despues de que empeore)
+    Con rewards en cada paso en lugar de al final todavía no he conseguido resultados buenos
+
+    He implementado el env con el generator y la validacion con 1000 imagenes en lugar de 25
+    He implementado rewards intermedios
+    He implementado finalizacion por acción que empeora.
+        Problemas:
+            En test no sabriamos como finalizar
+                Idea: implementar otro tipo de finalización (por la certeza de los primeros resultados o algo asi)
+            Solo resultados positivos, los pesos explotan, no aprende bien
+                Idea: probar con rewards intermedios para que aprenda de cada acción
+    He implementado sistema de logs para poder ejecutar scripts con varias tareas y luego ver los resultados
+    He implementado reinforce(Policy Gradient con baseline) (pero aun no lo he probado)
+    He solucionado problemas de memoria
+        En WindowEnvGenerator el reescalado y preprocesado delas imagenges pasa de ser tensorflow a Pillow. PArece que resuelve problema de memoria pero podría ir más lento (no lo he medido)
+        En WindowEnvGenerator y en DeepQLearning, llamar a predict_on_batch en lugar de predict (y gc.collect)
+
