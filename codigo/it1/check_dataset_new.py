@@ -31,6 +31,7 @@ with open("label_to_index_dict.json", "r") as read_file:
     label_index_dict = json.load(read_file)
 
 image_batch=[]
+wrongs=[]
 filelist=os.listdir(TRAINING_IMAGES_DIR)
 filelist.sort()
 for entry in filelist:
@@ -64,7 +65,10 @@ for i in range(len(image_batch)):
     #print("Sample {} Hit: {}".format(i,hit))
     if not hit:
         print(str(1001+i) + " " +predicted_label + " and not " + label)
+        wrongs.append(i)
     if hit:
         hits+=1
+
+
 
 print("Hits: {}/{} ({}%)".format(hits,len(image_batch),hits*100/len(image_batch)))

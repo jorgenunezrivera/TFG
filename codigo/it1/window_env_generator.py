@@ -20,8 +20,8 @@ HEIGHT = 224
 WIDTH = 224
 N_CHANNELS = 3
 
-MAX_STEPS = 6
-STEP_SIZE = 16
+MAX_STEPS = 18
+STEP_SIZE = 32
 N_ACTIONS = 4
 INTERMEDIATE_REWARDS = 0
 INTERMEDIATE_REWARDS_FACTOR = 10
@@ -47,6 +47,8 @@ class ImageWindowEnvGenerator(gym.Env):
         self.num_samples = self.image_generator.__len__()
         self.labels = []
         self.last_better_result=-1
+        self.max_possible_step=int(HEIGHT/STEP_SIZE)
+        self.step_size=STEP_SIZE
         with open(labels_file) as fp:
             line = fp.readline()
             while line:
@@ -82,6 +84,16 @@ class ImageWindowEnvGenerator(gym.Env):
         self.last_better_result = -1
         return image_window
 
+    def restart_in_state(self,index):
+        self.sample_index=index
+        self.reset()
+
+    def set_window(self,x,y,z):
+        self.x=x
+        self.y=y
+        self.z=z
+
+
     def step(self, action):
         # 0: right 1:down 2: zoom in 3: end
         if action == 0:
@@ -93,14 +105,14 @@ class ImageWindowEnvGenerator(gym.Env):
         elif action == 3:
             pass
 
-        if (self.x > 6):
-            self.x = 6
+        if (self.x > self.max_possible_step):
+            self.x = self.max_possible_step
             self.n_steps =MAX_STEPS
-        if (self.y > 6):
-            self.y = 6
+        if (self.y > self.max_possible_step):
+            self.y = self.max_possible_step
             self.n_steps = MAX_STEPS
-        if (self.z > 6):
-            self.z = 6
+        if (self.z > self.max_possible_step):
+            self.z = self.max_possible_step
             self.n_steps = MAX_STEPS
         state = self._get_image_window()
         predictions = self._get_predictions(state)
