@@ -105,14 +105,14 @@ class ImageWindowEnvGenerator(gym.Env):
         elif action == 3:
             pass
 
-        if (self.x > self.max_possible_step):
-            self.x = self.max_possible_step
+        if (self.x >= self.max_possible_step):
+            self.x = self.max_possible_step-1
             self.n_steps =MAX_STEPS
-        if (self.y > self.max_possible_step):
-            self.y = self.max_possible_step
+        if (self.y >= self.max_possible_step):
+            self.y = self.max_possible_step-1
             self.n_steps = MAX_STEPS
-        if (self.z > self.max_possible_step):
-            self.z = self.max_possible_step
+        if (self.z >= self.max_possible_step):
+            self.z = self.max_possible_step-1
             self.n_steps = MAX_STEPS
         state = self._get_image_window()
         predictions = self._get_predictions(state)
