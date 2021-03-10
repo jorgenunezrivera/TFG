@@ -57,7 +57,6 @@ class Estimator():
             layers.Dense(512, activation='relu'),
             layers.Dense(n_actions)  # Tenia un softmax que no venia a cuento
         ])
-        self.model.summary()
         self.optimizer = tf.keras.optimizers.RMSprop(self.learning_rate, 0.99)
         
     def _build_model_norm(self,input_shape,n_actions,learning_rate):

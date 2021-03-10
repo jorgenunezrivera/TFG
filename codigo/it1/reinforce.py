@@ -143,7 +143,7 @@ class ValueEstimator():
         self.model.save("reinforce_value_model")
 
 
-def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_env, discount_factor=1.0,validate_every=200,stats_mean_every=50):
+def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_env, discount_factor=1.0,validate_every=200,stats_mean_every=100):
     """
     REINFORCE (Monte Carlo Policy Gradient) Algorithm. Optimizes the policy
     function approximator using policy gradient.
