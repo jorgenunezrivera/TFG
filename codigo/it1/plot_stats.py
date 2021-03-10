@@ -18,7 +18,7 @@ def training_plot(training_losses,training_rewards,validation_rewards,validation
     plt.plot(training_losses_x, training_losses_y)
     plt.legend(loc='upper right')
     plt.ylabel('Mean Absolute Error')
-    plt.ylim([0, 1])
+    #plt.ylim([0, 1])
     plt.title('Training Loss')
     plt.xlabel('epoch')
 
@@ -28,7 +28,7 @@ def training_plot(training_losses,training_rewards,validation_rewards,validation
     #plt.hlines(0,0,NUM_EPISODES)
     plt.legend(loc='upper right')
     plt.ylabel('Rewards')
-    plt.ylim([-1.1, 1.1])
+    #plt.ylim([-1.1, 1.1])
     plt.title('Training Rewards')
     plt.xlabel('epoch')
 
@@ -37,7 +37,7 @@ def training_plot(training_losses,training_rewards,validation_rewards,validation
    # plt.hlines(0.73,0,NUM_EPISODES)
     plt.legend(loc='upper right')
     plt.ylabel('Hits')
-    plt.ylim([0.6, 0.9])
+    #plt.ylim([0.6, 0.9])
     plt.title('Validation hits')
     plt.xlabel('epoch')
 
@@ -49,7 +49,7 @@ def training_plot(training_losses,training_rewards,validation_rewards,validation
         plt.plot(action_stats[0], action_stats[4],'c',label='action 3')
     plt.legend(loc='upper right')
     plt.ylabel('Ocurrences')
-    plt.ylim([0, 6000])
+    #plt.ylim([0, 6000])
     plt.title('Action stats')
     plt.xlabel('Action')
 
