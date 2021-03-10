@@ -153,6 +153,38 @@ def make_epsilon_greedy_policy(estimator, nA):
         return A
     return policy_fn
 
+def make_epsilon_greedy_policy_from_list(estimator, nA):
+    """
+    Creates an epsilon-greedy policy based on a given Q-function approximator and epsilon.
+
+    Args:
+        estimator: An estimator that returns q values for a given state
+        actions: List of legal actions
+
+    Returns:
+        A function that takes the (observation, epsilon,legal_actions) as an argument and returns
+        the probabilities for each action in the form of a numpy array of length nA.
+
+    """
+    def policy_fn(observation, epsilon, legal_actions):
+
+
+        A = np.zeros(nA, dtype=float)
+        if len(legal_actions) == 0:
+            return A
+        for i in range(nA):
+            if i in legal_actions:
+                A[i]=epsilon / len(legal_actions)
+        q_values = estimator.predict(tf.expand_dims(observation, axis=0))[0]
+        best_actions = np.argsort(-q_values)
+        for action in best_actions:
+            if action in legal_actions:
+                best_action=action
+                break;
+        A[best_action] += (1.0 - epsilon)
+        return A
+    return policy_fn
+
 #@profile
 def deep_q_learning(env,
                     q_estimator,
@@ -217,7 +249,7 @@ def deep_q_learning(env,
     epsilons = np.linspace(epsilon_start, epsilon_end, epsilon_decay_steps)
 
     # The policy we're following
-    policy = make_epsilon_greedy_policy(
+    policy = make_epsilon_greedy_policy_from_list(
         q_estimator,
         env.action_space.n)
 
@@ -227,7 +259,11 @@ def deep_q_learning(env,
     state = env.reset()
     # state = np.stack([state] * 4, axis=2)
     for i in range(replay_memory_init_size):
-        action_probs = policy(state, epsilons[min(total_t, epsilon_decay_steps-1)])
+        legal_actions=env.get_legal_actions()
+        if (len(legal_actions)==0):
+            print("ERROR: NO LEGAL ACTIONS POSSIBLE")
+            break;
+        action_probs = policy(state, epsilons[min(total_t, epsilon_decay_steps-1)],legal_actions)
         action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
         
         next_state, reward, done, _ = env.step(action)
@@ -264,7 +300,7 @@ def deep_q_learning(env,
             print("\rEpisode {}/{}, validation_reward: {} hits: {} mean_wrong_uncertanty: {}".format(i_episode + 1, num_episodes,validation_reward,hits,wrong_certanty))
         ######################### ESTADISTICAS ###############
         if (i_episode + 1) % rewards_mean_every==0:
-            #print("Updating stats")
+            print("Episode : {} / {}".format(i_episode,num_episodes))
             cumulated_reward/=rewards_mean_every
             stats["training_rewards"].append((i_episode,float(cumulated_reward)))
             cumulated_loss/=rewards_mean_every
@@ -284,7 +320,13 @@ def deep_q_learning(env,
 
             #################### INTERACCION CON EL ENV #########################
             # Take a step
-            action_probs = policy(state, epsilon)            
+            legal_actions=env.get_legal_actions()
+            if len(legal_actions)==0:
+                print("ERROR: NO LEGAL ACTIONS POSSIBLE")
+                break;
+            action_probs = policy(state, epsilon,legal_actions)
+
+
             action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
 
             next_state, reward, done, _ = env.step(action)
@@ -300,13 +342,7 @@ def deep_q_learning(env,
             ################## APRENDIZAJE #############################
             # Sample a minibatch from the replay memory
             samples = random.sample(replay_memory, batch_size)
-            #zipped_samples=zip(*samples)
-            #states_batch=zipped_samples[0].numpy()
-            #action_batch=np.array(zipped_samples[1])
-            #reward_batch=np.array(zipped_samples[2])
-            #next_states_batch=zipped_samples[3].numpy()
-            #done_batch=np.array(zipped_samples[4])
-            zipped_samples=None
+
             states_batch, action_batch, reward_batch, next_states_batch, done_batch = map(np.array, zip(*samples))
 
             # Calculate q values and targets
@@ -314,7 +350,6 @@ def deep_q_learning(env,
             targets_batch = reward_batch + np.invert(done_batch).astype(np.float32) * discount_factor * np.amax(q_values_next, axis=1)
 
             # Perform gradient descent update
-            #states_batch = np.array(states_batch)
             loss = q_estimator.update(states_batch, action_batch, targets_batch)
 
             gc.collect()

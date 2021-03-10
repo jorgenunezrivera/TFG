@@ -22,48 +22,46 @@ def sliding_window(index, env):
     for z in range(MAX_ZOOM):
         for y in range(z):
             for x in range(z):
-                #print("sample {}  x,y,z  ={},{},{}".format(index, x, y, z))
+                # print("sample {}  x,y,z  ={},{},{}".format(index, x, y, z))
                 env.set_window(x, y, z)
                 _, _, _, info = env.step(3)
                 if (info["hit"]):
-                    print("sample {} hit with x, y,z  ={},{},{}, certainty:{}".format(index, x, y, z,info["max_prediction_value"]))
+                    print("sample {} hit with x, y,z  ={},{},{}, certainty:{}".format(index, x, y, z,
+                                                                                      info["max_prediction_value"]))
                     return True
     print("sample {} wrong".format(index))
     return False
 
 
-HEIGHT=224
-WIDTH=224
-IMG_SHAPE=(224,224,3)
-TRAINING_IMAGES_DIR="train_200"
-VALIDATION_IMAGES_DIR="validation"
-TRAINING_LABELS_FILE="training_labels.txt"
-VALIDATION_LABELS_FILE="validation_labels.txt"
+HEIGHT = 224
+WIDTH = 224
+IMG_SHAPE = (224, 224, 3)
+TRAINING_IMAGES_DIR = "train_200"
+VALIDATION_IMAGES_DIR = "validation"
+TRAINING_LABELS_FILE = "training_labels.txt"
+VALIDATION_LABELS_FILE = "validation_labels.txt"
 
+wrongs = []
 
-
-wrongs=[]
-
-env=ImageWindowEnvGenerator(TRAINING_IMAGES_DIR, TRAINING_LABELS_FILE)
-MAX_ZOOM=env.max_possible_step
-hits=0
+env = ImageWindowEnvGenerator(TRAINING_IMAGES_DIR, TRAINING_LABELS_FILE)
+MAX_ZOOM = env.max_possible_step
+hits = 0
 for i in range(len(env)):
-    state=env.reset()
-    _,_,_,info=env.step(3)
-    hit=info["hit"]
+    state = env.reset()
+    _, _, _, info = env.step(3)
+    hit = info["hit"]
     if not hit:
         wrongs.append(i)
     else:
-        hits+=1
+        hits += 1
 
-print("Hits: {}/{} ({}%)".format(hits,len(env),hits*100/len(env)))
+print("Hits: {}/{} ({}%)".format(hits, len(env), hits * 100 / len(env)))
 
-fixable_wrongs=[]
+fixable_wrongs = []
 for w in wrongs:
     if sliding_window(w, env):
         fixable_wrongs.append(w)
 
-print("training set 200: {} hits, {} wrongs, {} fixable wrongs with step size: {} and MAX_STEPS: {}, max precission:{}".format(hits,len(wrongs), len(fixable_wrongs),env.step_size,MAX_ZOOM,(hits+len(fixable_wrongs))*100/len(env)))
-
-
-
+print(
+    "training set 200: {} hits, {} wrongs, {} fixable wrongs with step size: {} and MAX_STEPS: {}, max precission:{}".format(
+        hits, len(wrongs), len(fixable_wrongs), env.step_size, MAX_ZOOM, (hits + len(fixable_wrongs)) * 100 / len(env)))

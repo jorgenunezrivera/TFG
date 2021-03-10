@@ -18,30 +18,42 @@ NUM_EPISODES = 12000
 LEARNING_RATE = 0.000001
 VALIDATE_EVERY=3000
 
+#env default params
+#Default parameters
+MAX_STEPS = 6
+STEP_SIZE = 32
+INTERMEDIATE_REWARDS = 0
+CONTINUE_UNTIL_DIES = 0
 
+def reinforce_train(num_episodes=NUM_EPISODES,learning_rate=LEARNING_RATE,
+                          validate_freq=VALIDATE_EVERY,max_steps=MAX_STEPS,step_size=STEP_SIZE,intermediate_rewards=INTERMEDIATE_REWARDS,
+                 continue_until_dies=CONTINUE_UNTIL_DIES):
 
+    env = ImageWindowEnvGenerator(TRAINING_IMAGES_DIR, TRAINING_LABELS_FILE, max_steps, step_size, intermediate_rewards,
+                                  continue_until_dies)
 
-env = ImageWindowEnvGenerator(TRAINING_IMAGES_DIR, TRAINING_LABELS_FILE)
-validation_env = ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE)
+    validation_env = ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, max_steps, step_size,
+                                             intermediate_rewards, continue_until_dies)
 
-N_ACTIONS = env.action_space.n
-IMG_SHAPE = env.observation_space.shape
+    N_ACTIONS = env.action_space.n
+    IMG_SHAPE = env.observation_space.shape
 
-initial_ts = time.time()
+    initial_ts = time.time()
 
-policy_estimator = PolicyEstimator(IMG_SHAPE, N_ACTIONS, LEARNING_RATE)
-value_estimator = ValueEstimator(IMG_SHAPE, LEARNING_RATE)
+    policy_estimator = PolicyEstimator(IMG_SHAPE, N_ACTIONS, learning_rate)
+    value_estimator = ValueEstimator(IMG_SHAPE, learning_rate)
 
-stats=reinforce(env,policy_estimator,value_estimator,NUM_EPISODES,validation_env,validate_every=VALIDATE_EVERY)
+    stats=reinforce(env,policy_estimator,value_estimator,num_episodes,validation_env,validate_every=validate_freq)
 
-elapsed_time = time.time() - initial_ts
-print("Elapsed time: " + str(elapsed_time))
-print("Num episodes: " + str(NUM_EPISODES))
-print("secs/episode:" + str(elapsed_time / NUM_EPISODES))
+    elapsed_time = time.time() - initial_ts
+    print("Elapsed time: " + str(elapsed_time))
+    print("Num episodes: " + str(NUM_EPISODES))
+    print("secs/episode:" + str(elapsed_time / NUM_EPISODES))
 
-now = datetime.now()
-print(stats)
-log_filename = now.strftime("logs/%d_%m_%Y_%H_%M_%S_reinforce_log.json")
-with open(log_filename, 'w') as fp:
-    json.dump(stats, fp)
+    now = datetime.now()
+    print(stats)
+    log_filename = now.strftime("logs/%d_%m_%Y_%H_%M_%S_reinforce_log.json")
+    with open(log_filename, 'w') as fp:
+        json.dump(stats, fp)
+    return log_filename
 

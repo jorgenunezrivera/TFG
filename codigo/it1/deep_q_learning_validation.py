@@ -13,9 +13,12 @@ def validation(q_estimator, env):
         obs = env.reset()
         for _ in itertools.count():
             q_values = q_estimator.predict(np.array([obs]))
-            #if(np.min(q_values)<0):
-            #    print(q_values)
-            best_action = np.argmax(q_values)
+            legal_actions=env.get_legal_actions
+            best_actions = np.argsort(-q_values)
+            for action in best_actions:
+                if action in legal_actions:
+                    best_action = action
+                    break;
             action_stats[best_action]+=1
             obs, reward, done, info = env.step(best_action)
             #if(i%20==0):

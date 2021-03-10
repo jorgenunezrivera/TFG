@@ -1,6 +1,7 @@
 import numpy as np
 import time
 import itertools
+import tensorflow as tf
 
 
 def reinforce_validation(action_estimator, env):
@@ -13,6 +14,11 @@ def reinforce_validation(action_estimator, env):
         obs = env.reset()
         for _ in itertools.count():
             action_probs = action_estimator.predict(np.array([obs]))[0]
+            legal_actions = env.get_legal_actions()
+            for i in len(action_probs):
+                if i not in legal_actions:
+                    action_probs[i] = 0
+            action_probs = tf.nn.softmax(action_probs)
             chosen_action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
             action_stats[chosen_action]+=1
             obs, reward, done, info = env.step(chosen_action)

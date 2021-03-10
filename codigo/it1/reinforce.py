@@ -224,7 +224,15 @@ def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_en
         for t in itertools.count():
 
             # Take a step
+            legal_actions=env.get_legal_actions()
+            if len(legal_actions)==0:
+                print("ERRO:NO POSSIBLE ACTIONS")
+                break;
             action_probs = estimator_policy.predict((tf.expand_dims(state, axis=0)))[0]
+            for i in len(action_probs):
+                if i not in legal_actions:
+                    action_probs[i]=0
+            action_probs=tf.nn.softmax(action_probs)
             action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
             next_state, reward, done, _ = env.step(action)
 
