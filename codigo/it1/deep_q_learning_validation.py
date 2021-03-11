@@ -13,7 +13,7 @@ def validation(q_estimator, env):
         obs = env.reset()
         for _ in itertools.count():
             q_values = q_estimator.predict(np.array([obs]))
-            legal_actions=env.get_legal_actions
+            legal_actions=env.get_legal_actions()
             best_actions = np.argsort(-q_values)
             for action in best_actions:
                 if action in legal_actions:
