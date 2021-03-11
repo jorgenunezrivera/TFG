@@ -299,7 +299,7 @@ def deep_q_learning(env,
             print("\rEpisode {}/{}, validation_reward: {} hits: {} mean_wrong_uncertanty: {}".format(i_episode + 1, num_episodes,validation_reward,hits,wrong_certanty))
         ######################### ESTADISTICAS ###############
         if (i_episode + 1) % rewards_mean_every==0:
-            print("Episode : {} / {}".format(i_episode,num_episodes))
+            #print("Episode : {} / {}".format(i_episode,num_episodes))
             cumulated_reward/=rewards_mean_every
             stats["training_rewards"].append((i_episode,float(cumulated_reward)))
             cumulated_loss/=rewards_mean_every
