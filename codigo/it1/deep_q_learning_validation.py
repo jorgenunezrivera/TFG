@@ -1,6 +1,7 @@
 import numpy as np
 import time
 import itertools
+import tensorflow as tf
 
 
 def validation(q_estimator, env):
@@ -12,7 +13,7 @@ def validation(q_estimator, env):
     for i in range(len(env)):
         obs = env.reset()
         for _ in itertools.count():
-            q_values = q_estimator.predict(np.array([obs]))[0]
+            q_values = q_estimator.predict(tf.expand_dims(obs, axis=0))[0]#NUMPY?
             legal_actions=env.get_legal_actions()
             best_actions = np.argsort(-q_values)
             for action in best_actions:

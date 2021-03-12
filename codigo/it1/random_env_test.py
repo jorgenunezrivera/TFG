@@ -12,7 +12,8 @@ def random_env_test(env):
         env.reset()
         env.render
         for t in itertools.count():
-            best_action = np.random.randint(N_ACTIONS)
+            legal_actions=env.get_legal_actions()
+            best_action = legal_actions[np.random.randint(len(legal_actions))]
             obs, reward, done, info = env.step(best_action)
             if(done):
                 rewards.append(reward)

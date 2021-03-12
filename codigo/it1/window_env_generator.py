@@ -188,12 +188,13 @@ class ImageWindowEnvGenerator(gym.Env):
         self.bottom = self.image_shape[0] + (self.y - self.z) * self.image_size_factor[0] * self.step_size
         self.bottom = np.minimum(self.bottom, self.image_shape[0])
         image_window = Image.fromarray(np.uint8(self.img_arr[self.top:self.bottom, self.left:self.right]), mode='RGB')
-        image_window_resized = image_window.resize((WIDTH,
+        image_window_array = image_window.resize((WIDTH,
                                                     HEIGHT))  # tf.image.resize(image_window, size=(HEIGHT, WIDTH))  # .numpy() (comprobar performance) #IMPLEMENTARSIN TENSORFLOW
         image_window_array = np.array(
-            image_window_resized)  # tf.keras.applications.mobilenet_v2.preprocess_input(image_window_resized)
-        image_window_preprocessed = (image_window_array / 128) - 1
-        return image_window_preprocessed
+            image_window_array)  # tf.keras.applications.mobilenet_v2.preprocess_input(image_window_resized)
+        image_window_array = (image_window_array / 128)
+        image_window_array=image_window_array-1
+        return image_window_array
 
     def _get_predictions(self, image_window):
         predictions = self.model.predict_on_batch(tf.expand_dims(image_window, axis=0))  # np.array

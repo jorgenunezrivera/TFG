@@ -171,9 +171,8 @@ def make_epsilon_greedy_policy_from_list(estimator, nA):
         A = np.zeros(nA, dtype=float)
         if len(legal_actions) == 0:
             return A
-        for i in range(nA):
-            if i in legal_actions:
-                A[i]=epsilon / len(legal_actions)
+        for i in legal_actions:
+            A[i]=epsilon / len(legal_actions)
         q_values = estimator.predict(tf.expand_dims(observation, axis=0))[0]
         best_actions = np.argsort(-q_values)
         for action in best_actions:
@@ -278,7 +277,7 @@ def deep_q_learning(env,
 
     for i_episode in range(num_episodes):
 
-        #print("Episode {}".format(i_episode))
+        print("Episode {}".format(i_episode))
         # Reset the environment
         state = env.reset()
         #state = np.stack([state] * 4, axis=2)
@@ -324,7 +323,6 @@ def deep_q_learning(env,
                 print("ERROR: NO LEGAL ACTIONS POSSIBLE")
                 break;
             action_probs = policy(state, epsilon,legal_actions)
-
 
             action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
 
