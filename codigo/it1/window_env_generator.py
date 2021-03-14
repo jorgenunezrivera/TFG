@@ -196,7 +196,7 @@ class ImageWindowEnvGenerator(gym.Env):
         return image_window_array
 
     def _get_predictions(self, image_window):
-        predictions = self.model.predict_on_batch(tf.expand_dims(image_window, axis=0))  # np.array
+        predictions = self.model.predict_on_batch(np.expand_dims(image_window, axis=0))  # np.array
         gc.collect()
         return predictions
 
