@@ -192,8 +192,8 @@ class ImageWindowEnvGenerator(gym.Env):
                                                     HEIGHT))  # tf.image.resize(image_window, size=(HEIGHT, WIDTH))  # .numpy() (comprobar performance) #IMPLEMENTARSIN TENSORFLOW
         image_window_array = np.array(
             image_window_array)  # tf.keras.applications.mobilenet_v2.preprocess_input(image_window_resized)
+        image_window_array = np.add(image_window_array, -128)
         image_window_array = image_window_array / 128
-        image_window_array=np.add(image_window_array,-1)
         return image_window_array
 
     def _get_predictions(self, image_window):
