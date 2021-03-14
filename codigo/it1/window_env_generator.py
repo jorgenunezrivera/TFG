@@ -214,4 +214,6 @@ class ImageWindowEnvGenerator(gym.Env):
         x=np.random.randint(z)
         y=np.random.randint(z)
         self.set_window(x,y,z)
-        return self._get_image_window()
+        state= self._get_image_window()
+        predictions = self._get_predictions(state)
+        return predictions
