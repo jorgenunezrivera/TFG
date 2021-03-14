@@ -8,7 +8,7 @@ TRAINING_LABELS_FILE = "training_labels.txt"
 VALIDATION_LABELS_FILE = "validation_labels.txt"
 env = ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE,18,32,0,0)
 
-
+env.reset()
 for _ in range(10000):
     env.random_window()
 

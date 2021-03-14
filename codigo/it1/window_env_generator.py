@@ -192,7 +192,7 @@ class ImageWindowEnvGenerator(gym.Env):
         image_window_array = np.array(
             image_window_array)  # tf.keras.applications.mobilenet_v2.preprocess_input(image_window_resized)
         image_window_array = np.add(image_window_array, -128)
-        image_window_array = np.float32(image_window_array / 128)
+        image_window_array = np.float32(np.divide(image_window_array,128))
         return image_window_array
 
     def _get_predictions(self, image_window):
@@ -210,8 +210,8 @@ class ImageWindowEnvGenerator(gym.Env):
 
     #for test purposes
     def random_window(self):
-        z=np.random.randint(self.max_possible_step)
+        z=np.random.randint(1,self.max_possible_step)
         x=np.random.randint(z)
-        y=np.randomm.randint(z)
+        y=np.random.randint(z)
         self.set_window(x,y,z)
         return self._get_image_window()
