@@ -14,7 +14,7 @@ VALIDATION_IMAGES_DIR = "validation1000"
 TRAINING_LABELS_FILE = "training_labels.txt"
 VALIDATION_LABELS_FILE = "validation_labels.txt"
 #Constants
-REPLAY_MEMORY_SIZE=40000
+REPLAY_MEMORY_SIZE=10000
 REPLAY_MEMORY_INIT_SIZE=1000
 
 #training default params
