@@ -8,7 +8,6 @@ import numpy as np
 from PIL import Image
 
 import tensorflow as tf
-from tensorflow import keras
 import json
 import from_disk_generator
 from from_disk_generator import FromDiskGenerator
@@ -208,3 +207,11 @@ class ImageWindowEnvGenerator(gym.Env):
     def _get_reward(self, predictions):
         reward = float(predictions[0, self.true_class])
         return reward
+
+    #for test purposes
+    def random_window(self):
+        z=np.random.randint(self.max_possible_step)
+        x=np.random.randint(z)
+        y=np.randomm.randint(z)
+        self.set_window(x,y,z)
+        return self._get_image_window()
