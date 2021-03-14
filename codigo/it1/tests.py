@@ -10,7 +10,7 @@ env = ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE,18,3
 
 env.reset()
 for t in range(100000):
-    env.random_window()
+    window=env.random_window()
     print(t)
 
 #random_reward,random_hits=random_env_test(env)
