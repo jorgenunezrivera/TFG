@@ -9,9 +9,8 @@ VALIDATION_LABELS_FILE = "validation_labels.txt"
 env = ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE,18,32,0,0)
 
 env.reset()
-for t in range(100000):
-    env.reset()
-    window=env.random_window()
+for t in range(10):
+    random_env_test(env)
     print(t)
 
 #random_reward,random_hits=random_env_test(env)

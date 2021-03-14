@@ -13,8 +13,8 @@ def random_env_test(env):
         env.render
         for t in itertools.count():
             legal_actions=env.get_legal_actions()
-            best_action = legal_actions[np.random.randint(len(legal_actions))]
-            obs, reward, done, info = env.step(best_action)
+            rand_action = legal_actions[np.random.randint(len(legal_actions))]
+            obs, reward, done, info = env.step(rand_action)
             if(done):
                 rewards.append(reward)
                 if(info["hit"]):
