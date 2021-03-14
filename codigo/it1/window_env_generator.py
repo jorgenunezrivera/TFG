@@ -192,7 +192,7 @@ class ImageWindowEnvGenerator(gym.Env):
         image_window_array = np.array(
             image_window_array)  # tf.keras.applications.mobilenet_v2.preprocess_input(image_window_resized)
         image_window_array = np.add(image_window_array, -128)
-        image_window_array = np.divide(image_window_array,128,dtype=np.float32)
+        image_window_array = np.divide(image_window_array,128,dtype=np.float16)
         return image_window_array
 
     def _get_predictions(self, image_window):
