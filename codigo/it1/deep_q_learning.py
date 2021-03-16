@@ -277,7 +277,7 @@ def deep_q_learning(env,
 
     for i_episode in range(num_episodes):
 
-        print("Episode {}".format(i_episode))
+        #print("Episode {}".format(i_episode))
         # Reset the environment
         state = env.reset()
         #state = np.stack([state] * 4, axis=2)
@@ -287,7 +287,7 @@ def deep_q_learning(env,
         # One step in the environment
         ############# VALIDACION #######################
         if (i_episode + 1) % validate_every == 0:
-            print("Validating".format(i_episode))
+            #print("Validating".format(i_episode))
             validation_reward,hits,wrong_certanty,action_stats = validation(q_estimator, validation_env)
             stats["validation_rewards"].append((i_episode, float(validation_reward)))
             stats["validation_hits"].append((i_episode,hits))
@@ -312,10 +312,10 @@ def deep_q_learning(env,
 
             # Maybe update the target estimator
             if (total_t+1) % update_target_estimator_every == 0:
-                print("Copying weights")
+                #print("Copying weights")
                 target_estimator.copy_weights(q_estimator)
                 gc.collect()
-                print("Copied")
+                #print("Copied")
 
             #################### INTERACCION CON EL ENV #########################
             # Take a step
