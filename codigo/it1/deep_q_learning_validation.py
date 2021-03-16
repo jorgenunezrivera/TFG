@@ -25,7 +25,7 @@ def validation(q_estimator, env):
             #if(i%20==0):
             #    print("q values: {}, reward: {} , hit:{}".format(q_values,reward,info["hit"]))
             if done:
-                if info["hit"]:
+                if info["best_hit"]:
                     hits += 1
                 else:
                     incorrect_prediction_certainty+=info["max_prediction_value"]

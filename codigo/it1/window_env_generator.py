@@ -71,6 +71,8 @@ class ImageWindowEnvGenerator(gym.Env):
         self.x = self.y = self.z = 0
         self.true_class = 0
         self.predicted_class = 0
+        self.best_result=0
+        self.best_predicted_class=-1
         self.history = []
 
     def __len__(self):
@@ -88,10 +90,14 @@ class ImageWindowEnvGenerator(gym.Env):
         self.x = self.y = self.z = 0
         self.left = self.right = self.top = self.bottom = 0
         self.n_steps = 0
+
         image_window = self._get_image_window()
         predictions = self._get_predictions(image_window)
         self.predicted_class = self._get_predicted_class(predictions)
         self.initial_reward = self._get_reward(predictions)
+        self.best_result=self.initial_reward
+        self.best_predicted_class=-1
+
         max_prediction_value = np.max(predictions)
         # print("Initial_rewrd: {}".format(self.initial_reward))
         self.history = [(0, 0, 0, self.initial_reward, self.predicted_class, max_prediction_value)]
@@ -129,45 +135,42 @@ class ImageWindowEnvGenerator(gym.Env):
             self.z += 1
         elif action == 3:
             pass
-#
-#        if (self.x >= self.max_possible_step):
-#            self.x = self.max_possible_step - 1
-#            self.n_steps = MAX_STEPS
-#        if (self.y >= self.max_possible_step):
-#            self.y = self.max_possible_step - 1
-#            self.n_steps = MAX_STEPS
-#        if (self.z >= self.max_possible_step):
-#            self.z = self.max_possible_step - 1
-#            self.n_steps = MAX_STEPS
+
         state = self._get_image_window()
         predictions = self._get_predictions(state)
         self.predicted_class = self._get_predicted_class(predictions)
         max_prediction_value = np.max(predictions)
         step_reward = self._get_reward(predictions)
+
         if self.continue_until_dies:
-            if step_reward <= self.history[self.last_better_result][3]:
+            if step_reward <= self.best_result:
                 self.n_steps += 1
             else:
-                self.last_better_result = len(self.history)
                 self.n_steps = 0
         else:
             self.n_steps += 1
+
         done = (self.n_steps >= self.max_steps or action == 3 or len(self.get_legal_actions())==0)
 
-        if self.intermediate_rewards:
+        if self.intermediate_rewards==1:
             reward = (step_reward - self.history[-1][3]) * REWARDS_FACTOR
+        elif self.intermediate_rewards==2:
+            reward=(step_reward-self.best_result) * REWARDS_FACTOR
         else:
             if done:
                 reward = (step_reward - self.initial_reward) * REWARDS_FACTOR
             else:
                 reward = 0
-        # topfive=keras.applications.mobilenet_v2.decode_predictions(predictions,5)
+
+        if step_reward > self.best_result:
+            self.best_result = step_reward
+            self.best_predicted_class=self.predicted_class
+
         self.history.append((self.x, self.y, self.z, step_reward, self.predicted_class, max_prediction_value))
         return state, reward, done, {"predicted_class": self.predicted_class,
                                      "max_prediction_value": max_prediction_value,
-                                     "hit": (self.predicted_class == self.true_class)}
-
-        #                         "top5": topfive}
+                                     "hit": (self.predicted_class == self.true_class),
+                                     "best_hit": (self.best_predicted_class == self.true_class)}
 
     def render(self, mode='human', close=False):
         fig, ax = plt.subplots(1)
