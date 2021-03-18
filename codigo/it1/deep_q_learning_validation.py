@@ -5,8 +5,9 @@ import tensorflow as tf
 
 
 def validation(q_estimator, env):
-    init_ts=time.time()
+    #init_ts=time.time()
     rewards = []
+    best_rewards=[]
     action_stats=np.zeros(env.action_space.n)
     hits=0
     incorrect_prediction_certainty=0
@@ -25,11 +26,12 @@ def validation(q_estimator, env):
             #if(i%20==0):
             #    print("q values: {}, reward: {} , hit:{}".format(q_values,reward,info["hit"]))
             if done:
-                if info["best_hit"]:
+                if info["best_hit"]:#cambiar best_hit por hit para rewards antiguos
                     hits += 1
                 else:
                     incorrect_prediction_certainty+=info["max_prediction_value"]
                 rewards.append(reward)
+                best_rewards.append(info["best_reward"])
                 break
     #print("time_elapsed={}".format(time.time()-init_ts))
-    return np.mean(rewards),hits/len(env),incorrect_prediction_certainty/(len(env)-hits),action_stats
+    return np.mean(best_rewards),hits/len(env),incorrect_prediction_certainty/(len(env)-hits),action_stats #cambiar best_rewards por rewards para  rewards antiguos

@@ -70,5 +70,5 @@ else:
     with open(sys.argv[1], "r") as read_file:
         stats= json.load(read_file)
     training_plot(stats["training_losses"],stats["training_rewards"],stats["validation_rewards"],stats["validation_hits"],stats["step_action"])
-    print(stats)
+    #print(stats)
 

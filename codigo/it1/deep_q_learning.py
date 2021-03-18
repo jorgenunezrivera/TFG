@@ -237,6 +237,7 @@ def deep_q_learning(env,
     stats["training_losses"]=[]
     cumulated_loss=0
     stats["validation_rewards"]=[]
+    stats["validation_best_rewards"] = []
     stats["validation_hits"]=[]
     stats["action_stats"]=[]
     cumulated_action_stats=np.zeros(env.action_space.n)
@@ -288,8 +289,9 @@ def deep_q_learning(env,
         ############# VALIDACION #######################
         if (i_episode + 1) % validate_every == 0:
             #print("Validating".format(i_episode))
-            validation_reward,hits,wrong_certanty,action_stats = validation(q_estimator, validation_env)
+            validation_reward,hits,wrong_certanty,action_stats,validation_best_reward = validation(q_estimator, validation_env)
             stats["validation_rewards"].append((i_episode, float(validation_reward)))
+            stats["validation_best_rewards"].append((i_episode, float(validation_best_reward)))
             stats["validation_hits"].append((i_episode,hits))
             cumulated_action_stats=np.add(cumulated_action_stats,action_stats)
             stats["step_action"][0].append(i_episode)
