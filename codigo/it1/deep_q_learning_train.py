@@ -24,6 +24,7 @@ UPDATE_TARGET_ESTIMATOR_EVERY=120
 VALIDATE_EVERY=4000
 #env default params
 #Default parameters
+N_ACTIONS=4
 MAX_STEPS = 6
 STEP_SIZE = 32
 INTERMEDIATE_REWARDS = 0
@@ -32,11 +33,11 @@ CONTINUE_UNTIL_DIES = 0
 
 def deep_q_learning_train(num_episodes=NUM_EPISODES,learning_rate=LEARNING_RATE,update_target_freq=UPDATE_TARGET_ESTIMATOR_EVERY,
                           validate_freq=VALIDATE_EVERY,max_steps=MAX_STEPS,step_size=STEP_SIZE,intermediate_rewards=INTERMEDIATE_REWARDS,
-                 continue_until_dies=CONTINUE_UNTIL_DIES):
+                 continue_until_dies=CONTINUE_UNTIL_DIES,n_actions=N_ACTIONS):
 
-    env = ImageWindowEnvGenerator(TRAINING_IMAGES_DIR, TRAINING_LABELS_FILE,max_steps,step_size,intermediate_rewards,continue_until_dies)
+    env = ImageWindowEnvGenerator(TRAINING_IMAGES_DIR, TRAINING_LABELS_FILE,max_steps,step_size,intermediate_rewards,continue_until_dies,n_actions)
 
-    validation_env = ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE,max_steps,step_size,intermediate_rewards,continue_until_dies)
+    validation_env = ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE,max_steps,step_size,intermediate_rewards,continue_until_dies,n_actions)
 
     N_ACTIONS = env.action_space.n
     IMG_SHAPE = env.observation_space.shape

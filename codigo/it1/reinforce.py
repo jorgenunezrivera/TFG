@@ -232,7 +232,7 @@ def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_en
             for i in range(len(action_probs)):
                 if i not in legal_actions:
                     action_probs[i]=0
-            action_probs=tf.nn.softmax(action_probs)
+            action_probs=action_probs/np.sum(action_probs)
             action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
             next_state, reward, done, _ = env.step(action)
 
