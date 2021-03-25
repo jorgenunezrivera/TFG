@@ -229,7 +229,7 @@ def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_en
                 print("ERRO:NO POSSIBLE ACTIONS")
                 break;
             action_probs = estimator_policy.predict((tf.expand_dims(state, axis=0)))[0]
-            for i in len(action_probs):
+            for i in range(len(action_probs)):
                 if i not in legal_actions:
                     action_probs[i]=0
             action_probs=tf.nn.softmax(action_probs)
