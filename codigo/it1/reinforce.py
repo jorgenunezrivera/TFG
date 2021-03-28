@@ -5,6 +5,8 @@ from tensorflow.keras import layers
 import tensorflow as tf
 import numpy as np
 from collections import namedtuple
+
+from build_models import build_dqn_model
 from reinforce_validation import reinforce_validation
 
 mse = tf.keras.losses.MeanSquaredError() #categoricalcrossentropy
@@ -13,26 +15,15 @@ huber=tf.keras.losses.Huber()
 
 class PolicyEstimator():
 
-    def __init__(self, input_shape, n_actions, learning_rate):
-        self._build_model(input_shape, n_actions, learning_rate)
+    def __init__(self, input_shape, n_actions, learning_rate,model_name):
+        self._build_model(input_shape, n_actions, learning_rate,model_name)
 
-    def _build_model(self, input_shape, n_actions, learning_rate):
+    def _build_model(self, input_shape, n_actions, learning_rate,model_name):
         """
         Builds the Tensorflow model.
         """
         self.learning_rate = learning_rate
-        self.model = keras.Sequential([
-            layers.Conv2D(32, (8, 8), strides=(4, 4), activation='relu', input_shape=input_shape),
-            # layers.MaxPooling2D(),
-            layers.Conv2D(64, (4, 4), strides=(2, 2), activation='relu'),
-            # layers.MaxPooling2D(),
-            layers.Conv2D(64, (3, 3), strides=(2, 2), activation='relu'),
-            # layers.MaxPooling2D(),
-            layers.Flatten(),
-            layers.Dense(512, activation='relu'),
-            layers.Dense(n_actions,activation='softmax')
-        ])
-        self.model.summary()
+        self.model = build_dqn_model(model_name, input_shape, n_actions, False)
         self.optimizer = keras.optimizers.RMSprop(self.learning_rate, 0.99)
 
     def predict(self, state):
@@ -79,25 +70,15 @@ class PolicyEstimator():
 
 class ValueEstimator():
 
-    def __init__(self, input_shape, learning_rate):
-        self._build_model(input_shape, learning_rate)
+    def __init__(self, input_shape, learning_rate,model_name):
+        self._build_model(input_shape, learning_rate,model_name)
 
-    def _build_model(self, input_shape, learning_rate):
+    def _build_model(self, input_shape, learning_rate,model_name):
         """
         Builds the Tensorflow model.
         """
         self.learning_rate = learning_rate
-        self.model = keras.Sequential([
-            layers.Conv2D(32, (8, 8), strides=(4, 4), activation='relu', input_shape=input_shape),
-            # layers.MaxPooling2D(),
-            layers.Conv2D(64, (4, 4), strides=(2, 2), activation='relu'),
-            # layers.MaxPooling2D(),
-            layers.Conv2D(64, (3, 3), strides=(2, 2), activation='relu'),
-            # layers.MaxPooling2D(),
-            layers.Flatten(),
-            layers.Dense(512, activation='relu'),
-            layers.Dense(1)
-        ])
+        self.model = build_dqn_model(model_name, input_shape, 1, False)
         self.model.summary()
         self.optimizer = keras.optimizers.RMSprop(self.learning_rate, 0.99)
 
@@ -228,10 +209,19 @@ def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_en
             if len(legal_actions)==0:
                 print("ERRO:NO POSSIBLE ACTIONS")
                 break;
-            action_probs = estimator_policy.predict((tf.expand_dims(state, axis=0)))[0]
-            for i in range(len(action_probs)):
-                if i not in legal_actions:
-                    action_probs[i]=0
+            elif len(legal_actions)==1:
+                action_probs=np.zeros(env.action_space.n)
+                action_probs[legal_actions[0]]=1
+            else:
+                action_probs = estimator_policy.predict((tf.expand_dims(state, axis=0)))[0]
+                action_probs = tf.nn.softmax(action_probs).numpy()
+                for i in range(len(action_probs)):
+                    if i not in legal_actions:
+                        action_probs[i]=0
+            #Que pasa aqui
+            if(np.sum(action_probs))==0:
+                print("ERRO:NO CHOSEN LEGAL ACTIONS ")
+                break;
             action_probs=action_probs/np.sum(action_probs)
             action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
             next_state, reward, done, _ = env.step(action)
@@ -249,7 +239,8 @@ def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_en
                 break
 
             state = next_state
-
+        if len(episode)==0:
+            break
         # Go through the episode and make policy updates
         for t, transition in enumerate(episode):
             # The return after this timestep

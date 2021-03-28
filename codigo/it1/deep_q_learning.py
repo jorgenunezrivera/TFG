@@ -7,6 +7,8 @@ from tensorflow.keras import layers
 from collections import namedtuple
 import itertools
 import random
+
+from build_models import build_dqn_model
 from deep_q_learning_validation import validation
 from random_env_test import random_env_test
 
@@ -38,51 +40,16 @@ class Estimator():
     This network is used for both the Q-Network and the Target Network.
     """
 
-    def __init__(self,input_shape,n_actions,learning_rate):
-        self._build_model(input_shape,n_actions,learning_rate)
+    def __init__(self,input_shape,n_actions,learning_rate,model_name):
+        self._build_model(input_shape,n_actions,learning_rate,model_name)
 
-    def _build_model(self, input_shape, n_actions, learning_rate):
+    def _build_model(self, input_shape, n_actions, learning_rate,model_name):
         """
         Builds the Tensorflow model.
         """
         self.learning_rate = learning_rate
-        self.model = keras.Sequential([
-            layers.Conv2D(32, (8, 8), strides=(4, 4), activation='relu', input_shape=input_shape),
-            # layers.MaxPooling2D(),
-            layers.Conv2D(64, (4, 4), strides=(2, 2), activation='relu'),
-            # layers.MaxPooling2D(),
-            layers.Conv2D(64, (3, 3), strides=(2, 2), activation='relu'),
-            # layers.MaxPooling2D(),
-            layers.Flatten(),
-            layers.Dense(512, activation='relu'),
-            layers.Dense(n_actions)  # Tenia un softmax que no venia a cuento
-        ])
+        self.model = build_dqn_model(model_name,input_shape,n_actions,False)
         self.optimizer = tf.keras.optimizers.RMSprop(self.learning_rate, 0.99)
-        
-    def _build_model_norm(self,input_shape,n_actions,learning_rate):
-        """
-        Builds the Tensorflow model.
-        """
-        self.learning_rate=learning_rate
-        self.model = keras.Sequential([
-          layers.Conv2D(32, (8, 8), strides=(4, 4),   input_shape=input_shape),
-          layers.BatchNormalization(),
-          layers.Activation('relu'),
-          layers.Conv2D(64, (4, 4), strides=(2, 2), ),
-          layers.BatchNormalization(),
-          layers.Activation('relu'),
-          layers.Conv2D(64, (4, 4), strides=(2, 2), ),
-          layers.BatchNormalization(),
-          layers.Activation('relu'),
-          #layers.Conv2D(64, (4, 4), strides=(2, 2), ),
-          #layers.BatchNormalization(),
-          #layers.Activation('relu'),
-          layers.Flatten(),  
-          layers.Dense(512, activation='relu'),#512?
-          layers.Dense(n_actions)#Tenia un softmax que no venia a cuento
-        ])
-        self.model.summary()
-        self.optimizer=tf.keras.optimizers.RMSprop(self.learning_rate,0.99)
 
     def predict(self, state):
         """

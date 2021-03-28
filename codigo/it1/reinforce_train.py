@@ -25,10 +25,11 @@ MAX_STEPS = 6
 STEP_SIZE = 32
 INTERMEDIATE_REWARDS = 0
 CONTINUE_UNTIL_DIES = 0
+MODEL_NAME="atari"
 
 def reinforce_train(num_episodes=NUM_EPISODES,learning_rate=LEARNING_RATE,
                           validate_freq=VALIDATE_EVERY,max_steps=MAX_STEPS,step_size=STEP_SIZE,intermediate_rewards=INTERMEDIATE_REWARDS,
-                 continue_until_dies=CONTINUE_UNTIL_DIES,n_actions=N_ACTIONS):
+                 continue_until_dies=CONTINUE_UNTIL_DIES,n_actions=N_ACTIONS,model_name=MODEL_NAME):
 
     env = ImageWindowEnvGenerator(TRAINING_IMAGES_DIR, TRAINING_LABELS_FILE, max_steps, step_size, intermediate_rewards,
                                   continue_until_dies,n_actions)
@@ -41,8 +42,8 @@ def reinforce_train(num_episodes=NUM_EPISODES,learning_rate=LEARNING_RATE,
 
     initial_ts = time.time()
 
-    policy_estimator = PolicyEstimator(IMG_SHAPE, N_ACTIONS, learning_rate)
-    value_estimator = ValueEstimator(IMG_SHAPE, learning_rate)
+    policy_estimator = PolicyEstimator(IMG_SHAPE, N_ACTIONS, learning_rate,model_name)
+    value_estimator = ValueEstimator(IMG_SHAPE, learning_rate,model_name)
 
     stats=reinforce(env,policy_estimator,value_estimator,num_episodes,validation_env,validate_every=validate_freq)
 

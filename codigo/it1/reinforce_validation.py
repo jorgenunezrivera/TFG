@@ -14,22 +14,31 @@ def reinforce_validation(action_estimator, env):
         obs = env.reset()
         for _ in itertools.count():
             action_probs = action_estimator.predict(np.array([obs]))[0]
+            action_probs = tf.nn.softmax(action_probs).numpy()
             legal_actions = env.get_legal_actions()
-            for i in len(action_probs):
+            for i in range(len(action_probs)):
                 if i not in legal_actions:
                     action_probs[i] = 0
-            action_probs = tf.nn.softmax(action_probs)
+            if np.sum(action_probs)==0:
+                print("action probs error: sum action_probs =0")
+                break;
+            action_probs =action_probs/np.sum(action_probs)
             chosen_action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
             action_stats[chosen_action]+=1
             obs, reward, done, info = env.step(chosen_action)
             if(i%20==0):
                 print("action_probs: {}, reward: {} , hit:{}".format(action_probs,reward,info["hit"]))
             if done:
-                if info["hit"]:
+                if(env.best_reward):
+                    hit=info["best_hit"]
+                    rewards.append(info["best_reward"])
+                else:
+                    hit=info["hit"]
+                    rewards.append(reward)
+                if hit:
                     hits += 1
                 else:
                     incorrect_prediction_certainty+=info["max_prediction_value"]
-                rewards.append(reward)
                 break
     #print("time_elapsed={}".format(time.time()-init_ts))
-    return np.mean(rewards),hits/len(env),incorrect_prediction_certainty/(len(env)-hits),action_stats
+    return np.mean(rewards),hits/len(env),incorrect_prediction_certainty/(len(env)-hits),action_stats#cambiar np.mean(best_rewards por np.mean (rewards para reward final

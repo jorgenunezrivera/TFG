@@ -30,6 +30,7 @@ STEP_SIZE = 32
 
 INTERMEDIATE_REWARDS = 0
 CONTINUE_UNTIL_DIES = 0
+BEST_REWARD=0
 
 
 # Legal actions
@@ -39,8 +40,9 @@ class ImageWindowEnvGenerator(gym.Env):
 
     def __init__(self, directory, labels_file, max_steps=MAX_STEPS, step_size=STEP_SIZE,
                  intermediate_rewards=INTERMEDIATE_REWARDS,
-                 continue_until_dies=CONTINUE_UNTIL_DIES, n_actions=N_ACTIONS):
+                 continue_until_dies=CONTINUE_UNTIL_DIES, n_actions=N_ACTIONS,best_reward=BEST_REWARD):
         super(ImageWindowEnvGenerator, self).__init__()
+        self.best_reward=best_reward
         self.max_steps = max_steps
         self.step_size = step_size
         self.intermediate_rewards = intermediate_rewards
@@ -52,7 +54,7 @@ class ImageWindowEnvGenerator(gym.Env):
         self.image_generator = FromDiskGenerator(
             image_filenames, batch_size=1,
         )
-        self.action_space = spaces.Discrete(N_ACTIONS)
+        self.action_space = spaces.Discrete(self.n_actions)
         self.observation_space = spaces.Box(low=-1, high=1, shape=(HEIGHT, WIDTH, N_CHANNELS), dtype=np.float32)
         self.model = tf.keras.applications.MobileNetV2(input_shape=(HEIGHT, WIDTH, N_CHANNELS),
                                                        include_top=True,
@@ -152,19 +154,28 @@ class ImageWindowEnvGenerator(gym.Env):
 
         done = (self.n_steps >= self.max_steps or action == 3 or len(self.get_legal_actions())==0)
 
+
+
         if self.intermediate_rewards==1:
             reward = (step_reward - self.history[-1][3]) * REWARDS_FACTOR
         elif self.intermediate_rewards==2:
             reward=(step_reward-self.best_result) * REWARDS_FACTOR
-        else:
-            if done:
-                reward = (step_reward - self.initial_reward) * REWARDS_FACTOR
-            else:
-                reward = 0
+
 
         if step_reward > self.best_result:
             self.best_result = step_reward
             self.best_predicted_class=self.predicted_class
+
+        if self.intermediate_rewards==3:
+            if done:
+                reward = (self.best_result - self.initial_reward) * REWARDS_FACTOR
+            else:
+                reward = 0
+        elif self.intermediate_rewards==0:
+            if done:
+                reward = (step_reward - self.initial_reward) * REWARDS_FACTOR
+            else:
+                reward = 0
 
         self.history.append((self.x, self.y, self.z, step_reward, self.predicted_class, max_prediction_value))
         return state, reward, done, {"predicted_class": self.predicted_class,
