@@ -41,7 +41,7 @@ def build_alexnet_model(input_shape,n_actions,softmax_activation):
 
     # Layer 1
     alexnet.add(layers.Conv2D(96, (11, 11), input_shape=input_shape,
-                              padding='same', kernel_regularizer=l2(l2_reg)))
+                              padding='same', kernel_regularizer=l2(0)))
     alexnet.add(BatchNormalization())
     alexnet.add(Activation('relu'))
     alexnet.add(MaxPooling2D(pool_size=(2, 2)))
