@@ -75,6 +75,7 @@ class ImageWindowEnvGenerator(gym.Env):
         self.predicted_class = 0
         self.best_result=0
         self.best_predicted_class=-1
+        self.total_reward=0
         self.history = []
 
     def __len__(self):
@@ -99,6 +100,7 @@ class ImageWindowEnvGenerator(gym.Env):
         self.initial_reward = self._get_reward(predictions)
         self.best_result=self.initial_reward
         self.best_predicted_class=-1
+        self.total_reward=self.initial_reward
 
         max_prediction_value = np.max(predictions)
         # print("Initial_rewrd: {}".format(self.initial_reward))
@@ -144,6 +146,7 @@ class ImageWindowEnvGenerator(gym.Env):
         max_prediction_value = np.max(predictions)
         step_reward = self._get_reward(predictions)
 
+
         if self.continue_until_dies:
             if step_reward <= self.best_result:
                 self.n_steps += 1
@@ -177,12 +180,14 @@ class ImageWindowEnvGenerator(gym.Env):
             else:
                 reward = 0
 
+        self.total_reward += reward
         self.history.append((self.x, self.y, self.z, step_reward, self.predicted_class, max_prediction_value))
         return state, reward, done, {"predicted_class": self.predicted_class,
                                      "max_prediction_value": max_prediction_value,
                                      "hit": (self.predicted_class == self.true_class),
                                      "best_hit": (self.best_predicted_class == self.true_class),
-                                     "best_reward": self.best_result}
+                                     "best_reward": self.best_result,
+                                     "total_reward": self.total_reward}
 
     def render(self, mode='human', close=False):
         fig, ax = plt.subplots(1)
