@@ -8,15 +8,6 @@ from window_env_generator import ImageWindowEnvGenerator
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
 
-VALIDATION_IMAGES_DIR = "validation1000"
-VALIDATION_LABELS_FILE = "validation_labels.txt"
-env = ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE,10,32,2,1,3,1)
-print("checking random enviroment")
-random_reward,random_hits=random_env_test(env)
-print("Random test. reward: {} hits: {}".format(random_reward,random_hits))
-check_dataset_posibilities(env,5)
-print("checked")
-
 
 
 print("experiment 1. Reinforce step_size 32, max_Steps 6  continue_until_dies 1 intermediate rewards 2")
