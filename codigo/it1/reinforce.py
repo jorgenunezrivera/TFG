@@ -57,6 +57,7 @@ class PolicyEstimator():
 
     def _custom_loss(self, state, target, action):
         action_probs = self.model(tf.expand_dims(state,axis=0))
+        action_probs = tf.nn.softmax(action_probs)
         picked_action_prob=action_probs[:,action]
         return -tf.math.log(picked_action_prob)*target
 
@@ -250,8 +251,10 @@ def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_en
             # Update our value estimator
             episode_value_loss+=estimator_value.update(transition.state, total_return)
             # Update our policy estimator
-            episode_action_loss+=estimator_policy.update(transition.state, transition.action,advantage)
+            step_action_loss=estimator_policy.update(transition.state, transition.action,advantage)
+            episode_action_loss+=step_action_loss
             episode_total_return=total_return
+
 
         cumulated_action_loss+=float(episode_action_loss/len(episode))
         cumulated_value_loss+=float(episode_value_loss/len(episode))
