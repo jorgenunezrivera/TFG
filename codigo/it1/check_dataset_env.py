@@ -33,6 +33,7 @@ def sliding_window(index, env,max_zoom):
     return False
 
 def check_dataset_posibilities(env,max_zoom):
+    wrongs = []
     hits = 0
     for i in range(len(env)):
         state = env.reset()
@@ -54,19 +55,3 @@ def check_dataset_posibilities(env,max_zoom):
         "training set 200: {} hits, {} wrongs, {} fixable wrongs with step size: {} and MAX_STEPS: {}, max precission:{}".format(
             hits, len(wrongs), len(fixable_wrongs), env.step_size, max_zoom, (hits + len(fixable_wrongs)) * 100 / len(env)))
     return
-
-HEIGHT = 224
-WIDTH = 224
-IMG_SHAPE = (224, 224, 3)
-TRAINING_IMAGES_DIR = "train_200"
-VALIDATION_IMAGES_DIR = "validation1000"
-TRAINING_LABELS_FILE = "training_labels.txt"
-VALIDATION_LABELS_FILE = "validation_labels.txt"
-
-wrongs = []
-
-env = ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE)
-#MAX_ZOOM = env.max_possible_step
-MAX_ZOOM=5
-
-check_dataset_posibilities(env,MAX_ZOOM)
