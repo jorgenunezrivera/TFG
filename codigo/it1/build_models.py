@@ -66,7 +66,7 @@ def build_alexnet_model(input_shape,n_actions,softmax_activation):
     alexnet.add(Activation('relu'))
 
     # Layer 5
-    alexnet.add(ZeroPadding2D((1, 1)))
+    #alexnet.add(ZeroPadding2D((1, 1)))
     alexnet.add(Conv2D(256, (1, 1), padding='same'))
     alexnet.add(BatchNormalization())
     alexnet.add(Activation('relu'))
@@ -100,7 +100,7 @@ def build_mobilenet_model(input_shape,n_actions,softmax_activation):
     inputs = keras.Input(shape=input_shape)
     x = base_model(inputs, training=False)
     x = global_average_layer(x)
-    x = keras.layers.Droput(0.2)
+    x = keras.layers.Droput(0.2)(x)
 
     x = prediction_layer(x)
     if softmax_activation:
