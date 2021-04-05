@@ -53,6 +53,7 @@ def check_dataset_posibilities(env,max_zoom):
     print(
         "training set 200: {} hits, {} wrongs, {} fixable wrongs with step size: {} and MAX_STEPS: {}, max precission:{}".format(
             hits, len(wrongs), len(fixable_wrongs), env.step_size, max_zoom, (hits + len(fixable_wrongs)) * 100 / len(env)))
+    return
 
 HEIGHT = 224
 WIDTH = 224
