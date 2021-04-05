@@ -1,8 +1,12 @@
+import os
+
 from check_dataset_env import check_dataset_posibilities
 from deep_q_learning_train import deep_q_learning_train
 from random_env_test import random_env_test
 from reinforce_train import reinforce_train
 from window_env_generator import ImageWindowEnvGenerator
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
 
 VALIDATION_IMAGES_DIR = "validation1000"
 VALIDATION_LABELS_FILE = "validation_labels.txt"
