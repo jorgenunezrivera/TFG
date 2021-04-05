@@ -1,4 +1,5 @@
 import itertools
+import math
 
 from tensorflow import keras
 from tensorflow.keras import layers
@@ -219,7 +220,7 @@ def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_en
                     if i not in legal_actions:
                         action_probs[i]=0
             #Que pasa aqui
-            if(np.sum(action_probs))==0:
+            if(np.sum(action_probs))==0 or math.isnan(np.sum(action_probs)):
                 print("ERRO:NO CHOSEN LEGAL ACTIONS ")
                 break;
             action_probs=action_probs/np.sum(action_probs)

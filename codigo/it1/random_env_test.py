@@ -14,8 +14,13 @@ def random_env_test(env):
             rand_action = legal_actions[np.random.randint(len(legal_actions))]
             obs, reward, done, info = env.step(rand_action)
             if(done):
-                rewards.append(reward)
-                if(info["hit"]):
+                if env.best_reward:
+                    hit=info["best_hit"]
+                    rewards.append(info["best_reward"])
+                else:
+                    hit=info["hit"]
+                    rewards.append(reward)
+                if(hit):
                     hits+=1
                 break
     training_reward_mean=np.mean(rewards)
