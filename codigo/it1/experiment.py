@@ -23,6 +23,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
 #print("result: {}".format(name))
 
 
+
 print("experiment 3. Deep Q learning step_size 32, max_Steps 10  continue_until_dies 0 intermediate rewards 2 model=mobienet")
 name=deep_q_learning_train(num_episodes=12000,learning_rate=0.00001,update_target_freq=120,validate_freq=4000,max_steps=10,
                                                                                     step_size=32,intermediate_rewards=2,
