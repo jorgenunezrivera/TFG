@@ -31,7 +31,7 @@ STEP_SIZE = 32
 INTERMEDIATE_REWARDS = 0
 CONTINUE_UNTIL_DIES = 0
 BEST_REWARD=1
-
+NO_LABEL_EVAL=0
 
 # Legal actions
 
@@ -40,7 +40,7 @@ class ImageWindowEnvGenerator(gym.Env):
 
     def __init__(self, directory, labels_file, max_steps=MAX_STEPS, step_size=STEP_SIZE,
                  intermediate_rewards=INTERMEDIATE_REWARDS,
-                 continue_until_dies=CONTINUE_UNTIL_DIES, n_actions=N_ACTIONS,best_reward=BEST_REWARD):
+                 continue_until_dies=CONTINUE_UNTIL_DIES, n_actions=N_ACTIONS,best_reward=BEST_REWARD,no_label_eval=NO_LABEL_EVAL):
         super(ImageWindowEnvGenerator, self).__init__()
         self.best_reward=best_reward
         self.max_steps = max_steps
@@ -48,6 +48,7 @@ class ImageWindowEnvGenerator(gym.Env):
         self.intermediate_rewards = intermediate_rewards
         self.continue_until_dies = continue_until_dies
         self.n_actions=n_actions
+        self.no_label_eval=no_label_eval
         if self.continue_until_dies:
             self.n_actions -= 1
         image_filenames = from_disk_generator.get_filenames(directory)
@@ -64,7 +65,6 @@ class ImageWindowEnvGenerator(gym.Env):
         self.labels = []
         self.last_better_result = -1
         self.max_possible_step = int(HEIGHT / STEP_SIZE)
-        self.step_size = STEP_SIZE
         with open(labels_file) as fp:
             line = fp.readline()
             while line:
@@ -225,7 +225,10 @@ class ImageWindowEnvGenerator(gym.Env):
         return predicted_class
 
     def _get_reward(self, predictions):
-        reward = float(predictions[0, self.true_class])
+        if(self.no_label_eval):
+            reward=np.max(predictions[0])
+        else:
+            reward = float(predictions[0, self.true_class])
         return reward
 
     #for test purposes

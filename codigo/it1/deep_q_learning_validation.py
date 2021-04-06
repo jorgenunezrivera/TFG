@@ -30,7 +30,7 @@ def validation(q_estimator, env):
                     rewards.append(info["best_reward"])
                 else:
                     hit=info["hit"]
-                    rewards.append(reward)
+                    rewards.append(info["total_reward"])
                 if hit:
                     hits += 1
                 else:

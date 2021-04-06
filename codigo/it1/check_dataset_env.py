@@ -36,7 +36,7 @@ def check_dataset_posibilities(env,max_zoom):
     wrongs = []
     hits = 0
     for i in range(len(env)):
-        state = env.reset()
+        _ = env.reset()
         _, _, _, info = env.step(3)
         hit = info["hit"]
         if not hit:
@@ -52,6 +52,6 @@ def check_dataset_posibilities(env,max_zoom):
             fixable_wrongs.append(w)
 
     print(
-        "training set 200: {} hits, {} wrongs, {} fixable wrongs with step size: {} and MAX_STEPS: {}, max precission:{}".format(
+        " {} hits, {} wrongs, {} fixable wrongs with step size: {} and MAX_STEPS: {}, max precission:{}".format(
             hits, len(wrongs), len(fixable_wrongs), env.step_size, max_zoom, (hits + len(fixable_wrongs)) * 100 / len(env)))
     return
