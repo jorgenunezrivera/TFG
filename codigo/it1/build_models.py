@@ -100,12 +100,12 @@ def build_mobilenet_model(input_shape,n_actions,softmax_activation):
     inputs = keras.Input(shape=input_shape)
     x = base_model(inputs, training=False)
     x = global_average_layer(x)
-    x = keras.layers.Droput(0.2)(x)
+    x = keras.layers.Dropout(0.2)(x)
 
     x = prediction_layer(x)
     if softmax_activation:
-       outputs=keras.layers.Activation('softmax')(x)
+        outputs=keras.layers.Activation('softmax')(x)
     else:
         outputs=x
-    model = keras.model(inputs, outputs)
+    model = keras.Model(inputs, outputs)
     return model
