@@ -1,29 +1,55 @@
 from check_dataset_env import check_dataset_posibilities
 from deep_q_learning import Estimator, make_epsilon_greedy_policy_from_list
 from deep_q_learning_validation import validation
-from random_env_test import random_env_test
+from random_env_test import random_env_test, random_env_test_batch
 import numpy as np
 from window_env_generator import ImageWindowEnvGenerator
+
 TRAINING_IMAGES_DIR = "train_200"
 VALIDATION_IMAGES_DIR = "validation1000"
 TRAINING_LABELS_FILE = "training_labels.txt"
 VALIDATION_LABELS_FILE = "validation_labels.txt"
-env = ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE,6,16,0,0,n_actions=3,best_reward=1)
-check_dataset_posibilities(env,3)
+envs=[]
+envs.append(ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, 10, 32,intermediate_rewards=0,
+                                    continue_until_dies=0, n_actions=3, best_reward=1, no_label_eval=0))
+envs.append(ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, 10, 32,intermediate_rewards=0, continue_until_dies=0, n_actions=3, best_reward=0,
+                              no_label_eval=0))
+envs.append(ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, 10, 32,intermediate_rewards=0, continue_until_dies=0, n_actions=4, best_reward=0,
+                              no_label_eval=0))
+envs.append(ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, 10, 32,intermediate_rewards=0, continue_until_dies=0, n_actions=3, best_reward=1,
+                              no_label_eval=1))
+envs.append(ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, 10, 32,intermediate_rewards=0, continue_until_dies=0, n_actions=3, best_reward=0,
+                              no_label_eval=1))
+envs.append(ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, 10, 32,intermediate_rewards=0, continue_until_dies=0, n_actions=4, best_reward=0,
+                              no_label_eval=1))
+envs.append(ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, 6, 32,intermediate_rewards=0, continue_until_dies=0, n_actions=3, best_reward=1,
+                              no_label_eval=0))
+envs.append(ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, 6, 32,intermediate_rewards=0, continue_until_dies=0, n_actions=3, best_reward=0,
+                              no_label_eval=0))
+envs.append(ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, 6, 32,intermediate_rewards=0, continue_until_dies=0, n_actions=4, best_reward=0,
+                              no_label_eval=0))
+envs.append(ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, 6, 32,intermediate_rewards=0, continue_until_dies=0, n_actions=3, best_reward=1,
+                              no_label_eval=1))
+envs.append(ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, 6, 32,intermediate_rewards=0, continue_until_dies=0, n_actions=3, best_reward=0,
+                              no_label_eval=1))
+envs.append(ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, 6, 32,intermediate_rewards=0, continue_until_dies=0, n_actions=4, best_reward=0,
+                              no_label_eval=1))
+envs.append(ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, 6, 32,intermediate_rewards=0, continue_until_dies=1, n_actions=4, best_reward=1,
+                              no_label_eval=0))
+envs.append(ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, 10, 32,intermediate_rewards=0, continue_until_dies=1, n_actions=4, best_reward=1,
+                              no_label_eval=1))
+envs.append(ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, 8, 16,intermediate_rewards=0, continue_until_dies=1, n_actions=4, best_reward=1,
+                              no_label_eval=0))
 
-cumulated_random_reward=0
-cumulated_random_hits=0
-for i in range(10):
-    random_reward,random_hits=random_env_test(env)
-    print("Random test. reward: {} hits: {}".format(random_reward,random_hits))
-    cumulated_random_reward+=random_reward
-    cumulated_random_hits+=random_hits
-cumulated_random_hits/=10
-cumulated_random_reward/=10
-print("10 random tests. mena reward: {} mean hits: {}".format(cumulated_random_reward, cumulated_random_hits))
+check_dataset_posibilities(envs[0], 5)
+check_dataset_posibilities(envs[6], 3)
+check_dataset_posibilities(envs[14], 4)
 
-#N_ACTIONS = env.action_space.n
-#IMG_SHAPE = env.observation_space.shape
-#q_estimator = Estimator(IMG_SHAPE, N_ACTIONS, 0.00001)
-#q_estimator.load_model()
-#validation(q_estimator,env)
+
+
+for i,env in enumerate(envs):
+    print("env {} max_steps:{} step_size:{} continue_until_dies:{} n_actions:{} best_reward:{}, no_label_eval:{}".format
+          (i,env.max_steps,env.step_size,env.continue_until_dies,env.n_actions,env.best_reward,env.no_label_eval))
+    random_env_test_batch(env,10)
+
+#

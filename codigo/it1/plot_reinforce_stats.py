@@ -39,7 +39,8 @@ def training_plot(num_episodes,value_losses,action_losses,stats_mean_every,train
     plt.plot(action_stats[0], action_stats[1],'b',label='action 0')
     plt.plot(action_stats[0], action_stats[2],'r',label='action 1')
     plt.plot(action_stats[0], action_stats[3],'g',label='action 2')
-    plt.plot(action_stats[0], action_stats[4],'c',label='action 3')
+    if(action_stats[4]):
+        plt.plot(action_stats[0], action_stats[4],'c',label='action 3')
     plt.legend(loc='upper right')
     plt.ylabel('Ocurrences')
     #plt.ylim([0, 5*num_episodes])

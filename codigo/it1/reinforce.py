@@ -221,7 +221,7 @@ def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_en
                         action_probs[i]=0
             #Que pasa aqui
             if(np.sum(action_probs))==0 or math.isnan(np.sum(action_probs)):
-                print("ERRO:NO CHOSEN LEGAL ACTIONS ")
+                print("ERRO:NO CHOSEN LEGAL ACTIONS : {}".format(action_probs))
                 break;
             action_probs=action_probs/np.sum(action_probs)
             action = np.random.choice(np.arange(len(action_probs)), p=action_probs)

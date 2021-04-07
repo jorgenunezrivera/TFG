@@ -23,13 +23,15 @@ def sliding_window(index, env,max_zoom):
         for y in range(z):
             for x in range(z):
                 # print("sample {}  x,y,z  ={},{},{}".format(index, x, y, z))
+                if(x+y+z)>env.max_steps:
+                    break
                 env.set_window(x, y, z)
                 _, _, _, info = env.step(3)
                 if (info["hit"]):
-                    print("sample {} hit with x, y,z  ={},{},{}, certainty:{}".format(index, x, y, z,
-                                                                                      info["max_prediction_value"]))
+                    #print("sample {} hit with x, y,z  ={},{},{}, certainty:{}".format(index, x, y, z,
+                    #                                                                  info["max_prediction_value"]))
                     return True
-    print("sample {} wrong".format(index))
+    #print("sample {} wrong".format(index))
     return False
 
 def check_dataset_posibilities(env,max_zoom):
@@ -44,7 +46,7 @@ def check_dataset_posibilities(env,max_zoom):
         else:
             hits += 1
 
-    print("Hits: {}/{} ({}%)".format(hits, len(env), hits * 100 / len(env)))
+    #print("Hits: {}/{} ({}%)".format(hits, len(env), hits * 100 / len(env)))
 
     fixable_wrongs = []
     for w in wrongs:
@@ -53,5 +55,5 @@ def check_dataset_posibilities(env,max_zoom):
 
     print(
         " {} hits, {} wrongs, {} fixable wrongs with step size: {} and MAX_STEPS: {}, max precission:{}".format(
-            hits, len(wrongs), len(fixable_wrongs), env.step_size, max_zoom, (hits + len(fixable_wrongs)) * 100 / len(env)))
+            hits, len(wrongs), len(fixable_wrongs), env.step_size, env.max_steps, (hits + len(fixable_wrongs)) * 100 / len(env)))
     return
