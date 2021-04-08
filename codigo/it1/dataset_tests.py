@@ -10,13 +10,13 @@ VALIDATION_IMAGES_DIR = "validation1000"
 TRAINING_LABELS_FILE = "training_labels.txt"
 VALIDATION_LABELS_FILE = "validation_labels.txt"
 envs=[]
-envs.append(ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, 6, 32,intermediate_rewards=0, continue_until_dies=0, n_actions=3, best_reward=1,
+envs.append(ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, 6, 32,continue_until_dies=0, best_reward=1,
                               no_label_eval=1))
-envs.append(ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, 8, 16,intermediate_rewards=0, continue_until_dies=0, n_actions=3, best_reward=1,
+envs.append(ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, 8, 16,continue_until_dies=0,  best_reward=1,
                               no_label_eval=1))
-envs.append(ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, 6, 32,intermediate_rewards=0, continue_until_dies=1, n_actions=4, best_reward=1,
+envs.append(ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, 6, 32, continue_until_dies=1,  best_reward=1,
                               no_label_eval=1))
-envs.append(ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, 8, 16,intermediate_rewards=0, continue_until_dies=1, n_actions=4, best_reward=1,
+envs.append(ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, 8, 16, continue_until_dies=1,  best_reward=1,
                               no_label_eval=1))
 
 for i,env in enumerate(envs):
