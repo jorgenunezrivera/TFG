@@ -20,7 +20,7 @@ with open("label_to_index_dict.json", "r") as read_file:
 HEIGHT = 224
 WIDTH = 224
 N_CHANNELS = 3
-N_ACTIONS = 4
+N_ACTIONS = 3
 
 REWARDS_FACTOR = 10
 
@@ -28,7 +28,6 @@ REWARDS_FACTOR = 10
 MAX_STEPS = 6
 STEP_SIZE = 32
 
-INTERMEDIATE_REWARDS = 0
 CONTINUE_UNTIL_DIES = 0
 BEST_REWARD=1
 NO_LABEL_EVAL=0
@@ -39,18 +38,14 @@ NO_LABEL_EVAL=0
 class ImageWindowEnvGenerator(gym.Env):
 
     def __init__(self, directory, labels_file, max_steps=MAX_STEPS, step_size=STEP_SIZE,
-                 intermediate_rewards=INTERMEDIATE_REWARDS,
-                 continue_until_dies=CONTINUE_UNTIL_DIES, n_actions=N_ACTIONS,best_reward=BEST_REWARD,no_label_eval=NO_LABEL_EVAL):
+                 continue_until_dies=CONTINUE_UNTIL_DIES, best_reward=BEST_REWARD,no_label_eval=NO_LABEL_EVAL):
         super(ImageWindowEnvGenerator, self).__init__()
         self.best_reward=best_reward
         self.max_steps = max_steps
         self.step_size = step_size
-        self.intermediate_rewards = intermediate_rewards
         self.continue_until_dies = continue_until_dies
-        self.n_actions=n_actions
+        self.n_actions=N_ACTIONS
         self.no_label_eval=no_label_eval
-        if self.continue_until_dies:
-            self.n_actions -= 1
         image_filenames = from_disk_generator.get_filenames(directory)
         self.image_generator = FromDiskGenerator(
             image_filenames, batch_size=1,
@@ -157,28 +152,15 @@ class ImageWindowEnvGenerator(gym.Env):
 
         done = (self.n_steps >= self.max_steps or action == 3 or len(self.get_legal_actions())==0)
 
-
-
-        if self.intermediate_rewards==1:
-            reward = (step_reward - self.history[-1][3]) * REWARDS_FACTOR
-        elif self.intermediate_rewards==2:
-            reward=(step_reward-self.best_result) * REWARDS_FACTOR
-
+        reward=(step_reward-self.best_result) * REWARDS_FACTOR
 
         if step_reward > self.best_result:
             self.best_result = step_reward
             self.best_predicted_class=self.predicted_class
 
-        if self.intermediate_rewards==3:
-            if done:
-                reward = (self.best_result - self.initial_reward) * REWARDS_FACTOR
-            else:
-                reward = 0
-        elif self.intermediate_rewards==0:
-            if done:
-                reward = (step_reward - self.initial_reward) * REWARDS_FACTOR
-            else:
-                reward = 0
+        if done:
+            best_reward = (self.best_result - self.initial_reward) * REWARDS_FACTOR
+
 
         self.total_reward += reward
         self.history.append((self.x, self.y, self.z, step_reward, self.predicted_class, max_prediction_value))
@@ -186,7 +168,7 @@ class ImageWindowEnvGenerator(gym.Env):
                                      "max_prediction_value": max_prediction_value,
                                      "hit": (self.predicted_class == self.true_class),
                                      "best_hit": (self.best_predicted_class == self.true_class),
-                                     "best_reward": self.best_result,
+                                     "best_reward": self.best_reward,
                                      "total_reward": self.total_reward}
 
     def render(self, mode='human', close=False):
