@@ -140,7 +140,7 @@ class ImageWindowEnvGenerator(gym.Env):
         self.predicted_class = self._get_predicted_class(predictions)
         max_prediction_value = np.max(predictions)
         step_reward = self._get_reward(predictions)
-
+        best_reward=0
 
         if self.continue_until_dies:
             if step_reward <= self.best_result:
