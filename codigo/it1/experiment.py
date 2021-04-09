@@ -22,7 +22,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
 #                                                                                    step_size=32,intermediate_rewards=2,continue_until_dies=0,n_actions=3)
 #print("result: {}".format(name))
 
-import dataset_tests
+#import dataset_tests
 
 #print("experiment 1. Deep Q learning step_size 32, max_Steps 6  continue_until_dies 1 ")
 #name=deep_q_learning_train(num_episodes=4000,learning_rate=0.00001,update_target_freq=120,validate_freq=2000,max_steps=6,
