@@ -203,6 +203,7 @@ def deep_q_learning(env,
     cumulated_reward=0
     stats["training_losses"]=[]
     cumulated_loss=0
+    cumulated_length=0
     stats["validation_rewards"]=[]
     stats["validation_hits"]=[]
     stats["action_stats"]=[]
