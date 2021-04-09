@@ -208,8 +208,12 @@ def deep_q_learning(env,
     stats["action_stats"]=[]
     cumulated_action_stats=np.zeros(env.action_space.n)
     stats["step_action"]=[[] for _ in range(5)]
+    stats["total_steps"]=[]
     stats["num_episodes"]=num_episodes
     stats["learning_rate"]=q_estimator.learning_rate
+    stats["env_info"]="env max_steps:{} step_size:{} continue_until_dies:{} n_actions:{} best_reward:{}, " \
+                      "no_label_eval:{}".format(env.max_steps,env.step_size,env.continue_until_dies,env.n_actions,
+                                                env.best_reward,env.no_label_eval)
     # The epsilon decay schedule
     epsilons = np.linspace(epsilon_start, epsilon_end, epsilon_decay_steps)
 
@@ -270,7 +274,10 @@ def deep_q_learning(env,
             stats["training_rewards"].append((i_episode,float(cumulated_reward)))
             cumulated_loss/=rewards_mean_every
             stats["training_losses"].append((i_episode,float(cumulated_loss.numpy())))
-            cumulated_reward=cumulated_loss=0
+            cumulated_length/=rewards_mean_every
+            stats["total_steps"].append((i_episode,float(cumulated_length)))
+
+            cumulated_reward=cumulated_loss=cumulated_length=0
 
         for t in itertools.count():
 
@@ -294,8 +301,8 @@ def deep_q_learning(env,
 
             action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
 
-            next_state, reward, done, _ = env.step(action)
-             
+            next_state, reward, done, info = env.step(action)
+
 
             # If our replay memory is full, pop the first element
             if len(replay_memory) == replay_memory_size:
@@ -320,11 +327,13 @@ def deep_q_learning(env,
             gc.collect()
 
             episode_loss+=loss
-            episode_reward+=reward
             total_t += 1
             if done:
+                stats_reward = info["best_reward"]
                 cumulated_loss += episode_loss/(t+1)
-                cumulated_reward += episode_reward
+                cumulated_reward += stats_reward
+                episode_length=info["total_steps"]
+                cumulated_length+=episode_length
                 break
 
             state = next_state

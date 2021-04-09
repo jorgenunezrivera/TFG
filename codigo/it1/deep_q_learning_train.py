@@ -62,8 +62,8 @@ def deep_q_learning_train(num_episodes=NUM_EPISODES,learning_rate=LEARNING_RATE,
 
     elapsed_time = time.time() - initial_ts
     print("Elapsed time: " + str(elapsed_time))
-    print("Num episodes: " + str(NUM_EPISODES))
-    print("secs/episode:" + str(elapsed_time / NUM_EPISODES))
+    print("Num episodes: " + str(num_episodes))
+    print("secs/episode:" + str(elapsed_time / num_episodes))
 
     now = datetime.now()
     #print(stats)
