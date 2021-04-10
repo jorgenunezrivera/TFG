@@ -225,7 +225,7 @@ def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_en
                 break;
             action_probs=action_probs/np.sum(action_probs)
             action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
-            next_state, reward, done, _ = env.step(action)
+            next_state, reward, done, info = env.step(action)
 
             # Keep track of the transition
             episode.append(Transition(
@@ -237,6 +237,7 @@ def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_en
             # sys.stdout.flush()
 
             if done:
+
                 break
 
             state = next_state
@@ -259,7 +260,7 @@ def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_en
 
         cumulated_action_loss+=float(episode_action_loss/len(episode))
         cumulated_value_loss+=float(episode_value_loss/len(episode))
-        cumulated_return+=float(episode_total_return/len(episode))
+        cumulated_return += float(info["best_reward"])
 
 
     estimator_policy.save_model()
