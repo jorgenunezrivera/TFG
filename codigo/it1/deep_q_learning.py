@@ -1,4 +1,5 @@
 import gc
+import time
 
 import tensorflow as tf
 import numpy as np
@@ -215,6 +216,8 @@ def deep_q_learning(env,
     stats["env_info"]="env max_steps:{} step_size:{} continue_until_dies:{} n_actions:{} best_reward:{}, " \
                       "no_label_eval:{}".format(env.max_steps,env.step_size,env.continue_until_dies,env.n_actions,
                                                 env.best_reward,env.no_label_eval)
+    stats["total_time"]=time.time()
+    stats["validation_time"]=0
     # The epsilon decay schedule
     epsilons = np.linspace(epsilon_start, epsilon_end, epsilon_decay_steps)
 
@@ -260,6 +263,7 @@ def deep_q_learning(env,
         ############# VALIDACION #######################
         if (i_episode + 1) % validate_every == 0:
             #print("Validating".format(i_episode))
+            validation_time=time.time()
             validation_reward,hits,wrong_certanty,action_stats = validation(q_estimator, validation_env)
             stats["validation_rewards"].append((i_episode, float(validation_reward)))
             stats["validation_hits"].append((i_episode,hits))
@@ -268,6 +272,8 @@ def deep_q_learning(env,
             for i in range(env.action_space.n):
                 stats["step_action"][i+1].append(action_stats[i])
             print("\rEpisode {}/{}, validation_reward: {} hits: {} mean_wrong_uncertanty: {}".format(i_episode + 1, num_episodes,validation_reward,hits,wrong_certanty))
+            validation_time=time.time()-validation_time
+            stats["validation_time"] +=validation_time
         ######################### ESTADISTICAS ###############
         if (i_episode + 1) % rewards_mean_every==0:
             #print("Episode : {} / {}".format(i_episode,num_episodes))
@@ -341,6 +347,7 @@ def deep_q_learning(env,
             
     np.divide(cumulated_action_stats,np.sum(cumulated_action_stats))
     stats["action_stats"]=cumulated_action_stats.tolist()
+    stats["total_time"] =time.time()-stats["total_time"]
     q_estimator.save_model()
     return stats
 

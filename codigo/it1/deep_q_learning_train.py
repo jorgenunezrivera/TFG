@@ -60,10 +60,13 @@ def deep_q_learning_train(num_episodes=NUM_EPISODES,learning_rate=LEARNING_RATE,
                                                                                              epsilon_decay_steps=num_episodes * 4,
                                                                                              batch_size=32)
 
-    elapsed_time = time.time() - initial_ts
-    print("Elapsed time: " + str(elapsed_time))
-    print("Num episodes: " + str(num_episodes))
-    print("secs/episode:" + str(elapsed_time / num_episodes))
+    training_time=stats["total_time"]-stats["validation_time"]
+    print("Training time: " + str(training_time))
+    print("secs/episode:" + str(training_time / num_episodes))
+    num_validations=int(num_episodes/validate_freq)
+    val_time=stats["validation_time"]
+    print("Validation time: " + str(val_time))
+    print("secs/episode:" + str(val_time / num_validations*len(validation_env)))
 
     now = datetime.now()
     #print(stats)
