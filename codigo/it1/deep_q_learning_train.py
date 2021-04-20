@@ -48,6 +48,7 @@ def deep_q_learning_train(num_episodes=NUM_EPISODES,learning_rate=LEARNING_RATE,
     stats = deep_q_learning(env, q_estimator,
                                                                                              target_estimator,
                                                                                              validation_env,
+
                                                                                              num_episodes=num_episodes,
                                                                                              replay_memory_size=REPLAY_MEMORY_SIZE,
                                                                                              replay_memory_init_size=REPLAY_MEMORY_INIT_SIZE,
@@ -66,7 +67,7 @@ def deep_q_learning_train(num_episodes=NUM_EPISODES,learning_rate=LEARNING_RATE,
     num_validations=int(num_episodes/validate_freq)
     val_time=stats["validation_time"]
     print("Validation time: " + str(val_time))
-    print("secs/episode:" + str(val_time / num_validations*len(validation_env)))
+    print("secs/episode:" + str(val_time / (num_validations*len(validation_env))))
 
     now = datetime.now()
     #print(stats)
