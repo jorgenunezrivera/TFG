@@ -200,22 +200,31 @@ def deep_q_learning(env,
     total_t=0
     
     # Keeps track of useful statistics (PROVISIONAL)
+    stats["validation_episodes"]=[]
+    stats["validation_rewards"] = []
+    stats["validation_hits"] = []
+    stats["validation_class_changes"]=[]
+    stats["validation_positive_rewards"] = []
+
+    stats["training_stats_episodes"]=[]
     stats["training_rewards"]=[]
-    cumulated_reward=0
     stats["training_losses"]=[]
+    stats["training_hits"]=[]
+    stats["training_total_steps"]=[]
+    stats["training_class_changes"]=[]
+    stats["training_positive_rewards"]=[]
+
     cumulated_loss=0
     cumulated_length=0
-    stats["validation_rewards"]=[]
-    stats["validation_hits"]=[]
-    stats["action_stats"]=[]
-    cumulated_action_stats=np.zeros(env.action_space.n)
-    stats["step_action"]=[[] for _ in range(5)]
-    stats["total_steps"]=[]
+    cumulated_reward=0
+    training_hits = 0
+    training_class_changes = training_class_changes_bad = training_class_changes_good = training_class_changes_equal = 0
+    training_positive_rewards = 0
+
+
     stats["num_episodes"]=num_episodes
     stats["learning_rate"]=q_estimator.learning_rate
-    stats["env_info"]="env max_steps:{} step_size:{} continue_until_dies:{} n_actions:{} best_reward:{}, " \
-                      "no_label_eval:{}".format(env.max_steps,env.step_size,env.continue_until_dies,env.n_actions,
-                                                env.best_reward,env.no_label_eval)
+    stats["env_info"]="env max_steps:{} step_size:{} continue_until_dies:{}".format(env.max_steps,env.step_size,env.continue_until_dies)
     stats["total_time"]=time.time()
     stats["validation_time"]=0
     # The epsilon decay schedule
@@ -255,36 +264,33 @@ def deep_q_learning(env,
         #print("Episode {}".format(i_episode))
         # Reset the environment
         state = env.reset()
-        #state = np.stack([state] * 4, axis=2)
-        loss = None
-        episode_loss=0
-        episode_reward=0
+
         # One step in the environment
         ############# VALIDACION #######################
         if (i_episode + 1) % validate_every == 0:
+            stats["validation_episodes"].append(i_episode)
             #print("Validating".format(i_episode))
             validation_time=time.time()
-            validation_reward,hits,wrong_certanty,action_stats = validation(q_estimator, validation_env)
-            stats["validation_rewards"].append((i_episode, float(validation_reward)))
-            stats["validation_hits"].append((i_episode,hits))
-            cumulated_action_stats=np.add(cumulated_action_stats,action_stats)
-            stats["step_action"][0].append(i_episode)
-            for i in range(env.action_space.n):
-                stats["step_action"][i+1].append(action_stats[i])
-            print("\rEpisode {}/{}, validation_reward: {} hits: {} mean_wrong_uncertanty: {}".format(i_episode + 1, num_episodes,validation_reward,hits,wrong_certanty))
+            validation_reward,hits,class_changes,class_changes_good,class_changes_bad,class_changes_equal,validation_positive_rewards=validation(q_estimator, validation_env)
+            stats["validation_rewards"].append(float(validation_reward))
+            stats["validation_hits"].append(hits)
+            stats["validation_class_changes"].append((class_changes,class_changes_good,class_changes_bad,class_changes_equal))
+            stats["validation_positive_rewards"].append(validation_positive_rewards)
+            print("\rEpisode {}/{}, validation_reward: {} hits: {} ".format(i_episode + 1, num_episodes,validation_reward,hits))
             validation_time=time.time()-validation_time
             stats["validation_time"] +=validation_time
         ######################### ESTADISTICAS ###############
         if (i_episode + 1) % rewards_mean_every==0:
-            #print("Episode : {} / {}".format(i_episode,num_episodes))
-            cumulated_reward/=rewards_mean_every
-            stats["training_rewards"].append((i_episode,float(cumulated_reward)))
-            cumulated_loss/=rewards_mean_every
-            stats["training_losses"].append((i_episode,float(cumulated_loss.numpy())))
-            cumulated_length/=rewards_mean_every
-            stats["total_steps"].append((i_episode,float(cumulated_length)))
-
-            cumulated_reward=cumulated_loss=cumulated_length=0
+            stats["training_stats_episodes"].append(i_episode)
+            stats["training_rewards"].append(float(cumulated_reward/rewards_mean_every))
+            stats["training_losses"].append(float(cumulated_loss.numpy()/rewards_mean_every))
+            stats["training_total_steps"].append(float(cumulated_length/rewards_mean_every))
+            stats["training_hits"].append(training_hits*100/rewards_mean_every)
+            stats["training_class_changes"].append((training_class_changes/rewards_mean_every,training_class_changes_bad/rewards_mean_every,training_class_changes_good/rewards_mean_every,training_class_changes_equal/rewards_mean_every))
+            stats["training_positive_rewards"].append(training_positive_rewards/rewards_mean_every)
+            cumulated_reward=cumulated_loss=cumulated_length=training_hits=0
+            training_class_changes = training_class_changes_bad = training_class_changes_good = training_class_changes_equal = 0
+            training_positive_rewards = 0
 
         for t in itertools.count():
 
@@ -305,12 +311,31 @@ def deep_q_learning(env,
                 print("ERROR: NO LEGAL ACTIONS POSSIBLE")
                 break;
             action_probs = policy(state, epsilon,legal_actions)
-
             action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
-
             next_state, reward, done, info = env.step(action)
+            if done:
+                stats_reward = info["best_reward"]
+                cumulated_reward += stats_reward
+                episode_length=info["total_steps"]
+                cumulated_length+=episode_length
+                class_change = info["class_change"]
+                initial_hit = info["initial_hit"]
+                hit = info["final_hit"]
+                if hit:
+                    training_hits += 1
+                if class_change:
+                    training_class_changes += 1
+                    if hit:
+                        training_class_changes_good += 1
+                    else:
+                        if initial_hit:
+                            training_class_changes_bad += 1
+                        else:
+                            training_class_changes_equal += 1
+                if(stats_reward>0):
+                    training_positive_rewards+=1
 
-
+            ###################  GUARDADO EN MEMORIA ############################
             # If our replay memory is full, pop the first element
             if len(replay_memory) == replay_memory_size:
                 replay_memory.pop(0)
@@ -330,23 +355,17 @@ def deep_q_learning(env,
 
             # Perform gradient descent update
             loss = q_estimator.update(states_batch, action_batch, targets_batch)
-
             gc.collect()
 
-            episode_loss+=loss
+            cumulated_loss+=loss
             total_t += 1
-            if done:
-                stats_reward = info["best_reward"]
-                cumulated_loss += episode_loss/(t+1)
-                cumulated_reward += stats_reward
-                episode_length=info["total_steps"]
-                cumulated_length+=episode_length
-                break
 
+            ################ SIGUIENTE ESTADO / REINICIO ################
+            if done:
+                break
             state = next_state
             
-    np.divide(cumulated_action_stats,np.sum(cumulated_action_stats))
-    stats["action_stats"]=cumulated_action_stats.tolist()
+
     stats["total_time"] =time.time()-stats["total_time"]
     q_estimator.save_model()
     return stats

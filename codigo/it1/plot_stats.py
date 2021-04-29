@@ -17,6 +17,7 @@ def training_plot(training_losses,training_rewards,validation_rewards,validation
 
     plt.figure(figsize=(8, 8))
     plt.title(env_info)
+    print(env_info)
     plt.subplot(3, 2, 1)
     plt.plot(training_losses_x, training_losses_y)
     plt.legend(loc='upper right')

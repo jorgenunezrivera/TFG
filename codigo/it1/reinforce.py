@@ -125,7 +125,7 @@ class ValueEstimator():
         self.model.save("reinforce_value_model")
 
 
-def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_env, discount_factor=1.0,validate_every=200,stats_mean_every=100):
+def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_env, discount_factor=1.0,validate_every=200,stats_mean_every=200):
     """
     REINFORCE (Monte Carlo Policy Gradient) Algorithm. Optimizes the policy
     function approximator using policy gradient.
@@ -145,27 +145,33 @@ def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_en
     stats={}
     Transition = namedtuple("Transition", ["state", "action", "reward", "next_state", "done"])
 
-    stats["value_losses"] = []
-    stats["action_losses"] = []
-    stats["total_returns"] = []
-    stats["stats_mean_every"]=stats_mean_every
-    stats["num_episodes"] = num_episodes
+    stats["training_stats_episodes"] = []
+    stats["training_value_losses"] = []
+    stats["training_action_losses"] = []
+    stats["training_rewards"] = []
+    stats["training_hits"]=[]
+    stats["training_total_steps"] = []
+    stats["training_class_changes"] = []
+    stats["training_positive_rewards"] = []
+
+    stats["validation_episodes"]=[]
     stats["validation_rewards"] = []
-    stats["validation_rewards"].append([])
-    stats["validation_rewards"].append([])
     stats["validation_hits"] = []
-    stats["validation_hits"].append([])
-    stats["validation_hits"].append([])
-    stats["action_stats"] = []
-    cumulated_action_stats=np.zeros(env.action_space.n)
+    stats["validation_class_changes"] = []
+    stats["validation_positive_rewards"] = []
+
+
     stats["num_episodes"] = num_episodes
-    stats["step_action"] = [[] for _ in range(5)]
     stats["policy_learning_rate"] = estimator_policy.learning_rate
     stats["value_learning_rate"] = estimator_value.learning_rate
+
     cumulated_value_loss = 0
     cumulated_action_loss = 0
     cumulated_return=0
-
+    cumulated_length=0
+    training_hits = 0
+    training_class_changes = training_class_changes_bad = training_class_changes_good = training_class_changes_equal = 0
+    training_positive_rewards = 0
 
     for i_episode in range(num_episodes):
         # Reset the environment and pick the first action
@@ -177,30 +183,36 @@ def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_en
 
 ######################## VALIDATION ###################
         if (i_episode + 1) % validate_every == 0:
-            validation_reward, hits, wrong_certanty, action_stats = reinforce_validation(estimator_policy, validation_env)
-            stats["validation_rewards"][0].append(i_episode)
-            stats["validation_rewards"][1].append(float(validation_reward))
-            stats["validation_hits"][0].append(i_episode)
-            stats["validation_hits"][1].append(hits)
-            cumulated_action_stats=np.add(cumulated_action_stats,action_stats)
-            stats["step_action"][0].append(i_episode)
-            for i in range(env.action_space.n):
-                stats["step_action"][i + 1].append(action_stats[i])
-            print("\rEpisode {}/{}, validation_reward: {} hits: {} mean_wrong_uncertanty: {}".format(i_episode + 1,
+            validation_reward, hits,class_changes,class_changes_good,class_changes_bad,class_changes_equal,validation_positive_rewards  = reinforce_validation(estimator_policy, validation_env)
+            stats["validation_episodes"].append(i_episode)
+            stats["validation_rewards"].append(float(validation_reward))
+            stats["validation_hits"].append(hits)
+            stats["validation_class_changes"].append(
+                (class_changes, class_changes_good, class_changes_bad, class_changes_equal))
+            stats["validation_positive_rewards"].append(validation_positive_rewards)
+            print("\rEpisode {}/{}, validation_reward: {} hits: {} ".format(i_episode + 1,
                                                                                                      num_episodes,
                                                                                                      validation_reward,
-                                                                                                     hits,
-                                                                                                     wrong_certanty))
+                                                                                                     hits
+                                                                                                     ))
 ####################STATS###################
 
         if (i_episode + 1) % stats_mean_every==0:
-            cumulated_action_loss /= stats_mean_every
-            cumulated_value_loss /= stats_mean_every
-            cumulated_return /= stats_mean_every
-            stats["value_losses"].append(cumulated_value_loss)
-            stats["action_losses"].append(-cumulated_action_loss)
-            stats["total_returns"].append(cumulated_return)
-            cumulated_action_loss=cumulated_value_loss=cumulated_return=0
+            stats["training_stats_episodes"].append(i_episode)
+            stats["training_value_losses"].append(cumulated_value_loss/stats_mean_every)
+            stats["training_action_losses"].append(-cumulated_action_loss/stats_mean_every)
+            stats["training_rewards"].append(cumulated_return/stats_mean_every)
+            stats["training_total_steps"].append(float(cumulated_length / stats_mean_every))
+            stats["training_hits"].append(training_hits / stats_mean_every)
+            stats["training_class_changes"].append((training_class_changes / stats_mean_every,
+                                                    training_class_changes_good / stats_mean_every,
+                                                    training_class_changes_bad / stats_mean_every,
+                                                    training_class_changes_equal / stats_mean_every))
+            stats["training_positive_rewards"].append(training_positive_rewards / stats_mean_every)
+            cumulated_action_loss=cumulated_value_loss=cumulated_return=cumulated_length=0
+            training_hits=0
+            training_class_changes = training_class_changes_bad = training_class_changes_good = training_class_changes_equal = 0
+            training_positive_rewards = 0
 
         # One step in the environment
         for t in itertools.count():
@@ -227,6 +239,8 @@ def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_en
             action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
             next_state, reward, done, info = env.step(action)
 
+
+
             # Keep track of the transition
             episode.append(Transition(
                 state=state, action=action, reward=reward, next_state=next_state, done=done))
@@ -246,7 +260,7 @@ def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_en
         # Go through the episode and make policy updates
         for t, transition in enumerate(episode):
             # The return after this timestep
-            total_return = sum(discount_factor ** i * t.reward for i, t in enumerate(episode[t:]))
+            total_return = sum(discount_factor ** i * t.reward for i, t in enumerate(episode[t:])) #PRUEBAAAAA -10 #TODO....
             # Calculate baseline/advantage
             baseline_value = estimator_value.predict((tf.expand_dims(transition.state, axis=0)))[0]
             advantage = total_return - baseline_value
@@ -255,15 +269,32 @@ def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_en
             # Update our policy estimator
             step_action_loss=estimator_policy.update(transition.state, transition.action,advantage)
             episode_action_loss+=step_action_loss
-            episode_total_return=total_return
 
-
+        ######## ACTUALIZAR ESTADISTICAS DEL EPISODIO ##################
         cumulated_action_loss+=float(episode_action_loss/len(episode))
         cumulated_value_loss+=float(episode_value_loss/len(episode))
-        cumulated_return += float(info["best_reward"])
+        stats_reward=float(info["best_reward"])
+        cumulated_return += stats_reward
+        episode_length = info["total_steps"]
+        cumulated_length += episode_length
+        class_change = info["class_change"]
+        initial_hit = info["initial_hit"]
+        hit = info["final_hit"]
+        if hit:
+            training_hits += 1
+        if class_change:
+            training_class_changes += 1
+            if hit:
+                training_class_changes_good += 1
+            else:
+                if initial_hit:
+                    training_class_changes_bad += 1
+                else:
+                    training_class_changes_equal += 1
+        if (stats_reward > 0):
+            training_positive_rewards += 1
 
 
     estimator_policy.save_model()
     estimator_value.save_model()
-    stats["action_stats"] = cumulated_action_stats.tolist()
     return stats

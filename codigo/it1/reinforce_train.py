@@ -1,4 +1,6 @@
 import json
+
+from window_env import ImageWindowEnv
 from window_env_generator import ImageWindowEnvGenerator
 from datetime import datetime
 import time
@@ -31,11 +33,11 @@ def reinforce_train(num_episodes=NUM_EPISODES,learning_rate=LEARNING_RATE,
                           validate_freq=VALIDATE_EVERY,max_steps=MAX_STEPS,step_size=STEP_SIZE,
                  continue_until_dies=CONTINUE_UNTIL_DIES,model_name=MODEL_NAME):
 
-    env = ImageWindowEnvGenerator(TRAINING_IMAGES_DIR, TRAINING_LABELS_FILE, max_steps, step_size,
-                                  continue_until_dies,1,0)
+    env = ImageWindowEnv(TRAINING_IMAGES_DIR, TRAINING_LABELS_FILE, max_steps, step_size,
+                                  continue_until_dies,is_validation=0)
 
-    validation_env = ImageWindowEnvGenerator(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, max_steps, step_size,
-                                             continue_until_dies,1,1)
+    validation_env = ImageWindowEnv(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, max_steps, step_size,
+                                             continue_until_dies,is_validation=1)
 
     N_ACTIONS = env.action_space.n
     IMG_SHAPE = env.observation_space.shape
@@ -45,7 +47,7 @@ def reinforce_train(num_episodes=NUM_EPISODES,learning_rate=LEARNING_RATE,
     policy_estimator = PolicyEstimator(IMG_SHAPE, N_ACTIONS, learning_rate,model_name)
     value_estimator = ValueEstimator(IMG_SHAPE, learning_rate,model_name)
 
-    stats=reinforce(env,policy_estimator,value_estimator,num_episodes,validation_env,validate_every=validate_freq)
+    stats=reinforce(env,policy_estimator,value_estimator,num_episodes,validation_env,validate_every=validate_freq,stats_mean_every=100)
 
     elapsed_time = time.time() - initial_ts
     print("Elapsed time: " + str(elapsed_time))

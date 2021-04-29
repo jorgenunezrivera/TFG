@@ -30,23 +30,20 @@ STEP_SIZE = 32
 
 CONTINUE_UNTIL_DIES = 0
 BEST_REWARD=1
-NO_LABEL_EVAL=0
-NO_LABEL_SELECT_BEST=0
+IS_VALIDATION=0
 # Legal actions
 
 
-class ImageWindowEnvGenerator(gym.Env):
+class ImageWindowEnv(gym.Env):
 
     def __init__(self, directory, labels_file, max_steps=MAX_STEPS, step_size=STEP_SIZE,
-                 continue_until_dies=CONTINUE_UNTIL_DIES, best_reward=BEST_REWARD,no_label_eval=NO_LABEL_EVAL,no_label_select_best=NO_LABEL_SELECT_BEST):
-        super(ImageWindowEnvGenerator, self).__init__()
-        self.best_reward=best_reward
+                 continue_until_dies=CONTINUE_UNTIL_DIES, is_validation=IS_VALIDATION):
+        super(ImageWindowEnv, self).__init__()
         self.max_steps = max_steps
         self.step_size = step_size
         self.continue_until_dies = continue_until_dies
         self.n_actions=N_ACTIONS
-        self.no_label_eval=no_label_eval
-        self.no_label_select_best=no_label_select_best
+        self.is_validation=is_validation
         image_filenames = from_disk_generator.get_filenames(directory)
         self.image_generator = FromDiskGenerator(
             image_filenames, batch_size=1,
@@ -59,7 +56,6 @@ class ImageWindowEnvGenerator(gym.Env):
         self.sample_index = 0
         self.num_samples = self.image_generator.__len__()
         self.labels = []
-        self.last_better_result = -1
         self.max_possible_step = int(HEIGHT / STEP_SIZE)
         with open(labels_file) as fp:
             line = fp.readline()
@@ -70,9 +66,17 @@ class ImageWindowEnvGenerator(gym.Env):
         self.true_class = 0
         self.predicted_class = 0
         self.best_result=0
+        self.best_stop_result=0
         self.best_predicted_class=-1
         self.total_reward=0
-        self.history = []
+        self.left = self.right = self.top = self.bottom = 0
+        self.n_steps = 0
+        self.img_arr = 0
+        self.image_shape = 0
+        self.image_size_factor = 0
+        self.initial_reward=0
+        self.initial_stop_reward=0
+        self.initial_prediction=0
 
     def __len__(self):
         return self.num_samples
@@ -82,7 +86,7 @@ class ImageWindowEnvGenerator(gym.Env):
         label = self.labels[self.sample_index]
         self.true_class = label_index_dict[str(label)]
         self.sample_index += 1  # Batches siempre en el mismo orden???
-        if (self.sample_index >= self.num_samples):  # >=?
+        if self.sample_index >= self.num_samples:  # >=?
             self.sample_index = 0
         self.image_shape = self.img_arr.shape
         self.image_size_factor = (self.image_shape[0] // HEIGHT, self.image_shape[1] // WIDTH)
@@ -93,15 +97,13 @@ class ImageWindowEnvGenerator(gym.Env):
         image_window = self._get_image_window()
         predictions = self._get_predictions(image_window)
         self.predicted_class = self._get_predicted_class(predictions)
-        self.initial_reward = self._get_reward(predictions)
+        self.initial_prediction=self.predicted_class
+        self.initial_reward = self._get_reward(predictions,True)
+        #self.initial_stop_reward=self.get_reward(predictions,not(self.no_label_select_best))
         self.best_result=self.initial_reward
+        self.best_stop_result=0#self.initial_stop_reward
         self.best_predicted_class=-1
-        self.total_reward=self.initial_reward
-
-        max_prediction_value = np.max(predictions)
-        # print("Initial_rewrd: {}".format(self.initial_reward))
-        self.history = [(0, 0, 0, self.initial_reward, self.predicted_class, max_prediction_value)]
-        self.last_better_result = -1
+        #self.total_reward=self.initial_reward
         return image_window
 
     def restart_in_state(self, index):
@@ -139,12 +141,16 @@ class ImageWindowEnvGenerator(gym.Env):
         state = self._get_image_window()
         predictions = self._get_predictions(state)
         self.predicted_class = self._get_predicted_class(predictions)
-        max_prediction_value = np.max(predictions)
-        step_reward = self._get_reward(predictions)
+        step_reward = self._get_reward(predictions,True)
+        stop_reward = self._get_reward(predictions, self.is_validation)
+
         best_reward=0
+        class_change=0
+        initial_hit=0
+        final_hit=0
 
         if self.continue_until_dies:
-            if step_reward <= self.best_result:
+            if stop_reward <= self.best_stop_result:
                 self.n_steps += 1
             else:
                 self.n_steps = 0
@@ -153,25 +159,36 @@ class ImageWindowEnvGenerator(gym.Env):
 
         done = (self.n_steps >= self.max_steps or action == 3 or len(self.get_legal_actions())==0)
 
-        reward=(step_reward-self.best_result) * REWARDS_FACTOR
+        #REWARD USADO PARA ENTRENAR
+        #reward=(step_reward-self.best_result) * REWARDS_FACTOR #CALCULA EL REWARD USANDO LA CLASE REAL
+        reward = (stop_reward - self.best_stop_result) * REWARDS_FACTOR #CALCULA EL REWARD USANDO EL MEJOR RESULTADO
 
         if step_reward > self.best_result:
             self.best_result = step_reward
-            self.best_predicted_class=self.predicted_class
+            #self.best_predicted_class=self.predicted_class  #CALCULA EL MEJOR RESULTADO USANDO LA CLASE REAL
+
+        if stop_reward > self.best_stop_result:
+            self.best_stop_result = stop_reward
+            self.best_predicted_class = self.predicted_class #CALCULA EL MEJOR RESULTADO USANDO EL VALOR MÁXIMO DE CONFIANZA DE LA RED
+
+        if self.is_validation and step_reward != stop_reward:
+            print("step_reward: {}".format(step_reward))
+            print("stop_reward: {}".format(stop_reward))
 
         if done:
+            #REWARD USADO PARA FINES INFORMATIVOS
             best_reward = (self.best_result - self.initial_reward) * REWARDS_FACTOR
-
+            class_change= self.best_predicted_class!=self.initial_prediction
+            initial_hit = self.initial_prediction==self.true_class
+            final_hit=self.best_predicted_class==self.true_class
+            #print("initial prediction. {} final prediction. {}".format(self.initial_prediction,self.best_predicted_class))
 
         self.total_reward += reward
-        self.history.append((self.x, self.y, self.z, step_reward, self.predicted_class, max_prediction_value))
-        return state, reward, done, {"predicted_class": self.predicted_class,
-                                     "max_prediction_value": max_prediction_value,
-                                     "hit": (self.predicted_class == self.true_class),
-                                     "best_hit": (self.best_predicted_class == self.true_class),
+        return state, reward, done, {"initial_hit": initial_hit,
+                                     "final_hit": final_hit,
                                      "best_reward": best_reward,
-                                     "total_reward": self.total_reward,
-                                     "total_steps": self.x+self.y+self.z}
+                                     "class_change":class_change,
+                                     "total_steps":self.x+self.y+self.z}
 
     def render(self, mode='human', close=False):
         fig, ax = plt.subplots(1)
@@ -208,19 +225,10 @@ class ImageWindowEnvGenerator(gym.Env):
         predicted_class = np.argmax(predictions[0])
         return predicted_class
 
-    def _get_reward(self, predictions):
-        if(self.no_label_eval):
+    def _get_reward(self, predictions,validation):
+        if validation:
             reward=np.max(predictions[0])
         else:
             reward = float(predictions[0, self.true_class])
         return reward
 
-    #for test purposes
-    def random_window(self):
-        z=np.random.randint(1,self.max_possible_step)
-        x=np.random.randint(z)
-        y=np.random.randint(z)
-        self.set_window(x,y,z)
-        state= self._get_image_window()
-        predictions = self._get_predictions(state)
-        return predictions
