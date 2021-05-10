@@ -31,7 +31,6 @@ STEP_SIZE = 32
 CONTINUE_UNTIL_DIES = 0
 BEST_REWARD=1
 IS_VALIDATION=0
-# Legal actions
 
 
 class ImageWindowEnv(gym.Env):
@@ -99,9 +98,9 @@ class ImageWindowEnv(gym.Env):
         self.predicted_class = self._get_predicted_class(predictions)
         self.initial_prediction=self.predicted_class
         self.initial_reward = self._get_reward(predictions,True)
-        #self.initial_stop_reward=self.get_reward(predictions,not(self.no_label_select_best))
+        self.initial_stop_reward=self._get_reward(predictions,self.is_validation)
         self.best_result=self.initial_reward
-        self.best_stop_result=0#self.initial_stop_reward
+        self.best_stop_result=self.initial_stop_reward
         self.best_predicted_class=-1
         #self.total_reward=self.initial_reward
         return image_window
@@ -114,6 +113,7 @@ class ImageWindowEnv(gym.Env):
         self.x = x
         self.y = y
         self.z = z
+        self._get_image_window()
 
     def get_legal_actions(self):
         actions = []
@@ -182,13 +182,15 @@ class ImageWindowEnv(gym.Env):
             initial_hit = self.initial_prediction==self.true_class
             final_hit=self.best_predicted_class==self.true_class
             #print("initial prediction. {} final prediction. {}".format(self.initial_prediction,self.best_predicted_class))
-
+        hit=self.predicted_class==self.true_class
         self.total_reward += reward
-        return state, reward, done, {"initial_hit": initial_hit,
+        return state, reward, done, {"hit":hit,
+                                     "initial_hit": initial_hit,
                                      "final_hit": final_hit,
                                      "best_reward": best_reward,
                                      "class_change":class_change,
-                                     "total_steps":self.x+self.y+self.z}
+                                     "total_steps":self.x+self.y+self.z,
+                                     "position":(self.x,self.y,self.z)}
 
     def render(self, mode='human', close=False):
         fig, ax = plt.subplots(1)

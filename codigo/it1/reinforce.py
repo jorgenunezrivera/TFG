@@ -1,18 +1,123 @@
 import itertools
 import math
+import json
+import os
+
+from window_env import ImageWindowEnv
+
+from datetime import datetime
+import time
 
 from tensorflow import keras
-from tensorflow.keras import layers
 import tensorflow as tf
 import numpy as np
 from collections import namedtuple
 
 from build_models import build_dqn_model
-from reinforce_validation import reinforce_validation
 
 mse = tf.keras.losses.MeanSquaredError() #categoricalcrossentropy
 mae = tf.keras.losses.MeanAbsoluteError()
 huber=tf.keras.losses.Huber()
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
+
+# IMG_SHAPE=(224,224,3)
+TRAINING_IMAGES_DIR = "train_200"
+VALIDATION_IMAGES_DIR = "validation1000"
+TRAINING_LABELS_FILE = "training_labels.txt"
+VALIDATION_LABELS_FILE = "validation_labels.txt"
+
+NUM_EPISODES = 12000
+LEARNING_RATE = 0.000001
+VALIDATE_EVERY=3000
+MODEL_NAME="atari"
+
+#env default params
+#Default parameters
+N_ACTIONS=3
+MAX_STEPS = 6
+STEP_SIZE = 32
+CONTINUE_UNTIL_DIES = 1
+
+
+def reinforce_train(num_episodes=NUM_EPISODES,learning_rate=LEARNING_RATE,
+                          validate_freq=VALIDATE_EVERY,max_steps=MAX_STEPS,step_size=STEP_SIZE,
+                 continue_until_dies=CONTINUE_UNTIL_DIES,model_name=MODEL_NAME):
+
+    env = ImageWindowEnv(TRAINING_IMAGES_DIR, TRAINING_LABELS_FILE, max_steps, step_size,
+                                  continue_until_dies,is_validation=0)
+
+    validation_env = ImageWindowEnv(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, max_steps, step_size,
+                                             continue_until_dies,is_validation=1)
+
+    N_ACTIONS = env.action_space.n
+    IMG_SHAPE = env.observation_space.shape
+
+    initial_ts = time.time()
+
+    policy_estimator = PolicyEstimator(IMG_SHAPE, N_ACTIONS, learning_rate,model_name)
+    value_estimator = ValueEstimator(IMG_SHAPE, learning_rate,model_name)
+
+    stats=reinforce(env,policy_estimator,value_estimator,num_episodes,validation_env,validate_every=validate_freq,stats_mean_every=100)
+
+    elapsed_time = time.time() - initial_ts
+    print("Elapsed time: " + str(elapsed_time))
+    print("Num episodes: " + str(NUM_EPISODES))
+    print("secs/episode:" + str(elapsed_time / NUM_EPISODES))
+
+    now = datetime.now()
+    print(stats)
+    log_filename = now.strftime("logs/%d_%m_%Y_%H_%M_%S_reinforce_log.json")
+    with open(log_filename, 'w') as fp:
+        json.dump(stats, fp)
+    return log_filename
+
+def reinforce_validation(action_estimator, env):
+    #init_ts=time.time()
+    rewards = []
+    hits=0
+    class_changes = 0
+    class_changes_bad = 0
+    class_changes_good = 0
+    class_changes_equal = 0
+    positive_rewards = 0
+    for i in range(len(env)):
+        obs = env.reset()
+        for _ in itertools.count():
+            action_probs = action_estimator.predict(np.array([obs]))[0]
+            action_probs = tf.nn.softmax(action_probs).numpy()
+            legal_actions = env.get_legal_actions()
+            for i in range(len(action_probs)):
+                if i not in legal_actions:
+                    action_probs[i] = 0
+            if np.sum(action_probs)==0 or math.isnan(sum(action_probs)):
+                print("action probs error: sum action_probs =0")
+                break;
+            action_probs =action_probs/np.sum(action_probs)
+            chosen_action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
+            obs, reward, done, info = env.step(chosen_action)
+            if done:
+                class_change = info["class_change"]
+                initial_hit=info["initial_hit"]
+                hit=info["final_hit"]
+                rewards.append(info["best_reward"])
+                if hit:
+                    hits += 1
+                if class_change:
+                    class_changes += 1
+                    if hit:
+                        class_changes_good += 1
+                    else:
+                        if initial_hit:
+                            class_changes_bad += 1
+                        else:
+                            class_changes_equal += 1
+                if info["best_reward"] > 0:
+                    positive_rewards += 1
+                break
+    #print("time_elapsed={}".format(time.time()-init_ts))
+    return np.mean(rewards),hits/len(env),class_changes/len(env),class_changes_good/len(env),class_changes_bad/len(env),class_changes_equal/len(env),positive_rewards/len(env)
+
 
 class PolicyEstimator():
 
@@ -69,6 +174,9 @@ class PolicyEstimator():
 
     def save_model(self):
         self.model.save("reinforce_policy_model")
+
+    def load_model(self):
+        self.model = keras.models.load_model('reinforce_policy_model')
 
 class ValueEstimator():
 
@@ -260,7 +368,7 @@ def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_en
         # Go through the episode and make policy updates
         for t, transition in enumerate(episode):
             # The return after this timestep
-            total_return = sum(discount_factor ** i * t.reward for i, t in enumerate(episode[t:])) #PRUEBAAAAA -10 #TODO....
+            total_return = sum(discount_factor ** i * t.reward for i, t in enumerate(episode[t:]))
             # Calculate baseline/advantage
             baseline_value = estimator_value.predict((tf.expand_dims(transition.state, axis=0)))[0]
             advantage = total_return - baseline_value

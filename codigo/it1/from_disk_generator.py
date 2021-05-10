@@ -3,6 +3,7 @@ import threading
 from tensorflow.keras.utils import Sequence
 from tensorflow.keras.preprocessing import image
 import os
+
 def get_filenames(folder):
     return list(sorted([os.path.join(folder, f) for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f)) and f.endswith('.JPEG')]))
 
