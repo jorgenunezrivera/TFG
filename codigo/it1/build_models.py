@@ -38,8 +38,9 @@ def build_atari_model(input_shape,n_actions):
         # layers.MaxPooling2D(),
         layers.Conv2D(64, (3, 3), strides=(2, 2), activation='relu'),
         # layers.MaxPooling2D(),
+        layers.Conv2D(128, (3, 3), strides=(2, 2), activation='relu'),
         layers.Flatten(),
-        layers.Dense(512, activation='relu'),
+        layers.Dense(256, activation='relu'),
         layers.Dense(n_actions)
     ])
     return model_atari

@@ -233,7 +233,8 @@ class ValueEstimator():
         self.model.save("reinforce_value_model")
 
 
-def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_env, discount_factor=1.0,validate_every=200,stats_mean_every=200):
+def reinforce(env, policy_estimator, value_estimator, num_episodes,validation_env, discount_factor=1.0
+            ,validate_every=200,stats_mean_every=200):
     """
     REINFORCE (Monte Carlo Policy Gradient) Algorithm. Optimizes the policy
     function approximator using policy gradient.
@@ -244,9 +245,11 @@ def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_en
         estimator_value: Value function approximator, used as a baseline
         num_episodes: Number of episodes to run for
         discount_factor: Time-discount factor
+        validate_every: Number of episodes between validations
+        stats_mean_every: Number of episodes between stats mean calculation
 
     Returns:
-        An EpisodeStats object with two numpy arrays for episode_lengths and episode_rewards.
+        A stats dictionary
     """
 
 
@@ -270,8 +273,8 @@ def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_en
 
 
     stats["num_episodes"] = num_episodes
-    stats["policy_learning_rate"] = estimator_policy.learning_rate
-    stats["value_learning_rate"] = estimator_value.learning_rate
+    stats["policy_learning_rate"] = policy_estimator.learning_rate
+    stats["value_learning_rate"] = value_estimator.learning_rate
 
     cumulated_value_loss = 0
     cumulated_action_loss = 0
@@ -291,7 +294,7 @@ def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_en
 
 ######################## VALIDATION ###################
         if (i_episode + 1) % validate_every == 0:
-            validation_reward, hits,class_changes,class_changes_good,class_changes_bad,class_changes_equal,validation_positive_rewards  = reinforce_validation(estimator_policy, validation_env)
+            validation_reward, hits,class_changes,class_changes_good,class_changes_bad,class_changes_equal,validation_positive_rewards  = reinforce_validation(policy_estimator, validation_env)
             stats["validation_episodes"].append(i_episode)
             stats["validation_rewards"].append(float(validation_reward))
             stats["validation_hits"].append(hits)
@@ -334,7 +337,7 @@ def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_en
                 action_probs=np.zeros(env.action_space.n)
                 action_probs[legal_actions[0]]=1
             else:
-                action_probs = estimator_policy.predict((tf.expand_dims(state, axis=0)))[0]
+                action_probs = policy_estimator.predict((tf.expand_dims(state, axis=0)))[0]
                 action_probs = tf.nn.softmax(action_probs).numpy()
                 for i in range(len(action_probs)):
                     if i not in legal_actions:
@@ -370,12 +373,12 @@ def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_en
             # The return after this timestep
             total_return = sum(discount_factor ** i * t.reward for i, t in enumerate(episode[t:]))
             # Calculate baseline/advantage
-            baseline_value = estimator_value.predict((tf.expand_dims(transition.state, axis=0)))[0]
+            baseline_value = value_estimator.predict((tf.expand_dims(transition.state, axis=0)))[0]
             advantage = total_return - baseline_value
             # Update our value estimator
-            episode_value_loss+=estimator_value.update(transition.state, total_return)
+            episode_value_loss+=value_estimator.update(transition.state, total_return)
             # Update our policy estimator
-            step_action_loss=estimator_policy.update(transition.state, transition.action,advantage)
+            step_action_loss=policy_estimator.update(transition.state, transition.action,advantage)
             episode_action_loss+=step_action_loss
 
         ######## ACTUALIZAR ESTADISTICAS DEL EPISODIO ##################
@@ -403,6 +406,6 @@ def reinforce(env, estimator_policy, estimator_value, num_episodes,validation_en
             training_positive_rewards += 1
 
 
-    estimator_policy.save_model()
-    estimator_value.save_model()
+    policy_estimator.save_model()
+    value_estimator.save_model()
     return stats

@@ -81,6 +81,11 @@ class ImageWindowEnv(gym.Env):
         return self.num_samples
 
     def reset(self):
+        """
+            Carga una nueva imagen, situa la ventana en el origen y reinicia las variables de cálculo de recompensa
+
+        """
+        #Carga una nueva imagen
         self.img_arr = self.image_generator.__getitem__([self.sample_index])[0]
         label = self.labels[self.sample_index]
         self.true_class = label_index_dict[str(label)]
@@ -89,10 +94,12 @@ class ImageWindowEnv(gym.Env):
             self.sample_index = 0
         self.image_shape = self.img_arr.shape
         self.image_size_factor = (self.image_shape[0] // HEIGHT, self.image_shape[1] // WIDTH)
+        #Situa la ventana en el origen
         self.x = self.y = self.z = 0
         self.left = self.right = self.top = self.bottom = 0
         self.n_steps = 0
 
+        #Reinicia las variables de calculo de recompensas
         image_window = self._get_image_window()
         predictions = self._get_predictions(image_window)
         self.predicted_class = self._get_predicted_class(predictions)
@@ -105,29 +112,23 @@ class ImageWindowEnv(gym.Env):
         #self.total_reward=self.initial_reward
         return image_window
 
-    def restart_in_state(self, index):
-        self.sample_index = index
-        self.reset()
 
-    def set_window(self, x, y, z):
-        self.x = x
-        self.y = y
-        self.z = z
-        self._get_image_window()
-
-    def get_legal_actions(self):
-        actions = []
-        if self.x < self.z:
-            actions.append(0)
-        if self.y < self.z:
-            actions.append(1)
-        if self.z < self.max_possible_step - 1:
-            actions.append(2)
-        if  self.n_actions == 4:
-            actions.append(3)
-        return actions
 
     def step(self, action):
+        """avanza un paso la posición de la ventana,
+            luego recalcula el estado y las recompensas
+
+            Args:
+                action : int(0-3)
+
+            Returns:
+                a tuple (state, reward,done,info}
+                state is the next state
+                reward is the training reward,
+                done indicates if the state is final
+                info is a dictionary wich contains validation information
+        """
+        #Avanza un paso
         # 0: right 1:down 2: zoom in 3: end
         if action == 0:
             self.x += 1
@@ -138,6 +139,7 @@ class ImageWindowEnv(gym.Env):
         elif action == 3:
             pass
 
+        #Actualiza el estado y los rewards
         state = self._get_image_window()
         predictions = self._get_predictions(state)
         self.predicted_class = self._get_predicted_class(predictions)
@@ -149,6 +151,7 @@ class ImageWindowEnv(gym.Env):
         initial_hit=0
         final_hit=0
 
+        #Comprueba  si el estado es final
         if self.continue_until_dies:
             if stop_reward <= self.best_stop_result:
                 self.n_steps += 1
@@ -159,6 +162,8 @@ class ImageWindowEnv(gym.Env):
 
         done = (self.n_steps >= self.max_steps or action == 3 or len(self.get_legal_actions())==0)
 
+
+        #Calcula los rewards
         #REWARD USADO PARA ENTRENAR
         #reward=(step_reward-self.best_result) * REWARDS_FACTOR #CALCULA EL REWARD USANDO LA CLASE REAL
         reward = (stop_reward - self.best_stop_result) * REWARDS_FACTOR #CALCULA EL REWARD USANDO EL MEJOR RESULTADO
@@ -193,12 +198,26 @@ class ImageWindowEnv(gym.Env):
                                      "position":(self.x,self.y,self.z)}
 
     def render(self, mode='human', close=False):
+        """Muestra la imagen con la ventana dibujada"""
         fig, ax = plt.subplots(1)
         ax.imshow(self.img_arr / 255)
         rectangle = pltpatch.Rectangle((self.left, self.bottom), self.right - self.left, self.top - self.bottom,
                                        edgecolor='r', facecolor='none', linewidth=3)
         ax.add_patch(rectangle)
         plt.show()
+
+    def get_legal_actions(self):
+        """devuelve una lista con las acciones legales"""
+        actions = []
+        if self.x < self.z:
+            actions.append(0)
+        if self.y < self.z:
+            actions.append(1)
+        if self.z < self.max_possible_step - 1:
+            actions.append(2)
+        if self.n_actions == 4:
+            actions.append(3)
+        return actions
 
     def _get_image_window(self):
         self.left = (self.x) * self.image_size_factor[1] * self.step_size
@@ -233,4 +252,15 @@ class ImageWindowEnv(gym.Env):
         else:
             reward = float(predictions[0, self.true_class])
         return reward
+
+    def restart_in_state(self, index):
+        self.sample_index = index
+        self.reset()
+
+    def set_window(self, x, y, z):
+        self.x = x
+        self.y = y
+        self.z = z
+        self._get_image_window()
+
 

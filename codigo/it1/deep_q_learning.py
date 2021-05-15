@@ -134,7 +134,7 @@ def validation(q_estimator, env):
                     positive_rewards += 1
                 break
     # print("time_elapsed={}".format(time.time()-init_ts))
-    return np.mean(rewards), hits / len(env), class_changes / len(env), class_changes_good / len(
+    return np.mean(rewards), 100*hits / len(env), class_changes / len(env), class_changes_good / len(
         env), class_changes_bad / len(env), class_changes_equal / len(env), positive_rewards / len(env)
 
 
@@ -263,7 +263,6 @@ def make_epsilon_greedy_policy(estimator, nA):
     return policy_fn
 
 
-# @profile
 def deep_q_learning(env,
                     q_estimator,
                     target_estimator,
@@ -274,7 +273,7 @@ def deep_q_learning(env,
                     update_target_estimator_every=10000,
                     validate_every=1000,
                     rewards_mean_every=100,
-                    discount_factor=0.99,
+                    discount_factor=1.0,
                     epsilon_start=1.0,
                     epsilon_end=0.1,
                     epsilon_decay_steps=500000,
@@ -289,7 +288,7 @@ def deep_q_learning(env,
         target_estimator: Estimator object used for the targets
         num_episodes: Number of episodes to run for
         replay_memory_size: Size of the replay memory
-        replay_memory_init_size: Number of random experiences to sampel when initializing 
+        replay_memory_init_size: Number of random experiences to sample when initializing
           the reply memory.
         update_target_estimator_every: Copy parameters from the Q estimator to the 
           target estimator every N steps
