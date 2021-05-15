@@ -188,7 +188,7 @@ class ValueEstimator():
         Builds the Tensorflow model.
         """
         self.learning_rate = learning_rate
-        self.model = build_dqn_model(model_name, input_shape, 1, False)
+        self.model = build_dqn_model(model_name, input_shape, 1)
         self.optimizer = keras.optimizers.RMSprop(self.learning_rate, 0.99)
 
     def predict(self, state):
