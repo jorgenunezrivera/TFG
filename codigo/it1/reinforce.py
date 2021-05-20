@@ -192,7 +192,7 @@ class ValueEstimator():
         self.optimizer = keras.optimizers.RMSprop(self.learning_rate, 0.99)
 
     def predict(self, state):
-        """
+        """    
         Predicts action values.
 
         Args:

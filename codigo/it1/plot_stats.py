@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import sys
 import json
+import numpy as np
 
 def training_plot(stats):
     training_episodes=stats["training_stats_episodes"]
@@ -10,6 +11,8 @@ def training_plot(stats):
     else:
         training_losses=(stats["training_value_losses"],stats["training_action_losses"])
     training_hits=stats["training_hits"]
+    if np.maximum(training_hits)>1:
+        training_hits/=100
     training_total_steps=stats["training_total_steps"]
     training_class_changes = [x[0] for x in stats["training_class_changes"]]
     training_class_better = [x[1] for x in stats["training_class_changes"]]
@@ -68,12 +71,12 @@ def training_plot(stats):
     plt.plot(training_episodes, training_class_changes,'b',label='t. changes')
     plt.plot(training_episodes, training_class_better,'r',label='t. better')
     plt.plot(training_episodes, training_class_worse,'g',label='t. worse')
-    #plt.plot(training_episodes, training_class_same, 'y', label='t. indiff')
+    plt.plot(training_episodes, training_class_same, 'y', label='t. indiff')
 
     plt.plot(validation_episodes, validation_class_changes, 'b',linestyle='dashed', label='v. changes')
     plt.plot(validation_episodes, validation_class_better, 'r', linestyle='dashed', label='v. better ')
     plt.plot(validation_episodes, validation_class_worse, 'g', linestyle='dashed', label='v. worse')
-    #plt.plot(validation_episodes, validation_class_same, 'y', linestyle='dashed', label='v.indif')
+    plt.plot(validation_episodes, validation_class_same, 'y', linestyle='dashed', label='v.indif')
 
 
     plt.legend(loc='upper right')

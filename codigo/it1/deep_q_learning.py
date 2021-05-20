@@ -134,7 +134,7 @@ def validation(q_estimator, env):
                     positive_rewards += 1
                 break
     # print("time_elapsed={}".format(time.time()-init_ts))
-    return np.mean(rewards), 100*hits / len(env), class_changes / len(env), class_changes_good / len(
+    return np.mean(rewards), hits / len(env), class_changes / len(env), class_changes_good / len(
         env), class_changes_bad / len(env), class_changes_equal / len(env), positive_rewards / len(env)
 
 
@@ -399,7 +399,7 @@ def deep_q_learning(env,
             stats["training_rewards"].append(float(cumulated_reward / rewards_mean_every))
             stats["training_losses"].append(float(cumulated_loss / rewards_mean_every))  # numpy?)
             stats["training_total_steps"].append(float(cumulated_length / rewards_mean_every))
-            stats["training_hits"].append(training_hits * 100 / rewards_mean_every)
+            stats["training_hits"].append(training_hits / rewards_mean_every)
             stats["training_class_changes"].append((training_class_changes / rewards_mean_every,
                                                     training_class_changes_bad / rewards_mean_every,
                                                     training_class_changes_good / rewards_mean_every,
