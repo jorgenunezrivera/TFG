@@ -11,8 +11,8 @@ def training_plot(stats):
     else:
         training_losses=(stats["training_value_losses"],stats["training_action_losses"])
     training_hits=stats["training_hits"]
-    if np.maximum(training_hits)>1:
-        training_hits/=100
+    if np.max(training_hits)>1:
+        training_hits[:] = [x/100 for x in training_hits]
     training_total_steps=stats["training_total_steps"]
     training_class_changes = [x[0] for x in stats["training_class_changes"]]
     training_class_better = [x[1] for x in stats["training_class_changes"]]
