@@ -29,7 +29,7 @@ seconds=time()
 
 env=ImageWindowEnv(VALIDATION_IMAGES_DIR,VALIDATION_LABELS_FILE,max_steps=6,step_size=32,continue_until_dies=1,is_validation=1)
 
-
+print (len(env))
 for i in range(len(env)):
     show=0
     if  n_class_same > FILES_TO_TEST and n_class_worse > FILES_TO_TEST and n_class_better > FILES_TO_TEST and n_class_indif > FILES_TO_TEST:
