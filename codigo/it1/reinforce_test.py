@@ -81,10 +81,10 @@ for i in range(FILES_TO_TEST):
                 if n_class_same <= FILES_TO_TEST:
                     print("Sin cambio de clase")
                     show = 1
-                if show:
-                    print("best position : {} hit: {} ".format(best_window, info["final_hit"]))
-                    env.set_window(best_window[0], best_window[1], best_window[2])
-                    env.render()
+            if show:
+                print("best position : {} hit: {} ".format(best_window, info["final_hit"]))
+                env.set_window(best_window[0], best_window[1], best_window[2])
+                env.render()
             break
 
 
