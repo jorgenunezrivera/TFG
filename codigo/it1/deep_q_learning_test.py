@@ -14,7 +14,7 @@ with open("label_to_index_dict.json", "r") as read_file:
     label_index_dict = json.load(read_file)
 
 VALIDATION_LABELS_FILE="validation_labels.txt"
-VALIDATION_IMAGES_DIR="validation"
+VALIDATION_IMAGES_DIR="validation1000"
 
 FILES_TO_TEST=5
 n_class_better=0
