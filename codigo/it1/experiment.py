@@ -18,10 +18,10 @@ name=deep_q_learning_train(num_episodes=2000,learning_rate=0.00001,validate_freq
                                                                                     step_size=32,continue_until_dies=1,model_name="alexnet")
 print("result: {}".format(name))
 
-#print("experiment 3. DQN  mobilenet")
-#name=deep_q_learning_train(num_episodes=2000,learning_rate=0.00001,validate_freq=1000,max_steps=6,
-#                                                                                    step_size=32,continue_until_dies=1,model_name="mobilenet")
-#print("result: {}".format(name))
+print("experiment 3. DQN  mobilenet")
+name=deep_q_learning_train(num_episodes=2000,learning_rate=0.00001,validate_freq=1000,max_steps=6,
+                                                                                    step_size=32,continue_until_dies=1,model_name="mobilenet")
+print("result: {}".format(name))
 
 print("experiment 4. Reinforce atari")
 name=reinforce_train(num_episodes=12000,learning_rate=0.0000001,validate_freq=4000,max_steps=6,
@@ -33,10 +33,10 @@ name=reinforce_train(num_episodes=12000,learning_rate=0.0000001,validate_freq=40
                                                                                     step_size=32,continue_until_dies=1,model_name="alexnet")
 print("result: {}".format(name))
 
-#print("experiment 6. Reinforce mobilenet")
-#name=reinforce_train(num_episodes=12000,learning_rate=0.0000001,validate_freq=4000,max_steps=6,
-#                                                                                    step_size=32,continue_until_dies=1,model_name="mobilenet")
-#print("result: {}".format(name))
+print("experiment 6. Reinforce mobilenet")
+name=reinforce_train(num_episodes=12000,learning_rate=0.0000001,validate_freq=4000,max_steps=6,
+                                                                                    step_size=32,continue_until_dies=1,model_name="mobilenet")
+print("result: {}".format(name))
 
 
 
