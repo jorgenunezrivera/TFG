@@ -186,7 +186,7 @@ class ImageWindowEnv(gym.Env):
             class_change= self.best_predicted_class!=self.initial_prediction
             initial_hit = self.initial_prediction==self.true_class
             final_hit=self.best_predicted_class==self.true_class
-            #print("initial prediction. {} final prediction. {}".format(self.initial_prediction,self.best_predicted_class))
+            print("initial prediction. {} final prediction. {}".format(self.initial_prediction,self.best_predicted_class))
         hit=self.predicted_class==self.true_class
         self.total_reward += reward
         return state, reward, done, {"hit":hit,
