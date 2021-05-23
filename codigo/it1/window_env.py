@@ -108,7 +108,7 @@ class ImageWindowEnv(gym.Env):
         self.initial_stop_reward=self._get_reward(predictions,self.is_validation)
         self.best_result=self.initial_reward
         self.best_stop_result=self.initial_stop_reward
-        self.best_predicted_class=-1
+        self.best_predicted_class = self.predicted_class
         #self.total_reward=self.initial_reward
         return image_window
 
@@ -168,11 +168,11 @@ class ImageWindowEnv(gym.Env):
         #reward=(step_reward-self.best_result) * REWARDS_FACTOR #CALCULA EL REWARD USANDO LA CLASE REAL
         reward = (stop_reward - self.best_stop_result) * REWARDS_FACTOR #CALCULA EL REWARD USANDO EL MEJOR RESULTADO
 
-        if step_reward > self.best_result:
+        if step_reward >= self.best_result:
             self.best_result = step_reward
             #self.best_predicted_class=self.predicted_class  #CALCULA EL MEJOR RESULTADO USANDO LA CLASE REAL
 
-        if stop_reward > self.best_stop_result:
+        if stop_reward >= self.best_stop_result:#Mayor o igual?? cero??
             self.best_stop_result = stop_reward
             self.best_predicted_class = self.predicted_class #CALCULA EL MEJOR RESULTADO USANDO EL VALOR MÁXIMO DE CONFIANZA DE LA RED
 
