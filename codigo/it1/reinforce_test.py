@@ -17,7 +17,13 @@ with open("label_to_index_dict.json", "r") as read_file:
 VALIDATION_LABELS_FILE="validation_labels.txt"
 VALIDATION_IMAGES_DIR="validation"
 
-FILES_TO_TEST=25
+FILES_TO_TEST=5
+n_class_better=0
+n_class_worse=0
+n_class_indif=0
+n_class_same=0
+show=0
+end_loop=0
 
 action_estimator=PolicyEstimator((224,224,3),3,0.00001,"mobilenet")
 action_estimator.load_model("mobilenet")
@@ -49,10 +55,36 @@ for i in range(FILES_TO_TEST):
         if reward>best_reward:
             best_reward=reward
             best_window=(info["position"])
-        if(done):
-            print("best position : {}  Hit : {}".format(best_window,info["final_hit"]))
-            env.set_window(best_window[0],best_window[1],best_window[2])
-            env.render()
+        if (done):
+            class_change = info["class_change"]
+            initial_hit = info["initial_hit"]
+            hit = info["final_hit"]
+            if class_change:
+                if hit:
+                    n_class_better += 1
+                    if (n_class_better <= FILES_TO_TEST):
+                        show = 1
+                        print("Cambio de clase incorrecta a clase correcta")
+                else:
+                    if initial_hit:
+                        n_class_worse += 1
+                        if (n_class_worse <= FILES_TO_TEST):
+                            print("Cambio de clase correcta a clase incorrecta")
+                            show = 1
+                    else:
+                        n_class_indif += 1
+                        if (n_class_indif <= FILES_TO_TEST):
+                            print("Cambio de clase incorrecta a otra clase incorrecta")
+                            show = 1
+            else:
+                n_class_same += 1
+                if n_class_same <= FILES_TO_TEST:
+                    print("Sin cambio de clase")
+                    show = 1
+                if show:
+                    print("best position : {} hit: {} ".format(best_window, info["final_hit"]))
+                    env.set_window(best_window[0], best_window[1], best_window[2])
+                    env.render()
             break
 
 
