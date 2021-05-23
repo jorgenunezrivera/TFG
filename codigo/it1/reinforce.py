@@ -58,7 +58,7 @@ def reinforce_train(num_episodes=NUM_EPISODES,learning_rate=LEARNING_RATE,
     policy_estimator = PolicyEstimator(IMG_SHAPE, N_ACTIONS, learning_rate,model_name)
     value_estimator = ValueEstimator(IMG_SHAPE, learning_rate,model_name)
 
-    stats=reinforce(env,policy_estimator,value_estimator,num_episodes,validation_env,validate_every=validate_freq,stats_mean_every=100)
+    stats=reinforce(env,policy_estimator,value_estimator,num_episodes,validation_env,validate_every=validate_freq,stats_mean_every=200)
 
     elapsed_time = time.time() - initial_ts
     print("Elapsed time: " + str(elapsed_time))
