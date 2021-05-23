@@ -24,6 +24,7 @@ n_class_indif=0
 n_class_same=0
 show=0
 end_loop=0
+hits=0
 
 action_estimator=PolicyEstimator((224,224,3),3,0.00001,"mobilenet")
 action_estimator.load_model("mobilenet")
@@ -61,6 +62,8 @@ for i in range(len(env)):
             class_change = info["class_change"]
             initial_hit = info["initial_hit"]
             hit = info["final_hit"]
+            if hit:
+                hits+=1
             if class_change:
                 if hit:
                     n_class_better += 1
@@ -85,8 +88,13 @@ for i in range(len(env)):
                     show = 1
             if show:
                 print("best position : {} hit: {} ".format(best_window, info["final_hit"]))
-                env.set_window(best_window[0], best_window[1], best_window[2])
-                env.render()
+            #    env.set_window(best_window[0], best_window[1], best_window[2])
+            #    env.render()
             break
-
+print("Same class: {} Class better: {} Class worse: {} Class indiferent: {} Final hits: {}".format(
+n_class_same,
+n_class_better,
+n_class_worse,
+n_class_indif,
+    hits))
 
