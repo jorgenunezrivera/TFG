@@ -115,8 +115,6 @@ def training_plot(stats):
 
 
 
-
-
 if len(sys.argv)!=2:
     print("Uso :  python plot_stats.py fichero_log.json")
 else:

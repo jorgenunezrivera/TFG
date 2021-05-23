@@ -23,7 +23,7 @@ def build_dqn_model(model_name,input_shape,n_actions):
         return build_atari_model(input_shape,n_actions)
     elif model_name=="alexnet":
         return build_alexnet_model(input_shape,n_actions)
-    elif model_name=="pretrained_mobilenet":
+    elif model_name=="mobilenet":
         return build_mobilenet_model(input_shape,n_actions)
     else:
         print("model name not recognized.using atari")
