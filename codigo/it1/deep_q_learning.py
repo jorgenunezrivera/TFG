@@ -151,6 +151,7 @@ class Estimator:
         """
         Builds the Tensorflow model.
         """
+        self.model_name=model_name
         self.learning_rate = learning_rate
         self.model = build_dqn_model(model_name, input_shape, n_actions)
         self.optimizer = tf.keras.optimizers.RMSprop(self.learning_rate, 0.99)
@@ -216,10 +217,10 @@ class Estimator:
         self.load_weights()
 
     def save_model(self):
-        self.model.save("dqn_model")
+        self.model.save("dqn_model_"+self.model_name)
 
-    def load_model(self):
-        self.model = keras.models.load_model('dqn_model')
+    def load_model(self,model_name):
+        self.model = keras.models.load_model('dqn_model_'+model_name)
 
 
 def make_epsilon_greedy_policy(estimator, nA):

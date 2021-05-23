@@ -128,6 +128,7 @@ class PolicyEstimator():
         """
         Builds the Tensorflow model.
         """
+        self.model_name=model_name
         self.learning_rate = learning_rate
         self.model = build_dqn_model(model_name, input_shape, n_actions)
         self.optimizer = keras.optimizers.RMSprop(self.learning_rate, 0.99)
@@ -173,10 +174,10 @@ class PolicyEstimator():
         return loss_value, tape.gradient(loss_value, self.model.trainable_variables)
 
     def save_model(self):
-        self.model.save("reinforce_policy_model")
+        self.model.save("reinforce_policy_model_"+self.model_name)
 
-    def load_model(self):
-        self.model = keras.models.load_model('reinforce_policy_model')
+    def load_model(self,model_name):
+        self.model = keras.models.load_model('reinforce_policy_model_'+model_name)
 
 class ValueEstimator():
 
@@ -187,6 +188,7 @@ class ValueEstimator():
         """
         Builds the Tensorflow model.
         """
+        self.model_name=model_name
         self.learning_rate = learning_rate
         self.model = build_dqn_model(model_name, input_shape, 1)
         self.optimizer = keras.optimizers.RMSprop(self.learning_rate, 0.99)
@@ -230,7 +232,7 @@ class ValueEstimator():
         return loss_value, tape.gradient(loss_value, self.model.trainable_variables)
 
     def save_model(self):
-        self.model.save("reinforce_value_model")
+        self.model.save("reinforce_value_model_"+self.model_name)
 
 
 def reinforce(env, policy_estimator, value_estimator, num_episodes,validation_env, discount_factor=1.0

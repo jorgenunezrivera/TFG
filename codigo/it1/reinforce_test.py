@@ -20,7 +20,7 @@ VALIDATION_IMAGES_DIR="validation"
 FILES_TO_TEST=25
 
 action_estimator=PolicyEstimator((224,224,3),3,0.00001,"atari")
-action_estimator.load_model()
+action_estimator.load_model("")
 seconds=time()
 
 env=ImageWindowEnv(VALIDATION_IMAGES_DIR,VALIDATION_LABELS_FILE,max_steps=6,step_size=32,continue_until_dies=1,is_validation=1)
