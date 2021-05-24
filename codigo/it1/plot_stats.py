@@ -36,7 +36,7 @@ def training_plot(stats):
     plt.subplot(3, 2, 1)
     if 'training_losses' in stats:
         plt.plot(training_episodes, training_losses,label='t.losses')
-        plt.ylim([5, 35])
+        plt.ylim([-2, 35])
         plt.xlim([0, 2900])
     else:
         plt.plot(training_episodes, training_losses[0],'r',label='v.losses')
@@ -66,7 +66,7 @@ def training_plot(stats):
    # plt.hlines(0.73,0,NUM_EPISODES)
     plt.legend(loc='upper right')
     plt.ylabel('Hits')
-    plt.ylim([0.55, 0.95])
+    plt.ylim([0.65, 0.95])
     plt.xlim([0, 2900])
     #plt.title('Hits')
     #plt.xlabel('epoch')
