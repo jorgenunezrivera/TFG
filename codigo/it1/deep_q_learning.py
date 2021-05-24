@@ -402,8 +402,8 @@ def deep_q_learning(env,
             stats["training_total_steps"].append(float(cumulated_length / rewards_mean_every))
             stats["training_hits"].append(training_hits / rewards_mean_every)
             stats["training_class_changes"].append((training_class_changes / rewards_mean_every,
-                                                    training_class_changes_bad / rewards_mean_every,
                                                     training_class_changes_good / rewards_mean_every,
+                                                    training_class_changes_bad / rewards_mean_every,
                                                     training_class_changes_equal / rewards_mean_every))
             stats["training_positive_rewards"].append(training_positive_rewards / rewards_mean_every)
             cumulated_reward = cumulated_loss = cumulated_length = training_hits = 0
