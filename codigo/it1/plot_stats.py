@@ -2,6 +2,10 @@ import matplotlib.pyplot as plt
 import sys
 import json
 import numpy as np
+import matplotlib.pyplot as plt
+import sys
+import json
+import numpy as np
 
 def training_plot(stats):
     training_episodes=stats["training_stats_episodes"]
@@ -31,20 +35,20 @@ def training_plot(stats):
 
     validation_positive_rewards=stats["validation_positive_rewards"]
 
+    plot_length=stats["validation_episodes"][-1] + 400
+
     #Plot 1: training loss
     plt.figure(figsize=(16, 8))
     plt.subplot(3, 2, 1)
     if 'training_losses' in stats:
         plt.plot(training_episodes, training_losses,label='t.losses')
-        plt.ylim([-2, 35])
-        plt.xlim([0, 2900])
     else:
         plt.plot(training_episodes, training_losses[0],'r',label='v.losses')
         plt.plot(training_episodes, training_losses[1],'g',label='a.losses')
-        plt.xlim([0,2900])
     plt.legend(loc='upper right')
     plt.ylabel('Huber Error')
-
+    plt.ylim([5,35])
+    plt.xlim([0,plot_length])
     #plt.title('Training Loss')
     #plt.xlabel('epoch')
 
@@ -55,7 +59,7 @@ def training_plot(stats):
     plt.legend(loc='upper right')
     plt.ylabel('Rewards')
     plt.ylim([1.45, 2.1])
-    plt.xlim([0, 2900])
+    plt.xlim([0, plot_length])
     #plt.title('Rewards')
     #plt.xlabel('epoch')
 
@@ -66,8 +70,8 @@ def training_plot(stats):
    # plt.hlines(0.73,0,NUM_EPISODES)
     plt.legend(loc='upper right')
     plt.ylabel('Hits')
-    plt.ylim([0.65, 0.95])
-    plt.xlim([0, 2900])
+    plt.ylim([0.55, 0.85])
+    plt.xlim([0, plot_length])
     #plt.title('Hits')
     #plt.xlabel('epoch')
 
@@ -87,7 +91,7 @@ def training_plot(stats):
     plt.legend(loc='upper right')
     plt.ylabel('Percent')
     plt.ylim([0, 0.4])
-    plt.xlim([0, 2900])
+    plt.xlim([0, plot_length])
     #plt.title('Class changes')
     #plt.xlabel('epoch')
 
@@ -98,7 +102,7 @@ def training_plot(stats):
     plt.legend(loc='upper right')
     plt.ylabel('Percent')
     plt.ylim([0.8, 0.92])
-    plt.xlim([0, 2900])
+    plt.xlim([0, plot_length])
     #plt.title('Class changes')
     #plt.xlabel('epoch')
 
@@ -108,12 +112,14 @@ def training_plot(stats):
     plt.legend(loc='upper right')
     plt.ylabel('Num steps')
     plt.ylim([9.7, 11.6])
-    plt.xlim([0, 2900])
+    plt.xlim([0, plot_length])
     #plt.title('Episode mean length')
     #plt.xlabel('epoch')
     plt.show()
 
     print(stats["env_info"])
+
+
 
 
 
@@ -123,5 +129,4 @@ else:
     with open(sys.argv[1], "r") as read_file:
         stats= json.load(read_file)
     training_plot(stats)
-
 
