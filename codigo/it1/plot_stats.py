@@ -42,12 +42,13 @@ def training_plot(stats):
     plt.subplot(3, 2, 1)
     if 'training_losses' in stats:
         plt.plot(training_episodes, training_losses,label='t.losses')
+        plt.ylim([5, 35])
     else:
         plt.plot(training_episodes, training_losses[0],'r',label='v.losses')
         plt.plot(training_episodes, training_losses[1],'g',label='a.losses')
+        plt.ylim([-5, 350])
     plt.legend(loc='upper right')
     plt.ylabel('Huber Error')
-    plt.ylim([5,35])
     plt.xlim([0,plot_length])
     #plt.title('Training Loss')
     #plt.xlabel('epoch')
