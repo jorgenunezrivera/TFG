@@ -35,7 +35,7 @@ stats = deep_q_learning(env, q_estimator,
                             )
 save_stats(stats,'DQN_Alexnet')
 
-#deep Q Learning Atari
+#deep Q Learning Mobilenet
 q_estimator = Q_Estimator(model_name='mobilenet')
 target_estimator = Q_Estimator(model_name='mobilenet')
 stats = deep_q_learning(env, q_estimator,

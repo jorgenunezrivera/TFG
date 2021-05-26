@@ -67,7 +67,7 @@ def training_plot(stats):
     #plot 3: training hits and validation hits
     plt.subplot(3, 2, 3)
     plt.plot(training_episodes, training_hits,label='t.hits')
-    plt.plot(validation_episodes, validation_hits,'ro',label='v.hits')
+    plt.plot(validation_episodes, validation_hits,'ro-',label='v.hits') #AQUI PRUEBA
    # plt.hlines(0.73,0,NUM_EPISODES)
     plt.legend(loc='upper right')
     plt.ylabel('Hits')
