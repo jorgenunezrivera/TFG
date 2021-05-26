@@ -58,7 +58,7 @@ def reinforce_train(num_episodes=NUM_EPISODES,learning_rate=LEARNING_RATE,
     policy_estimator = PolicyEstimator(IMG_SHAPE, N_ACTIONS, learning_rate,model_name)
     value_estimator = ValueEstimator(IMG_SHAPE, learning_rate,model_name)
 
-    stats=reinforce(env,policy_estimator,value_estimator,num_episodes,validation_env,validate_every=validate_freq,stats_mean_every=200)
+    stats=reinforce(env,policy_estimator,value_estimator,validation_env,num_episodes=num_episodes,validate_every=validate_freq,stats_mean_every=200)
 
     elapsed_time = time.time() - initial_ts
     print("Elapsed time: " + str(elapsed_time))
@@ -121,7 +121,7 @@ def reinforce_validation(action_estimator, env):
 
 class PolicyEstimator():
 
-    def __init__(self, input_shape, n_actions, learning_rate,model_name):
+    def __init__(self, input_shape=(224,224,3), n_actions=3, learning_rate=.0000001,model_name='atari'):
         self._build_model(input_shape, n_actions, learning_rate,model_name)
 
     def _build_model(self, input_shape, n_actions, learning_rate,model_name):
@@ -235,7 +235,7 @@ class ValueEstimator():
         self.model.save("reinforce_value_model_"+self.model_name)
 
 
-def reinforce(env, policy_estimator, value_estimator, num_episodes,validation_env, discount_factor=1.0
+def reinforce(env, policy_estimator, value_estimator,validation_env, num_episodes=12000, discount_factor=1.0
             ,validate_every=200,stats_mean_every=200):
     """
     REINFORCE (Monte Carlo Policy Gradient) Algorithm. Optimizes the policy

@@ -58,8 +58,8 @@ def deep_q_learning_train(num_episodes=NUM_EPISODES, learning_rate=LEARNING_RATE
     n_actions = env.action_space.n
     img_shape = env.observation_space.shape
 
-    q_estimator = Estimator(img_shape, n_actions, learning_rate, model_name)
-    target_estimator = Estimator(img_shape, n_actions, learning_rate, model_name)
+    q_estimator = Q_Estimator(img_shape, n_actions, learning_rate, model_name)
+    target_estimator = Q_Estimator(img_shape, n_actions, learning_rate, model_name)
     stats = deep_q_learning(env, q_estimator,
                             target_estimator,
                             validation_env,
@@ -75,6 +75,7 @@ def deep_q_learning_train(num_episodes=NUM_EPISODES, learning_rate=LEARNING_RATE
                             epsilon_end=0.1,
                             epsilon_decay_steps=num_episodes * 4,
                             batch_size=32)
+
 
     training_time = stats["total_time"] - stats["validation_time"]
     print("Training time: " + str(training_time))
@@ -138,13 +139,13 @@ def validation(q_estimator, env):
         env), class_changes_bad / len(env), class_changes_equal / len(env), positive_rewards / len(env)
 
 
-class Estimator:
+class Q_Estimator:
     """Q-Value Estimator neural network.
 
     This network is used for both the Q-Network and the Target Network.
     """
 
-    def __init__(self, input_shape, n_actions, learning_rate, model_name):
+    def __init__(self, input_shape=(224,224,3), n_actions=3, learning_rate=0.00001, model_name='atari'):
         self._build_model(input_shape, n_actions, learning_rate, model_name)
 
     def _build_model(self, input_shape, n_actions, learning_rate, model_name):
@@ -268,16 +269,16 @@ def deep_q_learning(env,
                     q_estimator,
                     target_estimator,
                     validation_env,
-                    num_episodes,
-                    replay_memory_size=500000,
-                    replay_memory_init_size=50000,
-                    update_target_estimator_every=10000,
-                    validate_every=1000,
+                    num_episodes=2000,
+                    replay_memory_size=REPLAY_MEMORY_SIZE,
+                    replay_memory_init_size=REPLAY_MEMORY_INIT_SIZE,
+                    update_target_estimator_every=UPDATE_TARGET_ESTIMATOR_EVERY,
+                    validate_every=VALIDATE_EVERY,
                     rewards_mean_every=100,
                     discount_factor=1.0,
                     epsilon_start=1.0,
-                    epsilon_end=0.1,
-                    epsilon_decay_steps=500000,
+                    epsilon_end=0.15,
+                    epsilon_decay_steps=10000,
                     batch_size=32):
     """
     Q-Learning algorithm for off-policy TD control using Function Approximation.
