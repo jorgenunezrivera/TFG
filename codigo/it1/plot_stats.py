@@ -56,7 +56,7 @@ def training_plot(stats):
     #plot 2: trainig rewards and validation rewards
     plt.subplot(3, 2, 2)
     plt.plot(training_episodes, training_rewards,label='t.rewards')
-    plt.plot(validation_episodes, validation_rewards, 'ro-',label='v.rewards')
+    plt.plot(validation_episodes, validation_rewards, 'ro--',label='v.rewards')
     plt.legend(loc='upper right')
     plt.ylabel('Rewards')
     plt.ylim([1.45, 2.1])
@@ -67,7 +67,7 @@ def training_plot(stats):
     #plot 3: training hits and validation hits
     plt.subplot(3, 2, 3)
     plt.plot(training_episodes, training_hits,label='t.hits')
-    plt.plot(validation_episodes, validation_hits,'ro-',label='v.hits') #AQUI PRUEBA
+    plt.plot(validation_episodes, validation_hits,'ro--',label='v.hits') #AQUI PRUEBA
    # plt.hlines(0.73,0,NUM_EPISODES)
     plt.legend(loc='upper right')
     plt.ylabel('Hits')
@@ -83,9 +83,9 @@ def training_plot(stats):
     plt.plot(training_episodes, training_class_worse,'g',label='t. worse')
     #plt.plot(training_episodes, training_class_same, 'y', label='t. indiff')
 
-    plt.plot(validation_episodes, validation_class_changes, 'bo-', label='v. changes')
-    plt.plot(validation_episodes, validation_class_better, 'ro-',  label='v. better ')
-    plt.plot(validation_episodes, validation_class_worse, 'go-', label='v. worse')
+    plt.plot(validation_episodes, validation_class_changes, 'bo--', label='v. changes')
+    plt.plot(validation_episodes, validation_class_better, 'ro--',  label='v. better ')
+    plt.plot(validation_episodes, validation_class_worse, 'go--', label='v. worse')
     #plt.plot(validation_episodes, validation_class_same, 'y', linestyle='dashed', label='v.indif')
 
 
@@ -99,7 +99,7 @@ def training_plot(stats):
     #plot 5: positive rewards
     plt.subplot(3, 2, 5)
     plt.plot(training_episodes, training_positive_rewards, label='t.pos.rewards')
-    plt.plot(validation_episodes,validation_positive_rewards,'ro-',label='v.pos.rewards' )
+    plt.plot(validation_episodes,validation_positive_rewards,'ro--',label='v.pos.rewards' )
     plt.legend(loc='upper right')
     plt.ylabel('Percent')
     plt.ylim([0.8, 0.92])
