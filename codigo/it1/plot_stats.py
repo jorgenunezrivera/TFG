@@ -118,7 +118,8 @@ def training_plot(stats):
     #plt.xlabel('epoch')
     plt.show()
 
-    print(stats["env_info"])
+    if("env_info" in stats):
+        print(stats["env_info"])
 
 
 
