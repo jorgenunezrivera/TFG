@@ -46,7 +46,7 @@ def training_plot(stats):
     else:
         plt.plot(training_episodes, training_losses[0],'r',label='v.losses')
         plt.plot(training_episodes, training_losses[1],'g',label='a.losses')
-        plt.ylim([-5, 350])
+        plt.ylim([-5, 400])
     plt.legend(loc='upper right')
     plt.ylabel('Huber Error')
     plt.xlim([0,plot_length])
@@ -71,7 +71,7 @@ def training_plot(stats):
    # plt.hlines(0.73,0,NUM_EPISODES)
     plt.legend(loc='upper right')
     plt.ylabel('Hits')
-    plt.ylim([0.55, 0.85])
+    plt.ylim([0.55, 0.95])
     plt.xlim([0, plot_length])
     #plt.title('Hits')
     #plt.xlabel('epoch')
