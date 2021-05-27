@@ -70,6 +70,7 @@ for i in range(len(env)):
                         n_class_worse += 1
                         if(n_class_worse<=FILES_TO_TEST):
                             print("Cambio de clase correcta a clase incorrecta")
+                            print(env.get_predicted_class_name())
                             show=1
                     else:
                         n_class_indif += 1

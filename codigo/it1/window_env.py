@@ -262,4 +262,8 @@ class ImageWindowEnv(gym.Env):
         self.z = z
         self._get_image_window()
 
-
+    def get_predicted_class_name(self):
+        state = self._get_image_window()
+        predictions = self._get_predictions(state)
+        name=tf.keras.applications.mobilenet_v2.decode_predictions(predictions,1)[0][0]
+        return name

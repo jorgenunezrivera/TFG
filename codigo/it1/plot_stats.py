@@ -35,7 +35,7 @@ def training_plot(stats):
 
     validation_positive_rewards=stats["validation_positive_rewards"]
 
-    plot_length=stats["validation_episodes"][-1] + 400
+    plot_length=stats["validation_episodes"][-1] *1.35
 
     #Plot 1: training loss
     plt.figure(figsize=(16, 8))
@@ -59,7 +59,7 @@ def training_plot(stats):
     plt.plot(validation_episodes, validation_rewards, 'ro--',label='v.rewards')
     plt.legend(loc='upper right')
     plt.ylabel('Rewards')
-    plt.ylim([1.45, 2.1])
+    plt.ylim([1.6, 1.9])
     plt.xlim([0, plot_length])
     #plt.title('Rewards')
     #plt.xlabel('epoch')
@@ -71,7 +71,7 @@ def training_plot(stats):
    # plt.hlines(0.73,0,NUM_EPISODES)
     plt.legend(loc='upper right')
     plt.ylabel('Hits')
-    plt.ylim([0.55, 0.95])
+    plt.ylim([0.7, 0.95])
     plt.xlim([0, plot_length])
     #plt.title('Hits')
     #plt.xlabel('epoch')
@@ -91,7 +91,7 @@ def training_plot(stats):
 
     plt.legend(loc='upper right')
     plt.ylabel('Percent')
-    plt.ylim([0, 0.4])
+    plt.ylim([0, 0.25])
     plt.xlim([0, plot_length])
     #plt.title('Class changes')
     #plt.xlabel('epoch')
@@ -112,7 +112,7 @@ def training_plot(stats):
     plt.plot(training_episodes, training_total_steps,label='ep.length')
     plt.legend(loc='upper right')
     plt.ylabel('Num steps')
-    plt.ylim([9.7, 11.6])
+    plt.ylim([9.7, 11.1])
     plt.xlim([0, plot_length])
     #plt.title('Episode mean length')
     #plt.xlabel('epoch')
