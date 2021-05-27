@@ -5,7 +5,7 @@ import itertools
 import os
 import matplotlib.pyplot as plt
 from time import time
-from deep_q_learning import Estimator
+from deep_q_learning import Q_Estimator
 import json
 
 from window_env import ImageWindowEnv
@@ -24,7 +24,7 @@ n_class_same=0
 hits=0
 show=0
 
-q_estimator=Estimator((224,224,3),3,0.00001,"mobilenet")
+q_estimator=Q_Estimator((224,224,3),3,0.00001,"mobilenet")
 q_estimator.load_model("mobilenet")
 seconds=time()
 
