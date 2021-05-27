@@ -145,8 +145,13 @@ class Q_Estimator:
     This network is used for both the Q-Network and the Target Network.
     """
 
-    def __init__(self, input_shape=(224,224,3), n_actions=3, learning_rate=0.00001, model_name='atari'):
-        self._build_model(input_shape, n_actions, learning_rate, model_name)
+    def __init__(self, input_shape=(224,224,3), n_actions=3, learning_rate=0.00001, model_name='atari',load_model=False):
+        if(load_model):
+            self.learning_rate = learning_rate
+            self.load_model(model_name)
+            self.optimizer = tf.keras.optimizers.RMSprop(self.learning_rate, 0.99)
+        else:
+            self._build_model(input_shape, n_actions, learning_rate, model_name)
 
     def _build_model(self, input_shape, n_actions, learning_rate, model_name):
         """
@@ -221,6 +226,7 @@ class Q_Estimator:
         self.model.save("dqn_model_"+self.model_name)
 
     def load_model(self,model_name):
+        self.model_name = model_name
         self.model = keras.models.load_model('dqn_model_'+model_name)
 
 

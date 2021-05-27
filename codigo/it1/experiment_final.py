@@ -16,57 +16,45 @@ validation_env = ImageWindowEnv(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, i
 
 
 #deep Q Learning Atari
-q_estimator = Q_Estimator(model_name='atari')
-target_estimator = Q_Estimator(model_name='atari')
-stats = deep_q_learning(env, q_estimator,
-                            target_estimator,
-                            validation_env,
-                            num_episodes=4000,
-                            )
-save_stats(stats,'DQN_Atari')
+#q_estimator = Q_Estimator(model_name='atari')
+#target_estimator = Q_Estimator(model_name='atari')
+#stats = deep_q_learning(env, q_estimator, target_estimator, validation_env,  num_episodes=4000)
+#save_stats(stats,'DQN_Atari')
 
 #deep Q Learning Alexnet
-q_estimator = Q_Estimator(model_name='alexnet')
-target_estimator = Q_Estimator(model_name='alexnet')
-stats = deep_q_learning(env, q_estimator,
-                            target_estimator,
-                            validation_env,
-                            num_episodes=4000,
-                            )
-save_stats(stats,'DQN_Alexnet')
+#q_estimator = Q_Estimator(model_name='alexnet')
+#target_estimator = Q_Estimator(model_name='alexnet')
+#stats = deep_q_learning(env, q_estimator, target_estimator, validation_env, num_episodes=4000 )
+#save_stats(stats,'DQN_Alexnet')
 
 #deep Q Learning Mobilenet
 q_estimator = Q_Estimator(model_name='mobilenet')
 target_estimator = Q_Estimator(model_name='mobilenet')
-stats = deep_q_learning(env, q_estimator,
-                            target_estimator,
-                            validation_env,
-                            num_episodes=4000,
-                            )
+stats = deep_q_learning(env, q_estimator, target_estimator, validation_env,num_episodes=6000,validate_every=2000)
 save_stats(stats,'DQN_Mobilenet')
 
 ##REINFORCE
 
 #Reinforce Atari
 
-policy_estimator = PolicyEstimator(model_name='atari')
-value_estimator = ValueEstimator(model_name='atari')
+#policy_estimator = PolicyEstimator(model_name='atari')
+#value_estimator = ValueEstimator(model_name='atari')
 
-stats=reinforce(env,policy_estimator,value_estimator,validation_env,num_episodes=12000,validate_every=4000,stats_mean_every=200)
-save_stats(stats,'REINFORCE_Atari')
+#stats=reinforce(env,policy_estimator,value_estimator,validation_env,num_episodes=12000,validate_every=4000,stats_mean_every=200)
+#save_stats(stats,'REINFORCE_Atari')
 
 #Reinforce Alexnet
 
-policy_estimator = PolicyEstimator(model_name='alexnet')
-value_estimator = ValueEstimator(model_name='alexnet')
+#policy_estimator = PolicyEstimator(model_name='alexnet')
+#value_estimator = ValueEstimator(model_name='alexnet')
 
-stats=reinforce(env,policy_estimator,value_estimator,validation_env,num_episodes=12000,validate_every=4000,stats_mean_every=200)
-save_stats(stats,'REINFORCE_Alexnet')
+#stats=reinforce(env,policy_estimator,value_estimator,validation_env,num_episodes=12000,validate_every=4000,stats_mean_every=200)
+#save_stats(stats,'REINFORCE_Alexnet')
 
 #Reinforce Mobilenet
 
-policy_estimator = PolicyEstimator(model_name='mobilenet')
-value_estimator = ValueEstimator(model_name='mobilenet')
+#policy_estimator = PolicyEstimator(model_name='mobilenet')
+#value_estimator = ValueEstimator(model_name='mobilenet')
 
-stats=reinforce(env,policy_estimator,value_estimator,validation_env,num_episodes=12000,validate_every=4000,stats_mean_every=200)
-save_stats(stats,'REINFORCE_Mobilenet')
+#stats=reinforce(env,policy_estimator,value_estimator,validation_env,num_episodes=12000,validate_every=4000,stats_mean_every=200)
+#save_stats(stats,'REINFORCE_Mobilenet')
