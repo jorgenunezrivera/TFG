@@ -83,8 +83,8 @@ for i in range(len(env)):
                 #    show = 1
             if(show):
                 print("best position : {} hit: {} ".format(best_window,info["final_hit"]))
-                #env.set_window(best_window[0],best_window[1],best_window[2])
-                #env.render()
+                env.set_window(best_window[0],best_window[1],best_window[2])
+                env.render()
             break
 
 print("Same class: {} Class better: {} Class worse: {} Class indiferent: {} Final hits: {}".format(
