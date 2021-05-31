@@ -382,8 +382,8 @@ def deep_q_learning(env,
     for i_episode in range(num_episodes):
 
 
-        print("\rStep {} @ Episode {}/{} ({})".format(
-            t, i_episode + 1, num_episodes, reward), end="")
+        print("\r @ Episode {}/{} ".format(
+            i_episode + 1, num_episodes), end="")
         sys.stdout.flush()
         # Reset the environment
         state = env.reset()
