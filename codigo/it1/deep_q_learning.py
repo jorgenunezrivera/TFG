@@ -1,5 +1,6 @@
 import gc
 import json
+import sys
 import time
 
 import tensorflow as tf
@@ -380,7 +381,10 @@ def deep_q_learning(env,
 
     for i_episode in range(num_episodes):
 
-        # print("Episode {}".format(i_episode))
+
+        print("\rStep {} @ Episode {}/{} ({})".format(
+            t, i_episode + 1, num_episodes, reward), end="")
+        sys.stdout.flush()
         # Reset the environment
         state = env.reset()
 

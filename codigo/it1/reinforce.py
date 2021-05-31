@@ -2,6 +2,7 @@ import itertools
 import math
 import json
 import os
+import sys
 
 from window_env import ImageWindowEnv
 
@@ -361,7 +362,7 @@ def reinforce(env, policy_estimator, value_estimator,validation_env, num_episode
             # Print out which step we're on, useful for debugging.
             print("\rStep {} @ Episode {}/{} ({})".format(
                 t, i_episode + 1, num_episodes, reward), end="")
-            # sys.stdout.flush()
+            sys.stdout.flush()
 
             if done:
 
