@@ -30,7 +30,7 @@ validation_env = ImageWindowEnv(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, i
 #deep Q Learning Mobilenet
 q_estimator = Q_Estimator(model_name='mobilenet')
 target_estimator = Q_Estimator(model_name='mobilenet')
-stats = deep_q_learning(env, q_estimator, target_estimator, validation_env,num_episodes=6000,validate_every=2000)
+stats = deep_q_learning(env, q_estimator, target_estimator, validation_env,num_episodes=2000,validate_every=1000,epsilon_decay_steps=8000)
 save_stats(stats,'DQN_Mobilenet')
 
 ##REINFORCE

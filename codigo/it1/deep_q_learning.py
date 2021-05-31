@@ -283,8 +283,8 @@ def deep_q_learning(env,
                     rewards_mean_every=100,
                     discount_factor=1.0,
                     epsilon_start=1.0,
-                    epsilon_end=0.15,
-                    epsilon_decay_steps=10000,
+                    epsilon_end=0.1,
+                    epsilon_decay_steps=8000,
                     batch_size=32):
     """
     Q-Learning algorithm for off-policy TD control using Function Approximation.
