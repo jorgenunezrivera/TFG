@@ -33,6 +33,8 @@ target_estimator = Q_Estimator(model_name='mobilenet')
 stats = deep_q_learning(env, q_estimator, target_estimator, validation_env,num_episodes=2000,validate_every=1000,epsilon_decay_steps=8000)
 save_stats(stats,'DQN_Mobilenet')
 
+
+
 ##REINFORCE
 
 #Reinforce Atari

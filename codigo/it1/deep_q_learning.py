@@ -281,7 +281,7 @@ def deep_q_learning(env,
                     replay_memory_init_size=REPLAY_MEMORY_INIT_SIZE,
                     update_target_estimator_every=UPDATE_TARGET_ESTIMATOR_EVERY,
                     validate_every=VALIDATE_EVERY,
-                    rewards_mean_every=100,
+                    rewards_mean_every=200,
                     discount_factor=1.0,
                     epsilon_start=1.0,
                     epsilon_end=0.1,
@@ -359,7 +359,6 @@ def deep_q_learning(env,
     print("Training {} steps with LR= {}".format(num_episodes, q_estimator.learning_rate))
     print("Populating replay memory...")
     state = env.reset()
-    # state = np.stack([state] * 4, axis=2)
     for i in range(replay_memory_init_size):
         legal_actions = env.get_legal_actions()
         if (len(legal_actions) == 0):
@@ -382,7 +381,7 @@ def deep_q_learning(env,
     for i_episode in range(num_episodes):
 
 
-        print("\r @ Episode {}/{} ".format(
+        print("\r Episode {}/{} ".format(
             i_episode + 1, num_episodes), end="")
         sys.stdout.flush()
         # Reset the environment
@@ -428,10 +427,8 @@ def deep_q_learning(env,
 
             # Maybe update the target estimator
             if (total_t + 1) % update_target_estimator_every == 0:
-                # print("Copying weights")
                 target_estimator.copy_weights(q_estimator)
                 gc.collect()
-                # print("Copied")
 
             #################### INTERACCION CON EL ENV #########################
             # Take a step

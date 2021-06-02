@@ -63,9 +63,11 @@ class ImageWindowEnv(gym.Env):
         self.x = self.y = self.z = 0
         self.true_class = 0
         self.predicted_class = 0
+        self.predicted_top5=[]
         self.best_result=0
         self.best_stop_result=0
         self.best_predicted_class=-1
+        self.best_predicted_top5=[]
         self.total_reward=0
         self.left = self.right = self.top = self.bottom = 0
         self.n_steps = 0
@@ -75,6 +77,8 @@ class ImageWindowEnv(gym.Env):
         self.initial_reward=0
         self.initial_stop_reward=0
         self.initial_prediction=0
+        self.initial_top5=[]
+        self.initial_top5_names=[]
 
     def __len__(self):
         return self.num_samples
@@ -102,12 +106,17 @@ class ImageWindowEnv(gym.Env):
         image_window = self._get_image_window()
         predictions = self._get_predictions(image_window)
         self.predicted_class = self._get_predicted_class(predictions)
+        self.predicted_top5=self._get_predicted_top5(predictions)
         self.initial_prediction=self.predicted_class
+        self.initial_top5=self.predicted_top5
+        self.initial_top5_names=self.get_predicted_top5_class_names()
+        self.initial_true_name=self.get_predicted_class_name()
         self.initial_reward = self._get_reward(predictions,True)
         self.initial_stop_reward=self._get_reward(predictions,self.is_validation)
         self.best_result=self.initial_reward
         self.best_stop_result=self.initial_stop_reward
         self.best_predicted_class = self.predicted_class
+        self.best_predicted_top5=self.predicted_top5
         #self.total_reward=self.initial_reward
         return image_window
 
@@ -142,13 +151,16 @@ class ImageWindowEnv(gym.Env):
         state = self._get_image_window()
         predictions = self._get_predictions(state)
         self.predicted_class = self._get_predicted_class(predictions)
+        self.predicted_top5 = self._get_predicted_top5(predictions)
         step_reward = self._get_reward(predictions,True)
         stop_reward = self._get_reward(predictions, self.is_validation)
 
         best_reward=0
         class_change=0
         initial_hit=0
+        initial_top5=0
         final_hit=0
+        final_top5=[]
 
         #Comprueba  si el estado es final
         if self.continue_until_dies:
@@ -174,6 +186,7 @@ class ImageWindowEnv(gym.Env):
         if stop_reward >= self.best_stop_result:#Mayor o igual?? cero??
             self.best_stop_result = stop_reward
             self.best_predicted_class = self.predicted_class #CALCULA EL MEJOR RESULTADO USANDO EL VALOR MÁXIMO DE CONFIANZA DE LA RED
+            self.best_predicted_top5=self.predicted_top5
 
         if self.is_validation and step_reward != stop_reward:
             print("step_reward: {}".format(step_reward))
@@ -184,13 +197,17 @@ class ImageWindowEnv(gym.Env):
             best_reward = (self.best_result - self.initial_reward) * REWARDS_FACTOR
             class_change= self.best_predicted_class!=self.initial_prediction
             initial_hit = self.initial_prediction==self.true_class
+            initial_top5=self.true_class in self.initial_top5
             final_hit=self.best_predicted_class==self.true_class
+            final_top5=self.true_class in self.best_predicted_top5
             #print("initial prediction. {} final prediction. {}".format(self.initial_prediction,self.best_predicted_class))
         hit=self.predicted_class==self.true_class
         self.total_reward += reward
         return state, reward, done, {"hit":hit,
                                      "initial_hit": initial_hit,
                                      "final_hit": final_hit,
+                                     "initial_top5":initial_top5,
+                                     "final_top5":final_top5,
                                      "best_reward": best_reward,
                                      "class_change":class_change,
                                      "total_steps":self.x+self.y+self.z,
@@ -203,6 +220,17 @@ class ImageWindowEnv(gym.Env):
         rectangle = pltpatch.Rectangle((self.left, self.bottom), self.right - self.left, self.top - self.bottom,
                                        edgecolor='r', facecolor='none', linewidth=3)
         ax.add_patch(rectangle)
+        plt.show()
+
+    def render_with_info(self, mode='human', close=False):
+        """Muestra la imagen con la ventana dibujada"""
+
+        fig,ax = plt.subplots(1)
+        ax.imshow(self.img_arr / 255)
+        rectangle = pltpatch.Rectangle((self.left, self.bottom), self.right - self.left, self.top - self.bottom,
+                                       edgecolor='r', facecolor='none', linewidth=3)
+        ax.add_patch(rectangle)
+        plt.title("Real class: {}. iniital top5: {}, final top5: {}".format(self.get_true_class_name(),self.initial_top5_names,self.get_predicted_top5_class_names()))
         plt.show()
 
     def get_legal_actions(self):
@@ -245,6 +273,16 @@ class ImageWindowEnv(gym.Env):
         predicted_class = np.argmax(predictions[0])
         return predicted_class
 
+    def _get_predicted_top5(self,predictions):
+        predicted_top5=[]
+        toppreds=predictions[0].copy()
+        print("top 1: {}".format(np.argmax(toppreds)))
+        for i in range(5):
+            predicted_top5.append(np.argmax(toppreds))
+            toppreds[np.argmax(toppreds)]=0
+        print("top5 : {}".format(predicted_top5))
+        return predicted_top5
+
     def _get_reward(self, predictions,validation):
         if validation:
             reward=np.max(predictions[0])
@@ -262,8 +300,21 @@ class ImageWindowEnv(gym.Env):
         self.z = z
         self._get_image_window()
 
+    def get_true_class_name(self):
+        fake_predictions = np.zeros(1000)
+        fake_predictions[self.true_class]=1
+        name = tf.keras.applications.mobilenet_v2.decode_predictions(np.array([fake_predictions]), 1)[0][0][1]
+        return name
+
     def get_predicted_class_name(self):
         state = self._get_image_window()
         predictions = self._get_predictions(state)
-        name=tf.keras.applications.mobilenet_v2.decode_predictions(predictions,1)[0][0]
+        name=tf.keras.applications.mobilenet_v2.decode_predictions(predictions,1)[0][0][1]
         return name
+
+    def get_predicted_top5_class_names(self):
+        state = self._get_image_window()
+        predictions = self._get_predictions(state)
+        top5=tf.keras.applications.mobilenet_v2.decode_predictions(predictions,5)
+        names=[x[1] for x in top5[0]]
+        return names

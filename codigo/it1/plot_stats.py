@@ -2,10 +2,6 @@ import matplotlib.pyplot as plt
 import sys
 import json
 import numpy as np
-import matplotlib.pyplot as plt
-import sys
-import json
-import numpy as np
 
 def training_plot(stats):
     training_episodes=stats["training_stats_episodes"]
