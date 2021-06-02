@@ -93,7 +93,9 @@ def reinforce_test(model_name):
                     else:
                         n_class_same_negative += 1
                         if n_class_same_negative <= FILES_TO_TEST:
-                            print("Sin cambio de clase, fallo")
+                            print("Sin cambio de clase,fallo")
+                            print("clase correcta: {}".format(env.get_true_class_name()))
+                            print("clase predicha: {}".format(env.get_predicted_class_name()))
                             show = 1
                 if show:
                     print("best position : {} hit: {} ".format(best_window, info["final_hit"]))
