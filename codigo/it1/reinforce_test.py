@@ -19,11 +19,12 @@ def reinforce_test(model_name):
     VALIDATION_LABELS_FILE="validation_labels.txt"
     VALIDATION_IMAGES_DIR="validation1000"
 
-    FILES_TO_TEST=5
+    FILES_TO_TEST=4
     n_class_better=0
     n_class_worse=0
     n_class_indif=0
-    n_class_same=0
+    n_class_same_positive=0
+    n_class_same_negative = 0
     show=0
     end_loop=0
     hits=0
@@ -36,7 +37,7 @@ def reinforce_test(model_name):
 
 
     for i in range(len(env)):
-        if  n_class_same > FILES_TO_TEST and n_class_worse > FILES_TO_TEST and n_class_better > FILES_TO_TEST and n_class_indif > FILES_TO_TEST:
+        if  n_class_same_positive > FILES_TO_TEST and n_class_same_negative > FILES_TO_TEST and n_class_worse > FILES_TO_TEST and n_class_better > FILES_TO_TEST and n_class_indif > FILES_TO_TEST:
             break
         print("sample : {} ".format(i))
         best_reward = 0
@@ -56,7 +57,7 @@ def reinforce_test(model_name):
             action_probs = action_probs / np.sum(action_probs)
             chosen_action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
             obs, reward, done, info = env.step(chosen_action)
-            print("position: {} , reward: {}".format(info["position"],reward))
+            #print("position: {} , reward: {}".format(info["position"],reward))
             if reward>best_reward:
                 best_reward=reward
                 best_window=(info["position"])
@@ -84,17 +85,24 @@ def reinforce_test(model_name):
                                 print("Cambio de clase incorrecta a otra clase incorrecta")
                                 show = 1
                 else:
-                    n_class_same += 1
-                    if n_class_same <= FILES_TO_TEST:
-                        print("Sin cambio de clase")
-                        show = 1
+                    if hit:
+                        n_class_same_positive += 1
+                        if n_class_same_positive <= FILES_TO_TEST:
+                            print("Sin cambio de clase, acierto")
+                            show = 1
+                    else:
+                        n_class_same_negative += 1
+                        if n_class_same_negative <= FILES_TO_TEST:
+                            print("Sin cambio de clase, fallo")
+                            show = 1
                 if show:
                     print("best position : {} hit: {} ".format(best_window, info["final_hit"]))
                 #    env.set_window(best_window[0], best_window[1], best_window[2])
                 #    env.render()
                 break
-    print("Same class: {} Class better: {} Class worse: {} Class indiferent: {} Final hits: {}".format(
-    n_class_same,
+    print("Same class positive: {} same class negative:{} Class better: {} Class worse: {} Class indiferent: {} Final hits: {}".format(
+    n_class_same_positive,
+    n_class_same_negative,
     n_class_better,
     n_class_worse,
     n_class_indif,

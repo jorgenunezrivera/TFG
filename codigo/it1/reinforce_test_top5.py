@@ -50,7 +50,7 @@ def reinforce_test_top5(model_name):
             action_probs = action_probs / np.sum(action_probs)
             chosen_action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
             obs, reward, done, info = env.step(chosen_action)
-            print("position: {} , reward: {}".format(info["position"],reward))
+            #print("position: {} , reward: {}".format(info["position"],reward))
             if reward>best_reward:
                 best_reward=reward
                 best_window=(info["position"])
