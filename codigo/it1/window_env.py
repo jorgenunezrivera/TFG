@@ -230,7 +230,7 @@ class ImageWindowEnv(gym.Env):
         rectangle = pltpatch.Rectangle((self.left, self.bottom), self.right - self.left, self.top - self.bottom,
                                        edgecolor='r', facecolor='none', linewidth=3)
         ax.add_patch(rectangle)
-        plt.title("Real class: {}. iniital top5: {}, final top5: {}".format(self.get_true_class_name(),self.initial_top5_names,self.get_predicted_top5_class_names()))
+        print("Real class: {}. iniital top5: {}, final top5: {}".format(self.get_true_class_name(),self.initial_top5_names,self.get_predicted_top5_class_names()))
         plt.show()
 
     def get_legal_actions(self):
@@ -276,11 +276,11 @@ class ImageWindowEnv(gym.Env):
     def _get_predicted_top5(self,predictions):
         predicted_top5=[]
         toppreds=predictions[0].copy()
-        print("top 1: {}".format(np.argmax(toppreds)))
+        #print("top 1: {}".format(np.argmax(toppreds)))
         for i in range(5):
             predicted_top5.append(np.argmax(toppreds))
             toppreds[np.argmax(toppreds)]=0
-        print("top5 : {}".format(predicted_top5))
+        #print("top5 : {}".format(predicted_top5))
         return predicted_top5
 
     def _get_reward(self, predictions,validation):

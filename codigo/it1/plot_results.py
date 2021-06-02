@@ -94,7 +94,7 @@ def plot_results(stats1, stats2, stats3):
     plt.ylim([0, 0.25])
     plt.xlim([1000, plot_length])
     plt.xlabel('Episodio')
-    plt.show()
+    #plt.show()
 
 
     #plot 4: Recompensas en validacion
@@ -104,12 +104,12 @@ def plot_results(stats1, stats2, stats3):
     plt.figure(figsize=(16, 8))
     plt.title('Recompensas en validación')
     plt.plot(validation_episodes, validation_rewards[0], 'bo--', label='Atari')
-    plt.plot(validation_episodes, validation_rewards[0], 'ro--', label='Alexnet')
-    plt.plot(validation_episodes, validation_rewards[0], 'go--', label='Mobilenet')
+    plt.plot(validation_episodes, validation_rewards[1], 'ro--', label='Alexnet')
+    plt.plot(validation_episodes, validation_rewards[2], 'go--', label='Mobilenet')
 
     plt.legend(loc='upper right')
     plt.ylabel('Recompensa (diferencia entre valor inicial e final * 10')
-    plt.ylim([0, 0.25])
+    plt.ylim([1.6, 1.9])
     plt.xlim([1000, plot_length])
     plt.xlabel('Episodio')
     plt.show()
@@ -150,7 +150,7 @@ def plot_results(stats1, stats2, stats3):
              'cambios alexnet',  'mejora alexnet', 'empeora alexnet',
              'cambios mobilenet','mejora mobilenet', 'empeora mobilenet']
     plt.bar(names, final_validation_class_changes)
-    plt.show()
+    #plt.show()
 
     # bar 3: Histograma de recompensas por modelo
 
@@ -173,7 +173,7 @@ def plot_results(stats1, stats2, stats3):
              '% recompensa positiva mobilenet',
              ]
     plt.bar(names, final_validation_rewards)
-    plt.show()
+    #plt.show()
 
 
 if len(sys.argv) != 4:
