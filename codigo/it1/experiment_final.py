@@ -28,9 +28,9 @@ validation_env = ImageWindowEnv(VALIDATION_IMAGES_DIR, VALIDATION_LABELS_FILE, i
 #save_stats(stats,'DQN_Alexnet')
 
 #deep Q Learning Mobilenet
-q_estimator = Q_Estimator(model_name='mobilenet')
-target_estimator = Q_Estimator(model_name='mobilenet')
-stats = deep_q_learning(env, q_estimator, target_estimator, validation_env,num_episodes=2000,validate_every=1000,epsilon_decay_steps=8000)
+q_estimator = Q_Estimator(model_name='mobilenet',load_model=True)
+target_estimator = Q_Estimator(model_name='mobilenet',load_model=True)
+stats = deep_q_learning(env, q_estimator, target_estimator, validation_env,num_episodes=4000,validate_every=2000,epsilon_decay_steps=16000)
 save_stats(stats,'DQN_Mobilenet')
 
 
