@@ -68,7 +68,7 @@ def dqn_test(model_name):
                     if hit:
                         n_class_better += 1
                         if(n_class_better<=FILES_TO_TEST):
-                            show=1
+                        #    show=1
                             print("Cambio de clase incorrecta a clase correcta")
                     else:
                         if initial_hit:
@@ -76,7 +76,7 @@ def dqn_test(model_name):
                             if(n_class_worse<=FILES_TO_TEST):
                                 print("Cambio de clase correcta a clase incorrecta")
                                 print(env.get_predicted_class_name())
-                                show=1
+                        #        show=1
                         else:
                             n_class_indif += 1
                             if (n_class_indif <= FILES_TO_TEST):
@@ -94,7 +94,7 @@ def dqn_test(model_name):
                             print("Sin cambio de clase,fallo")
                             print("clase correcta: {}".format(env.get_true_class_name()))
                             print("clase predicha: {}".format(env.get_predicted_class_name()))
-                        #    show = 1
+                            show = 1
                         #    show = 1
                 if(show):
                     print("best position : {} hit: {} ".format(best_window,info["final_hit"]))
