@@ -109,7 +109,7 @@ class ImageWindowEnv(gym.Env):
         self.predicted_top5=self._get_predicted_top5(predictions)
         self.initial_prediction=self.predicted_class
         self.initial_top5=self.predicted_top5
-        self.initial_top5_names=self.get_predicted_top5_class_names()
+        self.initial_top5_names=self.get_predicted_top5_class_names_and_probabilities()
         self.initial_true_name=self.get_predicted_class_name()
         self.initial_reward = self._get_reward(predictions,True)
         self.initial_stop_reward=self._get_reward(predictions,self.is_validation)
@@ -230,7 +230,8 @@ class ImageWindowEnv(gym.Env):
         rectangle = pltpatch.Rectangle((self.left, self.bottom), self.right - self.left, self.top - self.bottom,
                                        edgecolor='r', facecolor='none', linewidth=3)
         ax.add_patch(rectangle)
-        print("Real class: {}. iniital top5: {}, final top5: {}".format(self.get_true_class_name(),self.initial_top5_names,self.get_predicted_top5_class_names()))
+        print("Real class: {}. iniital top5: {}, final top5: {}".format(self.get_true_class_name(),self.initial_top5_names,
+                                                                        self.get_predicted_top5_class_names_and_probabilities()))
         plt.show()
 
     def get_legal_actions(self):
@@ -317,4 +318,11 @@ class ImageWindowEnv(gym.Env):
         predictions = self._get_predictions(state)
         top5=tf.keras.applications.mobilenet_v2.decode_predictions(predictions,5)
         names=[x[1] for x in top5[0]]
+        return names
+
+    def get_predicted_top5_class_names_and_probabilities(self):
+        state = self._get_image_window()
+        predictions = self._get_predictions(state)
+        top5=tf.keras.applications.mobilenet_v2.decode_predictions(predictions,5)
+        names=[(x[1],x[2]) for x in top5[0]]
         return names
