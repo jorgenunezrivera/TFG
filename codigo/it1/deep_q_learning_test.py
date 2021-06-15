@@ -19,7 +19,7 @@ def dqn_test(model_name):
     VALIDATION_LABELS_FILE="validation_labels.txt"
     VALIDATION_IMAGES_DIR="validation1000"
 
-    FILES_TO_TEST=4
+    FILES_TO_TEST=6
     n_class_better=0
     n_class_worse=0
     n_class_indif=0
@@ -76,7 +76,7 @@ def dqn_test(model_name):
                             if(n_class_worse<=FILES_TO_TEST):
                                 print("Cambio de clase correcta a clase incorrecta")
                                 print(env.get_predicted_class_name())
-                        #        show=1
+                                show=1
                         else:
                             n_class_indif += 1
                             if (n_class_indif <= FILES_TO_TEST):
