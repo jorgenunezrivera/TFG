@@ -154,6 +154,7 @@ class ImageWindowEnv(gym.Env):
         self.predicted_top5 = self._get_predicted_top5(predictions)
         step_reward = self._get_reward(predictions,True)
         stop_reward = self._get_reward(predictions, self.is_validation)
+        #print("Is validation: {}".format(self.is_validation))
 
         best_reward=0
         class_change=0
@@ -201,6 +202,7 @@ class ImageWindowEnv(gym.Env):
             final_hit=self.best_predicted_class==self.true_class
             final_top5=self.true_class in self.best_predicted_top5
             #print("initial prediction. {} final prediction. {}".format(self.initial_prediction,self.best_predicted_class))
+        #print("step reward: {} stop reward: {}".format(step_reward,stop_reward))
         hit=self.predicted_class==self.true_class
         self.total_reward += reward
         return state, reward, done, {"hit":hit,
@@ -209,6 +211,8 @@ class ImageWindowEnv(gym.Env):
                                      "initial_top5":initial_top5,
                                      "final_top5":final_top5,
                                      "best_reward": best_reward,
+                                     "step_reward":step_reward,
+                                     "stop_reward": stop_reward,
                                      "class_change":class_change,
                                      "total_steps":self.x+self.y+self.z,
                                      "position":(self.x,self.y,self.z)}
@@ -230,7 +234,8 @@ class ImageWindowEnv(gym.Env):
         rectangle = pltpatch.Rectangle((self.left, self.bottom), self.right - self.left, self.top - self.bottom,
                                        edgecolor='r', facecolor='none', linewidth=3)
         ax.add_patch(rectangle)
-        print("Real class: {}. iniital top5: {}, final top5: {}".format(self.get_true_class_name(),self.initial_top5_names,
+        print("Real class: {}. iniital top5: {}"
+              ", final top5: {}".format(self.get_true_class_name(),self.initial_top5_names,
                                                                         self.get_predicted_top5_class_names_and_probabilities()))
         plt.show()
 

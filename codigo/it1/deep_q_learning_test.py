@@ -28,11 +28,11 @@ def dqn_test(model_name):
     hits=0
     show=0
 
-    q_estimator=Q_Estimator((224,224,3),3,0.00001,"mobilenet")
-    q_estimator.load_model("mobilenet")
+    q_estimator=Q_Estimator((224,224,3),3,0.00001,model_name)
+    q_estimator.load_model(model_name)
     seconds=time()
 
-    env=ImageWindowEnv(VALIDATION_IMAGES_DIR,VALIDATION_LABELS_FILE,max_steps=6,step_size=32,continue_until_dies=1,is_validation=1)
+    env=ImageWindowEnv(VALIDATION_IMAGES_DIR,VALIDATION_LABELS_FILE,max_steps=6,step_size=32,continue_until_dies=1,is_validation=0)
 
     print (len(env))
     for i in range(len(env)):
@@ -76,7 +76,7 @@ def dqn_test(model_name):
                             if(n_class_worse<=FILES_TO_TEST):
                                 print("Cambio de clase correcta a clase incorrecta")
                                 print(env.get_predicted_class_name())
-                                show=1
+                        #        show=1
                         else:
                             n_class_indif += 1
                             if (n_class_indif <= FILES_TO_TEST):
@@ -94,7 +94,7 @@ def dqn_test(model_name):
                             print("Sin cambio de clase,fallo")
                             print("clase correcta: {}".format(env.get_true_class_name()))
                             print("clase predicha: {}".format(env.get_predicted_class_name()))
-                        #    show = 1
+                            show = 1
                         #    show = 1
                 if(show):
                     print("best position : {} hit: {} ".format(best_window,info["final_hit"]))
