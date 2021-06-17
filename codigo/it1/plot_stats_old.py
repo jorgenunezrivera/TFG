@@ -17,7 +17,7 @@ def training_plot(training_losses,training_rewards,validation_rewards,validation
 
 
 
-    plt.subplot(1, 2, 1)
+    plt.subplot(2, 1, 1)
     plt.plot(validation_hits_x, validation_hits_y)
    # plt.hlines(0.73,0,NUM_EPISODES)
     plt.legend(loc='upper right')
@@ -26,7 +26,7 @@ def training_plot(training_losses,training_rewards,validation_rewards,validation
     plt.title('Validation accuracy')
     plt.xlabel('epoch')
 
-    plt.subplot(1, 2, 2)
+    plt.subplot(2, 1, 2)
     plt.plot(training_rewards_x, training_rewards_y,label='training_rewards')
     plt.plot(validation_rewards_x, validation_rewards_y, 'ro',label='validation_rewards')
     #plt.hlines(0,0,NUM_EPISODES)
