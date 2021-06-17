@@ -15,6 +15,17 @@ def training_plot(training_losses,training_rewards,validation_rewards,validation
 
     plt.figure(figsize=(8, 8))
 
+
+
+    plt.subplot(1, 2, 1)
+    plt.plot(validation_hits_x, validation_hits_y)
+   # plt.hlines(0.73,0,NUM_EPISODES)
+    plt.legend(loc='upper right')
+    plt.ylabel('Accuracy')
+    plt.ylim([0.66, 0.72])
+    plt.title('Validation accuracy')
+    plt.xlabel('epoch')
+
     plt.subplot(1, 2, 2)
     plt.plot(training_rewards_x, training_rewards_y,label='training_rewards')
     plt.plot(validation_rewards_x, validation_rewards_y, 'ro',label='validation_rewards')
@@ -24,17 +35,6 @@ def training_plot(training_losses,training_rewards,validation_rewards,validation
     plt.ylim([-1, 3])
     plt.title('Training Rewards')
     plt.xlabel('epoch')
-
-    plt.subplot(1, 2, 1)
-    plt.plot(validation_hits_x, validation_hits_y)
-   # plt.hlines(0.73,0,NUM_EPISODES)
-    plt.legend(loc='upper right')
-    plt.ylabel('Accuracy')
-    plt.ylim([0.58, 0.74])
-    plt.title('Validation accuracy')
-    plt.xlabel('epoch')
-
-
 
 
     plt.show()
